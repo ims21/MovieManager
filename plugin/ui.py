@@ -4,7 +4,7 @@ from . import _
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "1.78"
+VERSION = "1.74"
 #  by ims (c) 2018 ims21@users.sourceforge.net
 #
 #  This program is free software; you can redistribute it and/or
@@ -28,15 +28,14 @@ from Components.Button import Button
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Screens.HelpMenu import HelpableScreen
 from Components.ConfigList import ConfigListScreen
-from enigma import eServiceReference, iServiceInformation, eServiceCenter, getDesktop, eSize, ePoint
+from enigma import eServiceReference, iServiceInformation, eServiceCenter
 from Components.SelectionList import SelectionList, SelectionEntryComponent
 from Components.Sources.ServiceEvent import ServiceEvent
 from Screens.ChoiceBox import ChoiceBox
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.MovieSelection import buildMovieLocationList, copyServiceFiles, moveServiceFiles, last_selected_dest
 from Screens.LocationBox import LocationBox, defaultInhibitDirs
-from Components.MovieList import MovieList, StubInfo, IMAGE_EXTENSIONS, resetMoviePlayState, AUDIO_EXTENSIONS, MOVIE_EXTENSIONS, DVD_EXTENSIONS, moviePlayState
-from Screens.About import MemoryInfo
+from Components.MovieList import MovieList, StubInfo, IMAGE_EXTENSIONS, resetMoviePlayState, AUDIO_EXTENSIONS, MOVIE_EXTENSIONS, DVD_EXTENSIONS
 from Tools.BoundFunction import boundFunction
 import os
 import skin
@@ -52,19 +51,17 @@ def hex2strColor(argb):
 try:
 	fC = "\c%s" % hex2strColor(int(skin.parseColor("foreground").argb()))
 except:
-	fC = "\c%s" % hex2strColor(0x00f0f0f0)
-gC = "\c%s" % hex2strColor(0x000ff80)
+	fC = "\c%s" % hex2strColor(int(skin.parseColor("#00f0f0f0").argb()))
+gC = "\c%s" % hex2strColor(int(skin.parseColor("#0000ff80").argb()))
 
 config.moviemanager = ConfigSubsection()
 config.moviemanager.sensitive = ConfigYesNo(default=False)
-config.moviemanager.search = ConfigSelection(default = "begin", choices = [("begin", _("start title")), ("end", _("end title")),("in", _("contains in title"))])
 choicelist = []
 for i in range(1, 11, 1):
 	choicelist.append(("%d" % i))
 choicelist.append(("15","15"))
 choicelist.append(("20","20"))
-config.moviemanager.length = ConfigSelection(default = "3", choices = [("0", _("No"))] + choicelist + [("255", _("All"))])
-config.moviemanager.endlength = ConfigSelection(default = "5", choices = [("0", _("No"))] + choicelist + [("255", _("All"))])
+config.moviemanager.length = ConfigSelection(default = "0", choices = [("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.add_bookmark = ConfigYesNo(default=False)
 config.moviemanager.clear_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.manage_all = ConfigYesNo(default=False)
@@ -92,8 +89,6 @@ def ITEM(item):
 	return item[0][1][0]
 def SIZE(item):
 	return item[0][1][1]
-def LENGTH(item):
-	return item[0][1][2]
 def SELECTED(item):
 	return item[0][3]
 
@@ -144,7 +139,15 @@ class MovieManager(Screen, HelpableScreen):
 		self.position = -1
 		self.size = 0
 		self.list = SelectionList([])
+		self.name = ""
 
+		def getName(service, path):
+			from enigma import eServiceCenter
+			serviceHandler = eServiceCenter.getInstance()
+			info = serviceHandler.info(service)
+			return info.getName(service)
+		path = service.getPath()
+		self.name = getName(service, path)
 		self["config"] = self.list
 		self.getData(config.movielist.last_videodir.value)
 
@@ -187,7 +190,6 @@ class MovieManager(Screen, HelpableScreen):
 			"groupSelect": (boundFunction(self.selectGroup, True), _("Group selection - add")),
 			"groupUnselect": (boundFunction(self.selectGroup, False), _("Group selection - remove")),
 			"text": (self.saveList, _("Save list to '%s'") % "%s%s%s" % (gC,LISTFILE,fC)),
-			"info": (self.displayInfo, _("Current item info")),
 			}, -2)
 
 		self["key_red"] = Button(_("Cancel"))
@@ -219,18 +221,21 @@ class MovieManager(Screen, HelpableScreen):
 						continue
 					if not cfg.dvds.value and ext in DVD_EXTENSIONS:
 						continue
-					if self.current.getPath() == item.getPath():
+					if self.current and item == self.current:
 						self.position = index
 						print "[MovieManager] position found"
 					info = record[1]
 					name = info and info.getName(item)
+					if name == self.name:
+						self.position = index
+						print "[MovieManager] name found"
 					size = 0
 					if info:
 						if isinstance(info, StubInfo): # picture
 							size = info.getInfo(item, iServiceInformation.sFileSize)
 						else:
 							size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
-					list.list.append(SelectionEntryComponent(name, (item, size, info.getLength(item)), index, False))
+					list.list.append(SelectionEntryComponent(name, (item, size), index, False))
 					index += 1
 					suma+=size
 		self.l = SelectionList(list)
@@ -277,28 +282,16 @@ class MovieManager(Screen, HelpableScreen):
 		self.session.nav.playService(self.playingRef)
 
 	def selectGroup(self, mark=True):
-		def getSubstring(value):
-			if value == "begin":
-				return _("starts with...")
-			elif value == "end":
-				return _("ends with...")
-			else:
-				return _("contains...")
 		if mark:
-			txt = _("Add to selection (%s)") % getSubstring(cfg.search.value)
+			txt = _("Add to selection (starts with...)")
 		else:
-			txt = _("Remove from selection (%s)")  % getSubstring(cfg.search.value)
+			txt = _("Remove from selection (starts with...)")
 		item = self["config"].getCurrent()
 		length = int(cfg.length.value)
-		endlength = int(cfg.endlength.value)
 		name = ""
-		if item:
-			if cfg.search.value == "begin" and length:
-				name = NAME(item).decode('UTF-8', 'replace')[0:length]
-				txt += 10*" " + "%s" % length
-			elif cfg.search.value == "end" and endlength:
-				name = NAME(item).decode('UTF-8', 'replace')[-endlength:]
-				txt += 10*" " + "%s" % endlength
+		if item and length:
+			name = NAME(item).decode('UTF-8', 'replace')[0:length]
+			txt += "\t%s" % length
 		self.session.openWithCallback(boundFunction(self.changeItems, mark), VirtualKeyBoard, title = txt, text = name)
 
 	def changeItems(self, mark, searchString = None):
@@ -308,19 +301,9 @@ class MovieManager(Screen, HelpableScreen):
 				searchString = searchString.lower()
 			for item in self.list.list:
 				if cfg.sensitive.value:
-					if cfg.search.value == "begin":
-						exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
-					elif cfg.search.value == "end":
-						exist = NAME(item).decode('UTF-8', 'replace').endswith(searchString)
-					else:
-						exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString)== -1 else True
+					exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
 				else:
-					if cfg.search.value == "begin":
-						exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
-					elif cfg.search.value == "end":
-						exist = NAME(item).decode('UTF-8', 'replace').lower().endswith(searchString)
-					else:
-						exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString)== -1 else True
+					exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
 				if exist:
 					if mark:
 						if not SELECTED(item):
@@ -345,8 +328,6 @@ class MovieManager(Screen, HelpableScreen):
 			keys += [""]
 		menu.append((_("Reset playback position"),15))
 		keys+=[""]
-		menu.append((_("Create directory"),7))
-		keys+=["7"]
 		menu.append((_("Sort by..."),17))
 		keys+=["yellow"]
 		if cfg.manage_all.value:
@@ -373,8 +354,6 @@ class MovieManager(Screen, HelpableScreen):
 			self.session.open(MovieManagerClearBookmarks)
 		elif choice[1] == 15:
 			self.resetSelected()
-		elif choice[1] == 7:
-			self.createDir()
 		elif choice[1] == 17:
 			self.selectSortby()
 		elif choice[1] == 18:
@@ -392,10 +371,6 @@ class MovieManager(Screen, HelpableScreen):
 					self.getData(path)
 			self.cfg_before = self.getCfgStatus()
 			self.session.openWithCallback(cfgCallBack, MovieManagerCfg)
-
-	def createDir(self):
-		self.session.openWithCallback(self.parent.createDirCallback, VirtualKeyBoard,
-			title = _("New directory name in '%s'") % config.movielist.last_videodir.value, text = "")
 
 	def getCfgStatus(self):
 		s =  0x01 if cfg.subdirs.value else 0
@@ -511,9 +486,7 @@ class MovieManager(Screen, HelpableScreen):
 			paths = []
 			for path, dirs, files in os.walk(path):
 				if path.find("BDMV") == -1 and path.find("VIDEO_TS") == -1 and path.find("AUDIO_TS") == -1: # and path.find(".Trash") == -1:
-					if not path.endswith('/'):
-						path += '/'
-					paths.append(path)
+					paths.append(path + '/')
 			return paths
 		def setCurrentRef(path):
 			self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path)
@@ -553,6 +526,7 @@ class MovieManager(Screen, HelpableScreen):
 		if len(self["config"].list):
 			item = self["config"].getCurrent()
 			self.current = ITEM(item)
+			self.name = NAME(item)
 		self.clearList()
 		self.list = self.parseMovieList(readLists(current_dir), self.list)
 		self.sortList(int(cfg.sort.value))
@@ -607,17 +581,6 @@ class MovieManager(Screen, HelpableScreen):
 				self.setTitle(_("List of files") + ":  %s" % os.path.realpath(ITEM(item).getPath()).rpartition('/')[0])
 		else:
 			self["Service"].newService(None)
-
-	def displayInfo(self):
-		item = self["config"].getCurrent()
-		if item:
-			self.session.open(MovieManagerFileInfo, (item, self.getLastPlayedPosition(item), self.convertSize(SIZE(item))))
-
-	def getLastPlayedPosition(self, item):
-		lastposition = moviePlayState(ITEM(item).getPath()+'.cuts' ,ITEM(item), LENGTH(item))
-		if lastposition:
-			return "%s%s" % (lastposition, '%')
-		return ""
 
 	def changePng(self):
 		path = resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/mark_select.png")
@@ -741,7 +704,7 @@ class MovieManager(Screen, HelpableScreen):
 		if len(data):
 			for item in data:
 				try:
-					# item ... (name, (service, size, length), index, status)
+					# item ... (name, (service, size), index, status)
 					copyServiceFiles(item[1][0], dest, item[0])
 					if toggle:
 						self.list.toggleItemSelection(item)
@@ -771,7 +734,7 @@ class MovieManager(Screen, HelpableScreen):
 		if len(data):
 			for item in data:
 				try:
-					# item ... (name, (service, size, length), index, status)
+					# item ... (name, (service, size), index, status)
 					moveServiceFiles(item[1][0], dest, item[0])
 					self.list.removeSelection(item)
 				except Exception, e:
@@ -805,7 +768,7 @@ class MovieManager(Screen, HelpableScreen):
 				toggle = False
 			if len(data):
 				for item in data:
-					# 0 - name, 1 - (0 - item, 1-size, 2-length), 2-index
+					# 0 - name, 1(0 - item, 1-size), 2-index
 					current = item[1][0]
 					resetMoviePlayState(current.getPath() + ".cuts", current)
 					if toggle:
@@ -910,28 +873,21 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 
 	def loadMenu(self):
 		self.list = []
-		self.search = _("Search in group selection by")
-		self.list.append(getConfigListEntry(self.search, cfg.search, _("You can set what will group selection use - start of title, end of title or contains in title.")))
-		if cfg.search.value == "begin":
-			self.list.append(getConfigListEntry(_("Pre-fill first 'n' filename chars to virtual keyboard"), cfg.length, _("You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
-		elif cfg.search.value == "end":
-			self.list.append(getConfigListEntry(_("Pre-fill last 'n' filename chars to virtual keyboard"), cfg.endlength, _("You can set the number of letters from the end of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
 		self.list.append(getConfigListEntry(_("Compare case sensitive"), cfg.sensitive, _("Sets whether to distinguish between uper case and lower case for searching.")))
+		self.list.append(getConfigListEntry(_("Pre-fill first 'n' filename chars to virtual keyboard"), cfg.length, _("You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
 		self.list.append(getConfigListEntry(_("Use target directory as bookmark"), cfg.add_bookmark, _("Set 'yes' if You want add target directories into bookmarks.")))
 		self.list.append(getConfigListEntry(_("Enable 'Clear bookmark...'"), cfg.clear_bookmarks, _("Enable in menu utility for delete bookmarks in menu.")))
 		self.list.append(getConfigListEntry(_("Enable 'Manage files in active bookmarks...'"), cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.")))
 		self.list.append(getConfigListEntry(_("Including subdirectories"), cfg.subdirs, _("If enabled, then will be used subdirectories too (it will take longer).")))
 		self.list.append(getConfigListEntry(_("Movie files"), cfg.movies, _("If enabled, then will be added movie files into list.")))
 		self.list.append(getConfigListEntry(_("Audio files"), cfg.audios, _("If enabled, then will be added audio files into list.")))
-		self.list.append(getConfigListEntry(_("DVD images"), cfg.dvds, _("If enabled, then will be added dvd image files into list.")))
+		self.list.append(getConfigListEntry(_("DVD files"), cfg.dvds, _("If enabled, then will be added dvd files into list.")))
 		self.list.append(getConfigListEntry(_("Pictures"), cfg.pictures, _("If enabled, then will be added pictures into list.")))
 		self.list.append(getConfigListEntry(_("To maintain selector position"), cfg.position, _("If enabled, then will be on start maintained selector position in items list.")))
 		self["config"].list = self.list
 
 	# Summary - for (LCD):
 	def changedEntry(self):
-		if self["config"].getCurrent()[0] == self.search:
-			self.loadMenu()
 		for x in self.onChangedEntry:
 			x()
 	def getCurrentEntry(self):
@@ -1061,65 +1017,6 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 				bookmarks.remove(item[0])
 			config.movielist.videodirs.value = bookmarks
 			config.movielist.videodirs.save()
-
-	def exit(self):
-		self.close()
-
-class MovieManagerFileInfo(Screen):
-	skin="""
-	<screen name="MovieManagerFileInfo" position="fill" title="Info" flags="wfNoBorder" backgroundColor="background">
-		<widget name="name" render="Label" position="10,15" size="1920,30" font="Regular;26"/>
-		<widget name="path" render="Label" position="10,45" size="1920,30" font="Regular;26" foregroundColor="green"/>
-		<widget source="service" render="Label" position="10,75" size="290,30" font="Regular;26" foregroundColor="grey">
-			<convert type="ServiceTime">StartTime</convert>
-			<convert type="ClockToText">Format:%a %d.%m.%Y, %H:%M</convert>
-		</widget>
-		<widget source="service" render="Label" position="300,75" size="600,30" font="Regular;26" foregroundColor="grey">
-			<convert type="MovieInfo">RecordServiceName</convert>
-		</widget>
-		<widget name="size" render="Label" position="10,105" size="100,30" font="Regular;26" foregroundColor="blue"/>
-		<widget name="play" render="Label" position="150,105" size="100,30" font="Regular;26" foregroundColor="yellow"/>
-	</screen>"""
-
-	def __init__(self, session, (item, last, size)):
-		Screen.__init__(self, session)
-		self.session = session
-
-		self.path = ITEM(item).getPath()
-		self["name"] = Label("%s" % NAME(item))
-		self["path"] = Label()
-		self["size"] = Label("%s" % size)
-		self["play"] = Label("%s" % last)
-		self["service"] = ServiceEvent()
-		self["service"].newService(ITEM(item))
-
-		self["actions"] = ActionMap(["MovieManagerActions", "OkCancelActions"],
-		{
-			"ok": self.exit,
-			"cancel": self.exit,
-			"green": self.exit,
-			"red": self.exit,
-			"info": self.exit,
-		}, -2)
-		self.onLayoutFinish.append(self.setSize)
-
-	def setSize(self):
-		x,y = self.getLineSize()
-		wsize = (x + 2*10, 5*y)
-		self.instance.resize(eSize(*wsize))
-		w,h = self.getScreenSize()
-		wx = (w - wsize[0])/2
-		wy = (h - wsize[1])/2
-		self.instance.move(ePoint(wx,wy))
-
-	def getLineSize(self):
-		self["path"].instance.setNoWrap(1)
-		self["path"].setText("%s" % self.path)
-		return self["path"].instance.calculateSize().width(), self["path"].instance.calculateSize().height()
-
-	def getScreenSize(self):
-		desktop = getDesktop(0)
-		return desktop.size().width(), desktop.size().height()
 
 	def exit(self):
 		self.close()
