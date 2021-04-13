@@ -48,11 +48,14 @@ MY_RECORDINGS_EXTENSIONS = frozenset((".ts",))
 MY_MOVIE_EXTENSIONS = MOVIE_EXTENSIONS.symmetric_difference(MY_RECORDINGS_EXTENSIONS)
 SKIPPED = ".m3u8"
 
+
 def hex2strColor(argb):
 	out = ""
 	for i in range(28, -1, -4):
 		out += "%s" % chr(0x30 + (argb >> i & 0xf))
 	return out
+
+
 try:
 	fC = "\c%s" % hex2strColor(int(skin.parseColor("foreground").argb()))
 except:
@@ -102,23 +105,36 @@ LISTFILE = '/tmp/movies.csv'
 HOSTNAME = '/etc/hostname'
 PKLFILE = '.e2settings.pkl'
 
+
 def NAME(item):
 	return item[0][0]
+
+
 def ITEM(item):
 	return item[0][1][0]
+
+
 def SIZE(item):
 	return item[0][1][1]
+
+
 def LENGTH(item):
 	return item[0][1][2].getLength(ITEM(item))
+
+
 def INFO(item):
 	return item[0][1][2]
+
+
 def SELECTED(item):
 	return item[0][3]
+
 
 class MovieManagerPlayerInfoBar(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = "MoviePlayer"
+
 
 class MovieManager(Screen, HelpableScreen):
 	skin = """
@@ -150,6 +166,7 @@ class MovieManager(Screen, HelpableScreen):
 		<widget name="description" position="140,368" zPosition="2" size="470,46" valign="center" halign="left" font="Regular;16" foregroundColor="white"/>
 	</screen>
 	"""
+
 	def __init__(self, session, service=None, parent=None):
 		Screen.__init__(self, session, parent=parent)
 		HelpableScreen.__init__(self)
@@ -289,6 +306,7 @@ class MovieManager(Screen, HelpableScreen):
 
 	def firstItem(self):
 		self["config"].moveToIndex(0)
+
 	def lastItem(self):
 		self["config"].moveToIndex(self.list.len() - 1)
 
@@ -353,6 +371,7 @@ class MovieManager(Screen, HelpableScreen):
 		if self.played:
 			self.controlPlayerInfoBar()
 			return
+
 		def getSubstring(value):
 			if value == "begin":
 				return _("starts with...")
@@ -535,6 +554,7 @@ class MovieManager(Screen, HelpableScreen):
 			if len(line):
 				return line
 			return "e2"
+
 		def getItemDuration(service, info):
 			duration = info.getLength(service)
 			if duration < 0:
@@ -637,6 +657,7 @@ class MovieManager(Screen, HelpableScreen):
 					self.position = list_item[0][2]
 				a.append(list_item)
 			return a
+
 		def reloadNewList(newlist, list):
 			index = 0
 			for n in newlist:
@@ -646,6 +667,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.l = MySelectionList(list)
 			self.l.setList(list)
 			return list
+
 		def renameItem(item, newname, list):
 			new = renameItemInList(list, item, newname)
 			self.clearList()
@@ -707,21 +729,25 @@ class MovieManager(Screen, HelpableScreen):
 				if PKLFILE in files:
 					self.pklPaths.append(path.rstrip('/'))
 			return paths
+
 		def setCurrentRef(path):
 			self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path)
 			if cfg.pictures.value:
 				self.current_ref.setName('16384:jpg 16384:png 16384:gif 16384:bmp 16384:jpeg')
+
 		def readDirectory(path):
 			setCurrentRef(path)
 			list = MovieList(None, sort_type=MovieList.SORT_GROUPWISE)
 			list.reload(self.current_ref, [])
 			return list
+
 		def readSubdirs(path):
 			files = []
 			for subdir in lookDirs(path):
 				files += readDirectory(subdir)
 				print "[MovieManager] + added files from %s" % subdir
 			return files
+
 		def readLists(current_dir=None):
 			files = []
 			if config.movielist.videodirs.saved_value and not current_dir:
@@ -1157,9 +1183,11 @@ class MovieManager(Screen, HelpableScreen):
 				from Plugins.Extensions.CSFD.plugin import CSFD
 				self.session.open(CSFD, event[0][0])
 
+
 def MyMovieLocationBox(session, text, dir, filename="", minFree=None):
 	config.movielist.videodirs.load()
 	return LocationBox(session, text=text, filename=filename, currDir=dir, bookmarks=config.movielist.videodirs, autoAdd=cfg.add_bookmark.value, editDir=True, inhibitDirs=defaultInhibitDirs, minFree=minFree)
+
 
 class MovieManagerCfg(Screen, ConfigListScreen):
 	def __init__(self, session):
@@ -1229,11 +1257,14 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.loadMenu()
 		for x in self.onChangedEntry:
 			x()
+
 	def getCurrentEntry(self):
 		self["description"].setText(self["config"].getCurrent()[2])
 		return self["config"].getCurrent()[0]
+
 	def getCurrentValue(self):
 		return str(self["config"].getCurrent()[1].getText())
+
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
@@ -1244,6 +1275,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 
 	def exit(self):
 		self.keyCancel()
+
 
 class MovieManagerClearBookmarks(Screen, HelpableScreen):
 	skin = """
@@ -1261,6 +1293,7 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 		<widget name="description" position="5,360" zPosition="2" size="590,25" valign="center" halign="left" font="Regular;22" foregroundColor="white"/>
 	</screen>
 	"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
@@ -1361,6 +1394,7 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 	def exit(self):
 		config.movielist.videodirs.load()
 		self.close()
+
 
 class MovieManagerFileInfo(Screen):
 	skin = """

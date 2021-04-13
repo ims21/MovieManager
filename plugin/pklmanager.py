@@ -30,6 +30,7 @@ import os
 from myselectionlist import MySelectionList
 from ui import PKLFILE, cfg
 
+
 class pklMovieManager(Screen):
 	skin = """
 		<screen name="pklMovieManager" position="center,center" size="560,417" title="MovieManager - directory">
