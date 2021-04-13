@@ -9,4 +9,4 @@ def main(session, service, **kwargs):
 def Plugins(path, **kwargs):
 	global plugin_path
 	plugin_path = path
-	return PluginDescriptor(name=_("Movie manager"),description=_("Movie manager"), where=PluginDescriptor.WHERE_MOVIELIST, fnc=main)
+	return PluginDescriptor(name=_("Movie manager"), description=_("Movie manager"), where=PluginDescriptor.WHERE_MOVIELIST, fnc=main)

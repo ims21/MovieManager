@@ -50,7 +50,7 @@ SKIPPED = ".m3u8"
 
 def hex2strColor(argb):
 	out = ""
-	for i in range(28,-1,-4):
+	for i in range(28, -1, -4):
 		out += "%s" % chr(0x30 + (argb >> i & 0xf))
 	return out
 try:
@@ -61,12 +61,12 @@ gC = "\c%s" % hex2strColor(0x000ff80)
 
 config.moviemanager = ConfigSubsection()
 config.moviemanager.sensitive = ConfigYesNo(default=False)
-config.moviemanager.search = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("end", _("end title")),("in", _("contains in title"))])
+config.moviemanager.search = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("end", _("end title")), ("in", _("contains in title"))])
 choicelist = []
 for i in range(1, 11, 1):
 	choicelist.append(("%d" % i))
-choicelist.append(("15","15"))
-choicelist.append(("20","20"))
+choicelist.append(("15", "15"))
+choicelist.append(("20", "20"))
 config.moviemanager.length = ConfigSelection(default="3", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.endlength = ConfigSelection(default="5", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.add_bookmark = ConfigYesNo(default=False)
@@ -182,7 +182,7 @@ class MovieManager(Screen, HelpableScreen):
 		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
 			{
 			"cancel": (self.exit, _("Exit plugin")),
-			"ok": (self.toggleSelection,_("Add or remove item of selection")),
+			"ok": (self.toggleSelection, _("Add or remove item of selection")),
 			})
 		### CSFDRunActions can be defined in keytranslation.xml
 		self["CSFDRunActions"] = ActionMap(["CSFDRunActions"],
@@ -217,7 +217,7 @@ class MovieManager(Screen, HelpableScreen):
 			"seekBackManual": (self.seekBackManual, _("Seek backward (enter time)")),
 			"groupSelect": (boundFunction(self.selectGroup, True), _("Group selection - add")),
 			"groupUnselect": (boundFunction(self.selectGroup, False), _("Group selection - remove")),
-			"text": (self.saveList, _("Save list to '%s'") % "%s%s%s" % (gC,LISTFILE,fC)),
+			"text": (self.saveList, _("Save list to '%s'") % "%s%s%s" % (gC, LISTFILE, fC)),
 			"info": (self.displayInfo, _("Current item info")),
 			"seek_3": (f13, seekFwd + _(" (%ss)") % time_13),
 			"seek_6": (f46, seekFwd + _(" (%ss)") % time_46),
@@ -413,13 +413,13 @@ class MovieManager(Screen, HelpableScreen):
 		menu = []
 		menu.append((_("Copy to..."), 5, _("Copy current file or selected file(s) to directory.")))
 		menu.append((_("Move to..."), 6, _("Move current file or selected file(s) to directory.")))
-		keys = ["5","6"]
+		keys = ["5", "6"]
 		menu.append((_("Rename"), 2, _("Rename current file.")))
 		keys += ["2"]
 		menu.append((_("Create directory"), 7, _("Create new directory in current directory.")))
 		keys += ["7"]
 		if config.usage.setup_level.index == 2:
-			menu.append((_("Delete"),8, _("Delete current file or selected file(s).")))
+			menu.append((_("Delete"), 8, _("Delete current file or selected file(s).")))
 			keys += ["8"]
 		if cfg.clear_bookmarks.value:
 			menu.append((_("Clear bookmarks..."), 10, _("Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed.")))
@@ -549,7 +549,7 @@ class MovieManager(Screen, HelpableScreen):
 			service_name = ServiceReference(rec_ref_str).getServiceName()
 			if not service_name:
 				path = service.getPath().split(' - ')
-				if len(path) >= 3 and path[0][-13:].replace(' ','').isdigit():
+				if len(path) >= 3 and path[0][-13:].replace(' ', '').isdigit():
 					return path[1]
 				else:
 					return service_name
@@ -575,7 +575,7 @@ class MovieManager(Screen, HelpableScreen):
 				title += "%s;" % _("time")
 			title = "%s\n" % title.rstrip(';')
 		else:
-			title = ';'.join((_("name"),_("size"),_("path"))) + "\n"
+			title = ';'.join((_("name"), _("size"), _("path"))) + "\n"
 		fo.write(title)
 		# data
 		for item in self.list.list:
@@ -670,7 +670,7 @@ class MovieManager(Screen, HelpableScreen):
 					metafile.truncate()
 					metafile.close()
 				else:
-					pathname,filename = os.path.split(path)
+					pathname, filename = os.path.split(path)
 					newpath = os.path.join(pathname, name)
 					print "[MovieManager] rename", path, "to", newpath
 					os.rename(path, newpath)
@@ -817,7 +817,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.session.open(MovieManagerFileInfo, (item, self.getLastPlayedPosition(item), self.convertSize(SIZE(item))))
 
 	def getLastPlayedPosition(self, item):
-		lastposition = moviePlayState(ITEM(item).getPath() + '.cuts',ITEM(item), LENGTH(item))
+		lastposition = moviePlayState(ITEM(item).getPath() + '.cuts', ITEM(item), LENGTH(item))
 		if lastposition:
 			return "%s%s" % (lastposition, '%')
 		return ""
@@ -946,7 +946,7 @@ class MovieManager(Screen, HelpableScreen):
 			selected = len(self.list.getSelectionsList())
 			if not selected:
 				selected = 1
-			text = ngettext("Are You sure to delete %s selected file?","Are You sure to delete %s selected files?", selected) % selected
+			text = ngettext("Are You sure to delete %s selected file?", "Are You sure to delete %s selected files?", selected) % selected
 			self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 
 	def delete(self, choice):
@@ -1147,7 +1147,7 @@ class MovieManager(Screen, HelpableScreen):
 			try:
 				from Plugins.Extensions.CSFD.plugin import CSFD
 			except ImportError:
-				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO,timeout=5)
+				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=5)
 				return False
 			else:
 				return True
@@ -1340,7 +1340,7 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 			selected = len(self.list.getSelectionsList())
 			if not selected:
 				selected = 1
-			msg = ngettext("Are You sure to delete %s selected bookmark?","Are You sure to delete %s selected bookmarks?", selected) % selected
+			msg = ngettext("Are You sure to delete %s selected bookmark?", "Are You sure to delete %s selected bookmarks?", selected) % selected
 			self.session.openWithCallback(self.delete, MessageBox, msg, type=MessageBox.TYPE_YESNO, default=False)
 
 	def delete(self, choice):
@@ -1409,13 +1409,13 @@ class MovieManagerFileInfo(Screen):
 		self.onLayoutFinish.append(self.setSize)
 
 	def setSize(self):
-		x,y = self.getLineSize()
+		x, y = self.getLineSize()
 		wsize = (x + 2 * 10, 5 * y)
 		self.instance.resize(eSize(*wsize))
-		w,h = self.getScreenSize()
+		w, h = self.getScreenSize()
 		wx = (w - wsize[0]) / 2
 		wy = (h - wsize[1]) / 2
-		self.instance.move(ePoint(wx,wy))
+		self.instance.move(ePoint(wx, wy))
 
 	def getLineSize(self):
 		self["path"].instance.setNoWrap(1)
