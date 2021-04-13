@@ -817,7 +817,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.session.open(MovieManagerFileInfo, (item, self.getLastPlayedPosition(item), self.convertSize(SIZE(item))))
 
 	def getLastPlayedPosition(self, item):
-		lastposition = moviePlayState(ITEM(item).getPath()+'.cuts' ,ITEM(item), LENGTH(item))
+		lastposition = moviePlayState(ITEM(item).getPath()+'.cuts',ITEM(item), LENGTH(item))
 		if lastposition:
 			return "%s%s" % (lastposition, '%')
 		return ""
@@ -946,7 +946,7 @@ class MovieManager(Screen, HelpableScreen):
 			selected = len(self.list.getSelectionsList())
 			if not selected:
 				selected = 1
-			text = ngettext("Are You sure to delete %s selected file?" ,"Are You sure to delete %s selected files?", selected) % selected
+			text = ngettext("Are You sure to delete %s selected file?","Are You sure to delete %s selected files?", selected) % selected
 			self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 
 	def delete(self, choice):
@@ -1043,7 +1043,7 @@ class MovieManager(Screen, HelpableScreen):
 					moveServiceFiles(item[1][0], dest, item[0])
 					self.list.removeSelection(item)
 				except Exception, e:
-					self.session.open(MessageBox, str(e), MessageBox.TYPE_ERROR, timeout=3 )
+					self.session.open(MessageBox, str(e), MessageBox.TYPE_ERROR, timeout=3)
 		self.displaySelectionPars()
 		if not len(self.list.list):
 			self.exit()
@@ -1147,7 +1147,7 @@ class MovieManager(Screen, HelpableScreen):
 			try:
 				from Plugins.Extensions.CSFD.plugin import CSFD
 			except ImportError:
-				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO,timeout=5 )
+				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO,timeout=5)
 				return False
 			else:
 				return True
@@ -1340,7 +1340,7 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 			selected = len(self.list.getSelectionsList())
 			if not selected:
 				selected = 1
-			msg = ngettext("Are You sure to delete %s selected bookmark?" ,"Are You sure to delete %s selected bookmarks?", selected) % selected
+			msg = ngettext("Are You sure to delete %s selected bookmark?","Are You sure to delete %s selected bookmarks?", selected) % selected
 			self.session.openWithCallback(self.delete, MessageBox, msg, type=MessageBox.TYPE_YESNO, default=False)
 
 	def delete(self, choice):

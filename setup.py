@@ -2,7 +2,7 @@ from distutils.core import setup
 import setup_translate
 
 pkg = 'Extensions.MovieManager'
-setup (name='enigma2-plugin-extensions-moviemanager',
+setup(name='enigma2-plugin-extensions-moviemanager',
 	version='2.02',
 	description='copy, move and delete more files at once',
 	packages=[pkg],

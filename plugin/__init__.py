@@ -6,7 +6,7 @@ import gettext
 
 def localeInit():
 	localedir = resolveFilename(SCOPE_PLUGINS, "Extensions/MovieManager/locale")
-	gettext.bindtextdomain('MovieManager', localedir )
+	gettext.bindtextdomain('MovieManager', localedir)
 
 def _(txt):
 	t = gettext.dgettext("MovieManager", txt)
