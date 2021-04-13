@@ -61,14 +61,14 @@ gC = "\c%s" % hex2strColor(0x000ff80)
 
 config.moviemanager = ConfigSubsection()
 config.moviemanager.sensitive = ConfigYesNo(default=False)
-config.moviemanager.search = ConfigSelection(default = "begin", choices = [("begin", _("start title")), ("end", _("end title")),("in", _("contains in title"))])
+config.moviemanager.search = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("end", _("end title")),("in", _("contains in title"))])
 choicelist = []
 for i in range(1, 11, 1):
 	choicelist.append(("%d" % i))
 choicelist.append(("15","15"))
 choicelist.append(("20","20"))
-config.moviemanager.length = ConfigSelection(default = "3", choices = [("0", _("No"))] + choicelist + [("255", _("All"))])
-config.moviemanager.endlength = ConfigSelection(default = "5", choices = [("0", _("No"))] + choicelist + [("255", _("All"))])
+config.moviemanager.length = ConfigSelection(default="3", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
+config.moviemanager.endlength = ConfigSelection(default="5", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.add_bookmark = ConfigYesNo(default=False)
 config.moviemanager.clear_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.manage_all = ConfigYesNo(default=False)
@@ -80,7 +80,7 @@ config.moviemanager.other_movies = ConfigYesNo(default=True)
 config.moviemanager.pictures = ConfigYesNo(default=False)
 config.moviemanager.audios = ConfigYesNo(default=False)
 config.moviemanager.dvds = ConfigYesNo(default=False)
-config.moviemanager.sort = ConfigSelection(default = "0", choices = [
+config.moviemanager.sort = ConfigSelection(default="0", choices=[
 	("0", _("Original list")),
 	("1", _("A-z sort")),
 	("2", _("Z-a sort")),
@@ -151,14 +151,13 @@ class MovieManager(Screen, HelpableScreen):
 	</screen>
 	"""
 	def __init__(self, session, service=None, parent=None):
-		Screen.__init__(self, session, parent = parent)
+		Screen.__init__(self, session, parent=parent)
 		HelpableScreen.__init__(self)
 		self.session = session
 		self.current = service
 		self.parent = parent
 
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evEOF: self.__endOfFile,
 			})
 
@@ -376,9 +375,9 @@ class MovieManager(Screen, HelpableScreen):
 			elif cfg.search.value == "end" and endlength:
 				name = NAME(item).decode('UTF-8', 'replace')[-endlength:]
 				txt += 10*" " + "%s" % endlength
-		self.session.openWithCallback(boundFunction(self.changeItems, mark), VirtualKeyBoard, title = txt, text = name)
+		self.session.openWithCallback(boundFunction(self.changeItems, mark), VirtualKeyBoard, title=txt, text=name)
 
-	def changeItems(self, mark, searchString = None):
+	def changeItems(self, mark, searchString=None):
 		if searchString:
 			searchString = searchString.decode('UTF-8', 'replace')
 			if not cfg.sensitive.value:
@@ -512,7 +511,7 @@ class MovieManager(Screen, HelpableScreen):
 
 	def createDir(self):
 		self.session.openWithCallback(self.parent.createDirCallback, VirtualKeyBoard,
-			title = _("New directory name in '%s'") % config.movielist.last_videodir.value, text = "")
+			title=_("New directory name in '%s'") % config.movielist.last_videodir.value, text="")
 
 	def getCfgStatus(self):
 		s =  0x01 if cfg.subdirs.value else 0
@@ -603,7 +602,7 @@ class MovieManager(Screen, HelpableScreen):
 				line = ';'.join((name, size, path)) + "\n"
 			fo.write(line)
 		fo.close()
-		self.session.open(MessageBox, _("List was saved to '%s'") % (gC + csvName + fC), type = MessageBox.TYPE_INFO, timeout = 5)
+		self.session.open(MessageBox, _("List was saved to '%s'") % (gC + csvName + fC), type=MessageBox.TYPE_INFO, timeout=5)
 
 	def selectSortby(self):
 		menu = []
@@ -627,7 +626,7 @@ class MovieManager(Screen, HelpableScreen):
 			full_name = os.path.split(ITEM(item).getPath())
 			if full_name == name: # split extensions for files without metafile
 				name, self.extension = os.path.splitext(name)
-		self.session.openWithCallback(self.renameCallback, VirtualKeyBoard, title = _("Rename"), text = name)
+		self.session.openWithCallback(self.renameCallback, VirtualKeyBoard, title=_("Rename"), text=name)
 
 	def renameCallback(self, name):
 		def renameItemInList(list, item, newname):
@@ -690,7 +689,7 @@ class MovieManager(Screen, HelpableScreen):
 				traceback.print_exc()
 				msg = _("Error") + '\n' + str(e)
 			if msg:
-				self.session.open(MessageBox, msg, type = MessageBox.TYPE_ERROR, timeout = 5)
+				self.session.open(MessageBox, msg, type=MessageBox.TYPE_ERROR, timeout=5)
 
 	def getData(self, current_dir=None):
 		def lookDirs(path):
@@ -1148,7 +1147,7 @@ class MovieManager(Screen, HelpableScreen):
 			try:
 				from Plugins.Extensions.CSFD.plugin import CSFD
 			except ImportError:
-				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 5 )
+				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO,timeout=5 )
 				return False
 			else:
 				return True
@@ -1158,9 +1157,9 @@ class MovieManager(Screen, HelpableScreen):
 				from Plugins.Extensions.CSFD.plugin import CSFD
 				self.session.open(CSFD, event[0][0])
 
-def MyMovieLocationBox(session, text, dir, filename = "", minFree = None):
+def MyMovieLocationBox(session, text, dir, filename="", minFree=None):
 	config.movielist.videodirs.load()
-	return LocationBox(session, text = text,  filename = filename, currDir = dir, bookmarks = config.movielist.videodirs, autoAdd = cfg.add_bookmark.value, editDir = True, inhibitDirs = defaultInhibitDirs, minFree = minFree)
+	return LocationBox(session, text=text,  filename=filename, currDir=dir, bookmarks=config.movielist.videodirs, autoAdd=cfg.add_bookmark.value, editDir=True, inhibitDirs=defaultInhibitDirs, minFree=minFree)
 
 class MovieManagerCfg(Screen, ConfigListScreen):
 	def __init__(self, session):
@@ -1182,7 +1181,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		}, -2)
 		self.list = []
 		self.onChangedEntry = []
-		ConfigListScreen.__init__(self, self.list, session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
 		self.loadMenu()
 
 	def loadMenu(self):
