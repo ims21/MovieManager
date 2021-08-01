@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.02"
+VERSION = "2.03"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -731,7 +731,7 @@ class MovieManager(Screen, HelpableScreen):
 			return paths
 
 		def setCurrentRef(path):
-			self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path)
+			self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path.replace(':', '%3a'))
 			if cfg.pictures.value:
 				self.current_ref.setName('16384:jpg 16384:png 16384:gif 16384:bmp 16384:jpeg')
 
