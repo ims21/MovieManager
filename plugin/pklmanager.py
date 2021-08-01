@@ -30,6 +30,7 @@ import os
 from myselectionlist import MySelectionList
 from ui import PKLFILE, cfg
 
+
 class pklMovieManager(Screen):
 	skin = """
 		<screen name="pklMovieManager" position="center,center" size="560,417" title="MovieManager - directory">
@@ -50,7 +51,7 @@ class pklMovieManager(Screen):
 		Screen.__init__(self, session)
 		self.setTitle(_("Directories with local setting"))
 
-		self.skinName = ["pklMovieManager","Setup"]
+		self.skinName = ["pklMovieManager", "Setup"]
 
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button()
@@ -62,7 +63,7 @@ class pklMovieManager(Screen):
 		self.reloadList()
 		self["description"] = Label()
 
-		self["actions"] = ActionMap(["OkCancelActions","ColorActions"],
+		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 			{
 				"cancel": self.exit,
 				"ok": self.list.toggleSelection,
@@ -92,7 +93,7 @@ class pklMovieManager(Screen):
 			selected = len(self.list.getSelectionsList())
 			if not selected:
 				selected = 1
-			text = ngettext("Are You sure to delete %s setting?" ,"Are You sure to delete %s settings?", selected) % selected
+			text = ngettext("Are You sure to delete %s setting?", "Are You sure to delete %s settings?", selected) % selected
 			self.session.openWithCallback(self.deleteSelected, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 
 	def deleteSelected(self, choice):
