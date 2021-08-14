@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.03"
+VERSION = "2.04"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -73,7 +73,7 @@ choicelist.append(("20", "20"))
 config.moviemanager.length = ConfigSelection(default="3", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.endlength = ConfigSelection(default="5", choices=[("0", _("No"))] + choicelist + [("255", _("All"))])
 config.moviemanager.add_bookmark = ConfigYesNo(default=False)
-config.moviemanager.clear_bookmarks = ConfigYesNo(default=True)
+config.moviemanager.edit_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.manage_all = ConfigYesNo(default=False)
 config.moviemanager.removepkl = ConfigYesNo(default=False)
 config.moviemanager.subdirs = ConfigYesNo(default=False)
@@ -440,8 +440,8 @@ class MovieManager(Screen, HelpableScreen):
 		if config.usage.setup_level.index == 2:
 			menu.append((_("Delete"), 8, _("Delete current file or selected file(s).")))
 			keys += ["8"]
-		if cfg.clear_bookmarks.value:
-			menu.append((_("Clear bookmarks..."), 10, _("Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed.")))
+		if cfg.edit_bookmarks.value:
+			menu.append((_("Edit bookmarks..."), 10, _("Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed or edited.")))
 			keys += [""]
 		menu.append((_("Reset playback position"), 15, _("Reset playback position for all marked files in movielist.")))
 		keys += [""]
@@ -484,7 +484,7 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 8:
 			self.deleteSelected()
 		elif choice[1] == 10:
-			self.session.open(MovieManagerClearBookmarks)
+			self.session.open(MovieManagerEditBookmarks)
 		elif choice[1] == 15:
 			self.resetSelected()
 		elif choice[1] == 7:
@@ -1223,7 +1223,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Pre-fill last 'n' filename chars to virtual keyboard"), cfg.endlength, _("You can set the number of letters from the end of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
 		self.list.append(getConfigListEntry(_("Compare case sensitive"), cfg.sensitive, _("Sets whether to distinguish between uper case and lower case for searching.")))
 		self.list.append(getConfigListEntry(_("Use target directory as bookmark"), cfg.add_bookmark, _("Set 'yes' if You want add target directories into bookmarks.")))
-		self.list.append(getConfigListEntry(_("Enable 'Clear bookmark...'"), cfg.clear_bookmarks, _("Enable in menu utility for delete bookmarks in menu.")))
+		self.list.append(getConfigListEntry(_("Enable 'Edit bookmark...'"), cfg.edit_bookmarks, _("Enable in menu utility for edit bookmarks.")))
 		self.list.append(getConfigListEntry(_("Enable 'Remove local directory setting...'"), cfg.removepkl, _("Enable item for delete local directory setting in menu. It depends on displayed directories in movielist.")))
 		self.list.append(getConfigListEntry(_("Enable 'Manage files in active bookmarks...'"), cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.") + note))
 		self.subdirs = _("Including subdirectories")
@@ -1277,7 +1277,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.keyCancel()
 
 
-class MovieManagerClearBookmarks(Screen, HelpableScreen):
+class MovieManagerEditBookmarks(Screen, HelpableScreen):
 	skin = """
 	<screen name="MovieManager" position="center,center" size="600,390" title="List of bookmarks">
 		<ePixmap name="red"    position="0,0"   zPosition="2" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on"/>
@@ -1319,17 +1319,18 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 			{
 			"red": (self.exit, _("Close")),
 			"green": (self.deleteSelected, _("Delete selected")),
-			"yellow": (self.sortList, _("Sort list")),
+			"yellow": (self.editCurrent, _("Edit current bookmark")),
 			"blue": (self.list.toggleAllSelection, _("Invert selection")),
+			"info": (self.sortList, _("Sort list")),
 			}, -2)
 
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button(_("Delete"))
-		self["key_yellow"] = Button(_("Sort"))
+		self["key_yellow"] = Button(_("Edit"))
 		self["key_blue"] = Button(_("Inversion"))
 
 		self.sort = 0
-		self["description"] = Label(_("Select with 'OK' and then remove with 'Delete'."))
+		self["description"] = Label(_("Use 'OK' to select multiple items. List can be sorted with 'Info/Epg'."))
 		self["config"].onSelectionChanged.append(self.bookmark)
 
 	def loadAllMovielistVideodirs(self):
@@ -1348,10 +1349,10 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 		if len(self["config"].list):
 			item = self["config"].getCurrent()
 			if item:
-				text = "%s" % NAME(item)
-				self["description"].setText(text)
+				self["description"].setText("%s" % NAME(item))
 		else:
 			self["description"].setText("")
+		self["key_yellow"].setText(_("Edit") if len(self.list.getSelectionsList()) <= 1 else "")
 
 	def sortList(self):
 		if self.sort == 0:	# z-a
@@ -1367,6 +1368,7 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 		elif self.sort == 2:	# a-z
 			self.list.sort(sortType=0)
 			self.sort = 0
+		self["description"].setText(_("Sorted from Z to A.") if self.sort == 1 else _("Selected top.") if self.sort == 2 else _("Sorted from A to Z."))
 
 	def deleteSelected(self):
 		if self["config"].getCurrent():
@@ -1390,6 +1392,25 @@ class MovieManagerClearBookmarks(Screen, HelpableScreen):
 				bookmarks.remove(item[0])
 			config.movielist.videodirs.value = bookmarks
 			config.movielist.videodirs.save()
+
+	def editCurrent(self):
+		def editBookmark(changedBookmark):
+			if changedBookmark:
+				if not changedBookmark.endswith('/'):
+					changedBookmark += '/'
+				bookmarks = config.movielist.videodirs.value
+				for i, text in enumerate(bookmarks):
+					if data[0] == text:
+						bookmarks[i] = changedBookmark
+						self.list.changeCurrentItem(data,(changedBookmark, changedBookmark, data[2], False))
+						config.movielist.videodirs.value = bookmarks
+						config.movielist.videodirs.save()
+						return
+
+		if self["config"].getCurrent():
+			if len(self.list.getSelectionsList()) <= 1:
+				data = self["config"].getCurrent()[0]
+				self.session.openWithCallback(editBookmark, VirtualKeyBoard, title=(_("Edit bookmark")), text=data[0])
 
 	def exit(self):
 		config.movielist.videodirs.load()
