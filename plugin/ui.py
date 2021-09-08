@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.04"
+VERSION = "2.05"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -98,6 +98,7 @@ config.moviemanager.csv_duration = ConfigYesNo(default=False)
 config.moviemanager.csv_date = ConfigYesNo(default=True)
 config.moviemanager.csv_time = ConfigYesNo(default=False)
 config.moviemanager.csv_servicename = ConfigYesNo(default=True)
+config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 
 cfg = config.moviemanager
 
@@ -1171,17 +1172,24 @@ class MovieManager(Screen, HelpableScreen):
 	def csfd(self):
 		def isCSFD():
 			try:
-				from Plugins.Extensions.CSFD.plugin import CSFD
+				if cfg.csfdtype.value == "CSFD":
+					from Plugins.Extensions.CSFD.plugin import CSFD
+				else:
+					from Plugins.Extensions.CSFDLite.plugin import CSFDLite
 			except ImportError:
-				self.session.open(MessageBox, _("The CSFD plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=5)
+				self.session.open(MessageBox, _("The %s plugin is not installed!\nPlease install it." % cfg.csfdtype.value), type=MessageBox.TYPE_INFO, timeout=5)
 				return False
 			else:
 				return True
 		if isCSFD():
 			event = self["config"].getCurrent()
 			if event:
-				from Plugins.Extensions.CSFD.plugin import CSFD
-				self.session.open(CSFD, event[0][0])
+				if cfg.csfdtype.value == "CSFD":
+					from Plugins.Extensions.CSFD.plugin import CSFD
+					self.session.open(CSFD, event[0][0])
+				else:
+					from Plugins.Extensions.CSFDLite.plugin import CSFDLite
+					self.session.open(CSFDLite, event[0][0])
 
 
 def MyMovieLocationBox(session, text, dir, filename="", minFree=None):
@@ -1248,6 +1256,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date into extended list in format '%s'.") % today[0]))
 			self.list.append(getConfigListEntry(dx + _("Time"), cfg.csv_time, _("Add time into extended list in format '%s'.") % today[1]))
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
+		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
 
