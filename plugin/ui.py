@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.05"
+VERSION = "2.06"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@ VERSION = "2.05"
 #  GNU General Public License for more details.
 #
 
-from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, getConfigListEntry
+from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, getConfigListEntry, ConfigLocations, ConfigDirectory
 from Screens.Screen import Screen
 from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
@@ -78,6 +78,10 @@ config.moviemanager.manage_all = ConfigYesNo(default=False)
 config.moviemanager.removepkl = ConfigYesNo(default=False)
 config.moviemanager.subdirs = ConfigYesNo(default=False)
 config.moviemanager.trashcans = ConfigYesNo(default=False)
+config.moviemanager.selected_dirs = ConfigYesNo(default=False)
+config.moviemanager.selected_dirs_subs = ConfigYesNo(default=False)
+config.moviemanager.selected_dirs_list = ConfigLocations()
+config.moviemanager.selected_dirs_text = ConfigDirectory(default=_("press OK"))
 config.moviemanager.recordings = ConfigYesNo(default=True)
 config.moviemanager.other_movies = ConfigYesNo(default=True)
 config.moviemanager.pictures = ConfigYesNo(default=False)
@@ -458,7 +462,7 @@ class MovieManager(Screen, HelpableScreen):
 		if cfg.manage_all.value:
 			menu.append((_("Update valid bookmarks"), 19, _("Update bookmarks depending on the current mountpoints. If mountpoints sleeping, then it take some time before they wakes up.")))
 			keys += [""]
-			menu.append((_("Manage files in active bookmarks..."), 18, _("Create movielist from all active bookmarks. Please, be patient, it take some time. There in 'Options...' it can be limited to some filetypes and can be enabled browsing subdirectories.")))
+			menu.append((_("Manage files in active bookmarks..."), 18, _("Create movielist from all active bookmarks and selected directories. Please, be patient, it take some time. There in 'Options...' it can be limited to some filetypes and can be enabled browsing subdirectories.")))
 			keys += ["red"]
 		menu.append((_("Use sync"), 40))
 		keys += ["0"]
@@ -542,6 +546,8 @@ class MovieManager(Screen, HelpableScreen):
 		s += 0x20 if cfg.manage_all.value else 0
 		s += 0x40 if cfg.recordings.value else 0
 		s += 0x80 if cfg.trashcans.value else 0
+		s += 0x100 if cfg.selected_dirs.value else 0
+		s += 0x200 if cfg.selected_dirs_subs.value else 0
 		return s
 
 	def saveList(self):
@@ -759,6 +765,10 @@ class MovieManager(Screen, HelpableScreen):
 						files += readDirectory(path)
 					print "[MovieManager] + added files from %s" % path
 				print "[MovieManager] readed items from directories in bookmarks."
+				if not cfg.subdirs.value and cfg.selected_dirs.value and cfg.selected_dirs_list.saved_value:
+					for path in eval(cfg.selected_dirs_list.saved_value):
+						files += readSubdirs(path) if cfg.selected_dirs_subs.value else readDirectory(path)
+						print "[MovieManager] + added files from selected directory %s" % "path"
 			elif current_dir:
 				if cfg.subdirs.value:
 					files = readSubdirs(current_dir)
@@ -833,7 +843,7 @@ class MovieManager(Screen, HelpableScreen):
 		item = self["config"].getCurrent()
 		if item:
 			self["Service"].newService(ITEM(item))
-			if self.accross or cfg.subdirs.value:
+			if self.accross or cfg.subdirs.value or cfg.selected_dirs.value:
 				self.setTitle(_("List of files") + ":  %s" % os.path.realpath(ITEM(item).getPath()).rpartition('/')[0])
 		else:
 			self["Service"].newService(None)
@@ -1211,7 +1221,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 		{
 			"green": self.save,
-			"ok": self.save,
+			"ok": self.ok,
 			"red": self.exit,
 			"cancel": self.exit
 		}, -2)
@@ -1222,6 +1232,8 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 
 	def loadMenu(self):
 		self.list = []
+		dx = 4 * " "
+		dx2 = 8 * " "
 		self.search = _("Search in group selection by")
 		note = "\n" + _("(Note: change will cancel all selections.)")
 		self.list.append(getConfigListEntry(self.search, cfg.search, _("You can set what will group selection use - start of title, end of title or contains in title.")))
@@ -1233,11 +1245,18 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Use target directory as bookmark"), cfg.add_bookmark, _("Set 'yes' if You want add target directories into bookmarks.")))
 		self.list.append(getConfigListEntry(_("Enable 'Edit bookmark...'"), cfg.edit_bookmarks, _("Enable in menu utility for edit bookmarks.")))
 		self.list.append(getConfigListEntry(_("Enable 'Remove local directory setting...'"), cfg.removepkl, _("Enable item for delete local directory setting in menu. It depends on displayed directories in movielist.")))
-		self.list.append(getConfigListEntry(_("Enable 'Manage files in active bookmarks...'"), cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.") + note))
+		self.manage_all = _("Enable 'Manage files in active bookmarks...'")
+		self.list.append(getConfigListEntry(self.manage_all, cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.") + note))
 		self.subdirs = _("Including subdirectories")
+		self.selected_dirs = dx + _("Including selected directories")
+		self.selDir = dx2 + _("Directories list")
+		if cfg.manage_all.value and not cfg.subdirs.value:
+				self.list.append(getConfigListEntry(self.selected_dirs, cfg.selected_dirs, _("Items from selected directories will be added into list created with 'Manage files in active bookmarks...' too.") + note))
+				if cfg.selected_dirs.value:
+					self.list.append(getConfigListEntry(self.selDir, cfg.selected_dirs_text, _("Press 'OK' and select directories as bookmarks.")))
+					self.list.append(getConfigListEntry(dx2 + _("Including subdirectories"), cfg.selected_dirs_subs, _("Items from subdirectories selected directories will be added into list too.") + note))
 		self.list.append(getConfigListEntry(self.subdirs, cfg.subdirs, _("If enabled, then will be used subdirectories too (it will take longer).") + note))
 		if cfg.subdirs.value:
-			dx = 4 * " "
 			self.list.append(getConfigListEntry(dx + _("Include trashcans"), cfg.trashcans, _("Items from trashcans will be added into list too.") + note))
 		self.list.append(getConfigListEntry(_("Recordings"), cfg.recordings, _("If enabled, then will be added recordings into list.") + note))
 		self.list.append(getConfigListEntry(_("Other movie files"), cfg.other_movies, _("If enabled, then will be added other movie files into list.") + note))
@@ -1250,7 +1269,6 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.csv_extended = _("Save extended list")
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
-			dx = 4 * " "
 			self.list.append(getConfigListEntry(dx + _("Duration"), cfg.csv_duration, _("Add duration in hours into extended list. It extends list creation.")))
 			today = strftime("%Y.%m.%d %H:%M", localtime()).split()
 			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date into extended list in format '%s'.") % today[0]))
@@ -1262,7 +1280,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 
 	# Summary - for (LCD):
 	def changedEntry(self):
-		if self["config"].getCurrent()[0] in (self.search, self.csv_extended, self.subdirs):
+		if self["config"].getCurrent()[0] in (self.search, self.csv_extended, self.subdirs, self.selected_dirs, self.manage_all):
 			self.loadMenu()
 		for x in self.onChangedEntry:
 			x()
@@ -1278,6 +1296,14 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
 	###
+
+	def ok(self):
+		if self["config"].getCurrent()[0] is self.selDir:
+			def pathSelected(res):
+				return
+			self.session.openWithCallback(pathSelected, LocationBox, text=_("Create bookmark for selected directory:"), currDir=config.movielist.last_videodir.getValue(), bookmarks=cfg.selected_dirs_list)
+		else:
+			self.keySave()
 
 	def save(self):
 		self.keySave()
