@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.06"
+VERSION = "2.07"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -1280,7 +1280,11 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 
 	# Summary - for (LCD):
 	def changedEntry(self):
-		if self["config"].getCurrent()[0] in (self.search, self.csv_extended, self.subdirs, self.selected_dirs, self.manage_all):
+		current = self["config"].getCurrent()[0]
+		if current in (self.search, self.csv_extended, self.subdirs, self.selected_dirs, self.manage_all):
+			if cfg.manage_all.value and current is self.subdirs: # hold selector position on subdirs item, when is changed
+				dx = (-3 if cfg.selected_dirs.value else -1) if cfg.subdirs.value else (3 if cfg.selected_dirs.value else 1)
+				self["config"].setCurrentIndex(self["config"].getCurrentIndex() + dx)
 			self.loadMenu()
 		for x in self.onChangedEntry:
 			x()
