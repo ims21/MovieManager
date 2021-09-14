@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 12:29+0200\n"
+"POT-Creation-Date: 2021-09-14 15:37+0200\n"
 "PO-Revision-Date: 2020-10-10 17:54+0200\n"
 "Last-Translator: Rob van der Does <RobvanderDoes@Gmail.com>\n"
 "Language-Team: \n"
@@ -383,7 +383,7 @@ msgstr "Moviemanager"
 msgid "New directory name in '%s'"
 msgstr "Nieuwe mapnaam in '%s'"
 
-#: ../ui.py:73 ../ui.py:74
+#: ../ui.py:73 ../ui.py:74 ../ui.py:101 ../ui.py:102
 msgid "No"
 msgstr "Nee"
 
@@ -750,6 +750,11 @@ msgid "date and time"
 msgstr "eindtitel"
 
 #: ../ui.py:597
+#, fuzzy
+msgid "duration"
+msgstr "Duur"
+
+#: ../ui.py:597
 #, fuzzy, python-format
 msgid "duration [%s]"
 msgstr "duur"
@@ -774,17 +779,13 @@ msgstr ""
 msgid "in minutes"
 msgstr ""
 
-#: ../ui.py:101 ../ui.py:615
+#: ../ui.py:101 ../ui.py:597 ../ui.py:615
 msgid "min"
 msgstr ""
 
 #: ../ui.py:596 ../ui.py:604
 msgid "name"
 msgstr "naam"
-
-#: ../ui.py:101 ../ui.py:102
-msgid "no"
-msgstr ""
 
 #: ../ui.py:598 ../ui.py:604
 msgid "path"

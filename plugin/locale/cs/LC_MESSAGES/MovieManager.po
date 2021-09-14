@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 12:29+0200\n"
-"PO-Revision-Date: 2021-09-14 12:30+0200\n"
+"POT-Creation-Date: 2021-09-14 15:37+0200\n"
+"PO-Revision-Date: 2021-09-14 15:37+0200\n"
 "Last-Translator: ims <ims21@users.sourceforge.net>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -366,7 +366,7 @@ msgstr "Správce souborů"
 msgid "New directory name in '%s'"
 msgstr "Název nového adresáře v '%s'"
 
-#: ../ui.py:73 ../ui.py:74
+#: ../ui.py:73 ../ui.py:74 ../ui.py:101 ../ui.py:102
 msgid "No"
 msgstr "Ne"
 
@@ -729,6 +729,10 @@ msgid "date and time"
 msgstr "datum a čas"
 
 #: ../ui.py:597
+msgid "duration"
+msgstr "délka"
+
+#: ../ui.py:597
 #, python-format
 msgid "duration [%s]"
 msgstr "délka [%s]"
@@ -753,17 +757,13 @@ msgstr "v hodinách"
 msgid "in minutes"
 msgstr "v minutách"
 
-#: ../ui.py:101 ../ui.py:615
+#: ../ui.py:101 ../ui.py:597 ../ui.py:615
 msgid "min"
 msgstr "min"
 
 #: ../ui.py:596 ../ui.py:604
 msgid "name"
 msgstr "název"
-
-#: ../ui.py:101 ../ui.py:102
-msgid "no"
-msgstr "ne"
 
 #: ../ui.py:598 ../ui.py:604
 msgid "path"

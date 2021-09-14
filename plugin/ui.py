@@ -98,8 +98,8 @@ config.moviemanager.position = ConfigYesNo(default=False)
 config.moviemanager.sort_as = ConfigYesNo(default=False)
 config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.csv_extended = ConfigYesNo(default=False)
-config.moviemanager.csv_duration = ConfigSelection(default="", choices=[(None, _("no")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
-config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("no")), ("date", _("date")), ("date&time", _("date and time"))])
+config.moviemanager.csv_duration = ConfigSelection(default="hour", choices=[(None, _("No")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
+config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("No")), ("date", _("date")), ("date&time", _("date and time"))])
 config.moviemanager.csv_servicename = ConfigYesNo(default=False)
 config.moviemanager.units = ConfigSelection(default="MB", choices=[("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
@@ -567,7 +567,7 @@ class MovieManager(Screen, HelpableScreen):
 			if duration < 0:
 				return ""
 			if not minutes:
-				return "%d:%02d" % (duration / 3600, duration / 60 % 60)
+				return "%d:%02d:%02d" % (duration / 3600, duration / 60 % 60, duration % 60)
 			return "%d:%02d" % (duration / 60, duration % 60)
 
 		def getItemDate(service, info):
@@ -593,8 +593,8 @@ class MovieManager(Screen, HelpableScreen):
 		# title #
 		units = cfg.units.value
 		if cfg.csv_extended.value:
-			title = "%s;%s;" % (_("name"), _("size")) if units == "behind" else "%s;%s;" % (_("name"), _("size [%s]") % units) # AAA
-			title += "%s;" % _("duration [%s]") % cfg.csv_duration.value if cfg.csv_duration.value else ""
+			title = "%s;%s;" % (_("name"), _("size")) if units == "behind" else "%s;%s;" % (_("name"), _("size [%s]") % units)
+			title += "%s;" % (_("duration [%s]") % cfg.csv_duration.value if cfg.csv_duration.value == _("min") else _("duration")) if cfg.csv_duration.value else ""
 			title += "%s;" % _("path")
 			title += "%s;" % _("service name") if cfg.csv_servicename.value else ""
 			title += "%s;" % _("date") if cfg.csv_date.value else ""

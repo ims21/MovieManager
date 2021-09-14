@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 12:29+0200\n"
+"POT-Creation-Date: 2021-09-14 15:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -369,7 +369,7 @@ msgstr ""
 msgid "New directory name in '%s'"
 msgstr ""
 
-#: ../ui.py:73 ../ui.py:74
+#: ../ui.py:73 ../ui.py:74 ../ui.py:101 ../ui.py:102
 msgid "No"
 msgstr ""
 
@@ -723,6 +723,10 @@ msgid "date and time"
 msgstr ""
 
 #: ../ui.py:597
+msgid "duration"
+msgstr ""
+
+#: ../ui.py:597
 #, python-format
 msgid "duration [%s]"
 msgstr ""
@@ -747,16 +751,12 @@ msgstr ""
 msgid "in minutes"
 msgstr ""
 
-#: ../ui.py:101 ../ui.py:615
+#: ../ui.py:101 ../ui.py:597 ../ui.py:615
 msgid "min"
 msgstr ""
 
 #: ../ui.py:596 ../ui.py:604
 msgid "name"
-msgstr ""
-
-#: ../ui.py:101 ../ui.py:102
-msgid "no"
 msgstr ""
 
 #: ../ui.py:598 ../ui.py:604
