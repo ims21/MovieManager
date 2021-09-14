@@ -101,7 +101,7 @@ config.moviemanager.csv_extended = ConfigYesNo(default=False)
 config.moviemanager.csv_duration = ConfigSelection(default="", choices=[(None, _("no")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
 config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("no")), ("date", _("date")), ("date&time", _("date and time"))])
 config.moviemanager.csv_servicename = ConfigYesNo(default=False)
-config.moviemanager.units = ConfigSelection(default="MB", choices=[("B", _("B")), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
+config.moviemanager.units = ConfigSelection(default="MB", choices=[("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 
 cfg = config.moviemanager
