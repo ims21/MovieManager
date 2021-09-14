@@ -101,7 +101,7 @@ config.moviemanager.csv_extended = ConfigYesNo(default=False)
 config.moviemanager.csv_duration = ConfigSelection(default="hour", choices=[(None, _("No")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
 config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("No")), ("date", _("date")), ("date&time", _("date and time"))])
 config.moviemanager.csv_servicename = ConfigYesNo(default=False)
-config.moviemanager.units = ConfigSelection(default="MB", choices=[("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
+config.moviemanager.units = ConfigSelection(default="MB", choices=[(None, _("No")),("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 
 cfg = config.moviemanager
@@ -593,7 +593,8 @@ class MovieManager(Screen, HelpableScreen):
 		# title #
 		units = cfg.units.value
 		if cfg.csv_extended.value:
-			title = "%s;%s;" % (_("name"), _("size")) if units == "behind" else "%s;%s;" % (_("name"), _("size [%s]") % units)
+			title = "%s;" % _("name")
+			title += ("%s;" % _("size") if units == "behind" else "%s;" % (_("size [%s]") % units)) if units else ""
 			title += "%s;" % (_("duration [%s]") % cfg.csv_duration.value if cfg.csv_duration.value == _("min") else _("duration")) if cfg.csv_duration.value else ""
 			title += "%s;" % _("path")
 			title += "%s;" % _("service name") if cfg.csv_servicename.value else ""
@@ -610,8 +611,8 @@ class MovieManager(Screen, HelpableScreen):
 			path = os.path.split(service.getPath())[0]
 			if cfg.csv_extended.value:
 				info = INFO(item)
-				size = self.convertSize(SIZE(item)) if units == "behind" else self.convertSizeInUnits(SIZE(item), units)
-				line = "%s;%s;" % (name, size)
+				line = "%s;" % name
+				line += ("%s;" % self.convertSize(SIZE(item)) if units == "behind" else "%s;" % self.convertSizeInUnits(SIZE(item), units)) if units else ""
 				line += ("%s;" % getItemDuration(service, info, True) if cfg.csv_duration.value == _("min") else "%s;" % getItemDuration(service, info)) if cfg.csv_duration.value else ""
 				line += "%s;" % path
 				line += "%s;" % getItemName(service, info) if cfg.csv_servicename.value else ""
@@ -1277,7 +1278,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
 			self.list.append(getConfigListEntry(dx + _("Duration"), cfg.csv_duration, _("Add duration in hours or minuts into extended list. It extends list creation.")))
-			self.list.append(getConfigListEntry(dx + _("Units"), cfg.units, _("Used units for filesize.")))
+			self.list.append(getConfigListEntry(dx + _("Size and units"), cfg.units, _("Add filesize in used units to extended list.")))
 			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date or time into extended list.")))
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
