@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.07"
+VERSION = "2.08"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -98,10 +98,10 @@ config.moviemanager.position = ConfigYesNo(default=False)
 config.moviemanager.sort_as = ConfigYesNo(default=False)
 config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.csv_extended = ConfigYesNo(default=False)
-config.moviemanager.csv_duration = ConfigYesNo(default=False)
-config.moviemanager.csv_date = ConfigYesNo(default=True)
-config.moviemanager.csv_time = ConfigYesNo(default=False)
-config.moviemanager.csv_servicename = ConfigYesNo(default=True)
+config.moviemanager.csv_duration = ConfigSelection(default="", choices=[(None, _("no")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
+config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("no")), ("date", _("date")), ("date&time", _("date and time"))])
+config.moviemanager.csv_servicename = ConfigYesNo(default=False)
+config.moviemanager.units = ConfigSelection(default="MB", choices=[("B", _("B")), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 
 cfg = config.moviemanager
@@ -467,7 +467,7 @@ class MovieManager(Screen, HelpableScreen):
 		menu.append((_("Use sync"), 40))
 		keys += ["0"]
 		menu.append((_("Save list"), 50, _("Save current movielist to '/tmp' directory as '.csv' file.")))
-		keys += [""]
+		keys += ["blue"]
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
 			keys += [""]
@@ -562,11 +562,13 @@ class MovieManager(Screen, HelpableScreen):
 				return line
 			return "e2"
 
-		def getItemDuration(service, info):
+		def getItemDuration(service, info, minutes=False):
 			duration = info.getLength(service)
 			if duration < 0:
 				return ""
-			return "%d:%02d" % (duration / 3600, duration / 60 % 60)
+			if not minutes:
+				return "%d:%02d" % (duration / 3600, duration / 60 % 60)
+			return "%d:%02d" % (duration / 60, duration % 60)
 
 		def getItemDate(service, info):
 			return strftime("%Y.%m.%d %H:%M", localtime(info.getInfo(service, iServiceInformation.sTimeCreate)))
@@ -586,46 +588,39 @@ class MovieManager(Screen, HelpableScreen):
 		csvName = "%s-%s-%s.%s" % (listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
 
 		fo = open("%s" % csvName, "w")
-		# header
+		# header #
 		fo.write(codecs.BOM_UTF8)
-		# title
+		# title #
+		units = cfg.units.value
 		if cfg.csv_extended.value:
-			title = "%s;%s;" % (_("name"), _("size"))
-			if cfg.csv_duration.value:
-				title += "%s;" % _("duration")
+			title = "%s;%s;" % (_("name"), _("size")) if units == "behind" else "%s;%s;" % (_("name"), _("size [%s]") % units) # AAA
+			title += "%s;" % _("duration [%s]") % cfg.csv_duration.value if cfg.csv_duration.value else ""
 			title += "%s;" % _("path")
-			if cfg.csv_servicename.value:
-				title += "%s;" % _("service name")
-			if cfg.csv_date.value:
-				title += "%s;" % _("date")
-			if cfg.csv_time.value:
-				title += "%s;" % _("time")
+			title += "%s;" % _("service name") if cfg.csv_servicename.value else ""
+			title += "%s;" % _("date") if cfg.csv_date.value else ""
+			title += "%s;" % _("time") if cfg.csv_date.value and "time" in cfg.csv_date.value else ""
 			title = "%s\n" % title.rstrip(';')
 		else:
 			title = ';'.join((_("name"), _("size"), _("path"))) + "\n"
 		fo.write(title)
-		# data
+		# data #
 		for item in self.list.list:
 			name = NAME(item)
 			service = ITEM(item)
-			size = self.convertSize(SIZE(item))
 			path = os.path.split(service.getPath())[0]
 			if cfg.csv_extended.value:
 				info = INFO(item)
+				size = self.convertSize(SIZE(item)) if units == "behind" else self.convertSizeInUnits(SIZE(item), units)
 				line = "%s;%s;" % (name, size)
-				if cfg.csv_duration.value:
-					line += "%s;" % getItemDuration(service, info)
+				line += ("%s;" % getItemDuration(service, info, True) if cfg.csv_duration.value == _("min") else "%s;" % getItemDuration(service, info)) if cfg.csv_duration.value else ""
 				line += "%s;" % path
-				if cfg.csv_servicename.value:
-					line += "%s;" % getItemName(service, info)
-				if cfg.csv_date.value or cfg.csv_time.value:
+				line += "%s;" % getItemName(service, info) if cfg.csv_servicename.value else ""
+				if cfg.csv_date.value:
 					tmp = getItemDate(service, info).split()
-					if cfg.csv_date.value:
-						line += "%s;" % tmp[0]
-					if cfg.csv_time.value:
-						line += "%s;" % tmp[1]
+					line += "%s;%s;" % (tmp[0], tmp[1]) if "time" in cfg.csv_date.value else "%s;" % tmp[0]
 				line = "%s\n" % line.rstrip(";")
 			else:
+				size = self.convertSize(SIZE(item))
 				line = ';'.join((name, size, path)) + "\n"
 			fo.write(line)
 		fo.close()
@@ -1179,6 +1174,18 @@ class MovieManager(Screen, HelpableScreen):
 			return _("%d B") % filesize
 		return ""
 
+	def convertSizeInUnits(self, filesize, units):
+		if filesize:
+			if units == "GB":
+				return "%.2f" % (filesize / 1073741824.0)
+			elif units == "MB":
+				return "%.0f" % (filesize / 1048576.0)
+			elif units == "kB":
+				return "%.0f" % (filesize / 1024.0)
+			else:
+				return "%d" % filesize
+		return ""
+
 	def csfd(self):
 		def isCSFD():
 			try:
@@ -1269,10 +1276,9 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.csv_extended = _("Save extended list")
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
-			self.list.append(getConfigListEntry(dx + _("Duration"), cfg.csv_duration, _("Add duration in hours into extended list. It extends list creation.")))
-			today = strftime("%Y.%m.%d %H:%M", localtime()).split()
-			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date into extended list in format '%s'.") % today[0]))
-			self.list.append(getConfigListEntry(dx + _("Time"), cfg.csv_time, _("Add time into extended list in format '%s'.") % today[1]))
+			self.list.append(getConfigListEntry(dx + _("Duration"), cfg.csv_duration, _("Add duration in hours or minuts into extended list. It extends list creation.")))
+			self.list.append(getConfigListEntry(dx + _("Units"), cfg.units, _("Used units for filesize.")))
+			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date or time into extended list.")))
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
