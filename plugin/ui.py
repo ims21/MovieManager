@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.08"
+VERSION = "2.10"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -88,14 +88,17 @@ config.moviemanager.pictures = ConfigYesNo(default=False)
 config.moviemanager.audios = ConfigYesNo(default=False)
 config.moviemanager.dvds = ConfigYesNo(default=False)
 config.moviemanager.sort = ConfigSelection(default="0", choices=[
-	("0", _("Original list")),
+	("0", _("Original list as 'Default'")), # original lists one after another, all 'as Default'
 	("1", _("A-z sort")),
 	("2", _("Z-a sort")),
 	("3", _("Selected top")),
-	("4", _("Original list - reverted"))
+	("4", _("Latest top")),
+	("5", _("Oldest top")),
+	("6", _("Smallest top")),
+	("7", _("Largest top")),
+	("8", _("Original list as 'Default' - reverted"))
 	])
 config.moviemanager.position = ConfigYesNo(default=False)
-config.moviemanager.sort_as = ConfigYesNo(default=False)
 config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.csv_extended = ConfigYesNo(default=False)
 config.moviemanager.csv_duration = ConfigSelection(default="hour", choices=[(None, _("No")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
@@ -253,7 +256,7 @@ class MovieManager(Screen, HelpableScreen):
 
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button(_("Action"))
-		self["key_yellow"] = Button(self.sortText())
+		self["key_yellow"] = Button(_("Sort list"))
 		self["key_blue"] = Button(_("Inversion"))
 
 		self.container = eConsoleAppContainer()
@@ -300,7 +303,8 @@ class MovieManager(Screen, HelpableScreen):
 							size = info.getInfo(item, iServiceInformation.sFileSize)
 						else:
 							size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
-					list.list.append(MySelectionEntryComponent(name, (item, size, info), index, False))
+						time = info.getInfo(item, iServiceInformation.sTimeCreate)
+					list.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
 					index += 1
 					suma += size
 		self.l = MySelectionList(list)
@@ -516,7 +520,7 @@ class MovieManager(Screen, HelpableScreen):
 						path = None
 					self.getData(path)
 				self.displaySelectionPars()
-				self["key_yellow"].setText(self.sortText())
+				self["key_yellow"].setText(_("Sort"))
 			self.cfg_before = self.getCfgStatus()
 			self.session.openWithCallback(cfgCallBack, MovieManagerCfg)
 		elif choice[1] == 30:
@@ -879,20 +883,12 @@ class MovieManager(Screen, HelpableScreen):
 		if self.played:
 			self.controlPlayerInfoBar()
 			return
-		if cfg.sort_as.value:
-			self.selectSortby()
-			return
-		sort = int(config.moviemanager.sort.value)
-		sort += 1
-		if sort == 3 and not len(self.list.getSelectionsList()):
-			sort += 1
-		sort %= 5
-		self.sortList(sort)
+		self.selectSortby()
 
 	def sortList(self, sort):
 		if len(self["config"].list):
 			item = self["config"].getCurrent()
-			if sort == 0:	# original input list
+			if sort == 0:	# original input lists - as Default
 				self.list.sort(sortType=2)
 			elif sort == 1:	# a-z
 				self.list.sort(sortType=0)
@@ -900,14 +896,19 @@ class MovieManager(Screen, HelpableScreen):
 				self.list.sort(sortType=0, flag=True)
 			elif sort == 3:	# selected top
 				self.list.sort(sortType=3, flag=True)
-			elif sort == 4:	# original input list reverted
+			elif sort == 4:	# older top
+				self.list.sortItemParts(sortType=3, flag=True)
+			elif sort == 5:	# new top
+				self.list.sortItemParts(sortType=3)
+			elif sort == 6:	# small top
+				self.list.sortItemParts(sortType=1)
+			elif sort == 7:	# large top
+				self.list.sortItemParts(sortType=1, flag=True)
+			elif sort == 8:	# original input liss - as Default - reverted
 				self.list.sort(sortType=2, flag=True)
 			idx = self.getItemIndex(item)
 			self["config"].moveToIndex(idx)
 			config.moviemanager.sort.value = str(sort)
-
-	def sortText(self):
-		return _("Sort by") if cfg.sort_as.value else _("Sort")
 
 	def timerHidePlayerInfoBar(self):
 		self.hidePlayerInfoBar.stop()
@@ -1272,7 +1273,6 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("DVD images"), cfg.dvds, _("If enabled, then will be added dvd image files into list.") + note))
 		self.list.append(getConfigListEntry(_("Pictures"), cfg.pictures, _("If enabled, then will be added pictures into list.") + note))
 		self.list.append(getConfigListEntry(_("To maintain selector position"), cfg.position, _("If enabled, then will be on start maintained selector position in items list.")))
-		self.list.append(getConfigListEntry(_("Sorting as menu under yellow"), cfg.sort_as, _("Use 'Sort by' as menu under yellow button instead simple 'Sort'.")))
 		self.list.append(getConfigListEntry(_("Refresh bookmaks"), cfg.refresh_bookmarks, _("Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time.")))
 		self.csv_extended = _("Save extended list")
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))

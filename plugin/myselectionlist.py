@@ -80,5 +80,10 @@ class MySelectionList(MenuList):
 		self.list.sort(key=lambda x: x[0][sortType], reverse=flag)
 		self.setList(self.list)
 
+	def sortItemParts(self, sortType=False, flag=False):
+		# sorting by sortType: # 0 - item, 1 - size, 2 - info, 3 - time
+		self.list.sort(key=lambda x: x[0][1][sortType], reverse=flag)
+		self.setList(self.list)
+
 	def len(self):
 		return len(self.list)
