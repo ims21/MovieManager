@@ -88,15 +88,15 @@ config.moviemanager.pictures = ConfigYesNo(default=False)
 config.moviemanager.audios = ConfigYesNo(default=False)
 config.moviemanager.dvds = ConfigYesNo(default=False)
 config.moviemanager.sort = ConfigSelection(default="0", choices=[
-	("0", _("Original list as 'Default'")), # original lists one after another, all 'as Default'
-	("1", _("A-z sort")),
-	("2", _("Z-a sort")),
-	("3", _("Selected top")),
-	("4", _("Latest top")),
-	("5", _("Oldest top")),
-	("6", _("Smallest top")),
-	("7", _("Largest top")),
-	("8", _("Original list as 'Default' - reverted"))
+	("0", _("Original list"), _("Used 'Default' sorting in original lists. Lists are sorted one after another.")),
+	("1", _("A-z sort"), ""),
+	("2", _("Z-a sort"), ""),
+	("3", _("Selected top"), _("Selected items are sorted at the beginning of the list.")),
+	("4", _("Date - latest top"), ""),
+	("5", _("Date - oldest top"), ""),
+	("6", _("Size - smallest top"), ""),
+	("7", _("Size - largest top"), ""),
+	("8", _("Original list - reverted"), _("Used 'Default' sorting in original lists. Lists are sorted one after another."))
 	])
 config.moviemanager.position = ConfigYesNo(default=False)
 config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
@@ -634,7 +634,7 @@ class MovieManager(Screen, HelpableScreen):
 	def selectSortby(self):
 		menu = []
 		for x in cfg.sort.choices.choices:
-			menu.append((x[1], x[0]))
+			menu.append((x[1], x[0], x[2]))
 		self.session.openWithCallback(self.sortbyCallback, ChoiceBox, title=_("Sort list:"), list=menu, selection=int(cfg.sort.value))
 
 	def sortbyCallback(self, choice):
