@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.10"
+VERSION = "2.11"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -96,7 +96,8 @@ config.moviemanager.sort = ConfigSelection(default="0", choices=[
 	("5", _("Date - oldest top"), ""),
 	("6", _("Size - smallest top"), ""),
 	("7", _("Size - largest top"), ""),
-	("8", _("Original list - reverted"), _("Used 'Default' sorting in original lists. Lists are sorted one after another."))
+	("8", _("Lists and content A-z"), _("Individual lists and content of individual lists are sorted alphabetically.")),
+	("9", _("Original list - reverted"), _("Used 'Default' sorting in original lists. Lists are sorted one after another."))
 	])
 config.moviemanager.position = ConfigYesNo(default=False)
 config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
@@ -904,7 +905,9 @@ class MovieManager(Screen, HelpableScreen):
 				self.list.sortItemParts(sortType=1)
 			elif sort == 7:	# large top
 				self.list.sortItemParts(sortType=1, flag=True)
-			elif sort == 8:	# original input liss - as Default - reverted
+			elif sort == 8:	# lists and content of lists alphabetically
+				self.list.sortItemParts(sortType=10)
+			elif sort == 9:	# original input lists - as Default - reverted
 				self.list.sort(sortType=2, flag=True)
 			idx = self.getItemIndex(item)
 			self["config"].moveToIndex(idx)

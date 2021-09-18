@@ -81,8 +81,13 @@ class MySelectionList(MenuList):
 		self.setList(self.list)
 
 	def sortItemParts(self, sortType=False, flag=False):
-		# sorting by sortType: # 0 - item, 1 - size, 2 - info, 3 - time
-		self.list.sort(key=lambda x: x[0][1][sortType], reverse=flag)
+		if sortType in (1,3):
+			# sorting by sortType: # 0 - item, 1 - size, 2 - info, 3 - time
+			self.list.sort(key=lambda x: x[0][1][sortType], reverse=flag)
+		elif sortType == 10:
+			from os import path
+			# sorting by path, then alphabetical:
+			self.list.sort(key=lambda x: (path.split(x[0][1][0].getPath())[0], x[0][0]), reverse=flag)
 		self.setList(self.list)
 
 	def len(self):
