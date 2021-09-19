@@ -48,19 +48,11 @@ MY_RECORDINGS_EXTENSIONS = frozenset((".ts",))
 MY_MOVIE_EXTENSIONS = MOVIE_EXTENSIONS.symmetric_difference(MY_RECORDINGS_EXTENSIONS)
 SKIPPED = ".m3u8"
 
-
-def hex2strColor(argb):
-	out = ""
-	for i in range(28, -1, -4):
-		out += "%s" % chr(0x30 + (argb >> i & 0xf))
-	return out
-
-
 try:
-	fC = "\c%s" % hex2strColor(int(skin.parseColor("foreground").argb()))
+	fC = "\c%08x" % int(skin.parseColor("foreground").argb())
 except:
-	fC = "\c%s" % hex2strColor(0x00f0f0f0)
-gC = "\c%s" % hex2strColor(0x000ff80)
+	fC = "\c00f0f0f0"
+gC = "\c000ff80"
 
 config.moviemanager = ConfigSubsection()
 config.moviemanager.sensitive = ConfigYesNo(default=False)
