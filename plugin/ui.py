@@ -52,7 +52,7 @@ try:
 	fC = "\c%08x" % int(skin.parseColor("foreground").argb())
 except:
 	fC = "\c00f0f0f0"
-gC = "\c000ff80"
+gC = "\c0000ff80"
 
 config.moviemanager = ConfigSubsection()
 config.moviemanager.sensitive = ConfigYesNo(default=False)
