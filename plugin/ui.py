@@ -1316,7 +1316,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 				if res is not None:
 					cfg.csvtarget.value = res
 			inhibitDirs = ["/autofs", "/bin", "/boot", "/dev", "/etc", "/lib", "/proc", "/sbin", "/sys", "/usr"]
-			self.session.openWithCallback(targetDirSelected, LocationBox, text="%s." % _("Select directory to save 'csv' file"), currDir=cfg.csvtarget.value, autoAdd=False, editDir=True, inhibitDirs=inhibitDirs)
+			self.session.openWithCallback(targetDirSelected, LocationBox, text=_("Select directory to save 'csv' file:"), currDir=cfg.csvtarget.value, autoAdd=False, editDir=True, inhibitDirs=inhibitDirs)
 		else:
 			self.keySave()
 
