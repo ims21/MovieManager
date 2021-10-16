@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.11"
+VERSION = "2.12"
 #  by ims (c) 2018-2021 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -99,10 +99,10 @@ config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(No
 config.moviemanager.csv_servicename = ConfigYesNo(default=False)
 config.moviemanager.units = ConfigSelection(default="MB", choices=[(None, _("No")),("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
-
+config.moviemanager.csvtarget = ConfigDirectory(default="/tmp/")
 cfg = config.moviemanager
 
-LISTFILE = '/tmp/movies.csv'
+LISTFILE =  'movies.csv'
 HOSTNAME = '/etc/hostname'
 PKLFILE = '.e2settings.pkl'
 
@@ -235,7 +235,7 @@ class MovieManager(Screen, HelpableScreen):
 			"seekBackManual": (self.seekBackManual, _("Seek backward (enter time)")),
 			"groupSelect": (boundFunction(self.selectGroup, True), _("Group selection - add")),
 			"groupUnselect": (boundFunction(self.selectGroup, False), _("Group selection - remove")),
-			"text": (self.saveList, _("Save list to '%s'") % "%s%s%s" % (gC, LISTFILE, fC)),
+			"text": (self.saveList, _("Save list to '%s'") % "%s%s%s" % (gC, cfg.csvtarget.value + LISTFILE, fC)),
 			"info": (self.displayInfo, _("Current item info")),
 			"seek_3": (f13, seekFwd + _(" (%ss)") % time_13),
 			"seek_6": (f46, seekFwd + _(" (%ss)") % time_46),
@@ -463,7 +463,7 @@ class MovieManager(Screen, HelpableScreen):
 			keys += ["red"]
 		menu.append((_("Use sync"), 40))
 		keys += ["0"]
-		menu.append((_("Save list"), 50, _("Save current movielist to '/tmp' directory as '.csv' file.")))
+		menu.append((_("Save list"), 50, _("Save current movielist to '%s' directory as '.csv' file.") % cfg.csvtarget.value))
 		keys += ["blue"]
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
@@ -582,7 +582,7 @@ class MovieManager(Screen, HelpableScreen):
 			return service_name
 
 		listfile = LISTFILE.split('.')
-		csvName = "%s-%s-%s.%s" % (listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
+		csvName = "%s%s-%s-%s.%s" % (cfg.csvtarget.value, listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
 
 		fo = open("%s" % csvName, "w")
 		# header #
@@ -1269,6 +1269,8 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Pictures"), cfg.pictures, _("If enabled, then will be added pictures into list.") + note))
 		self.list.append(getConfigListEntry(_("To maintain selector position"), cfg.position, _("If enabled, then will be on start maintained selector position in items list.")))
 		self.list.append(getConfigListEntry(_("Refresh bookmaks"), cfg.refresh_bookmarks, _("Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time.")))
+		self.csv_path = _("Path for 'csv' file")
+		self.list.append(getConfigListEntry(self.csv_path, cfg.csvtarget, _("Select directory to save 'csv' file.")))
 		self.csv_extended = _("Save extended list")
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
@@ -1304,10 +1306,17 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 	###
 
 	def ok(self):
-		if self["config"].getCurrent()[0] is self.selDir:
+		current = self["config"].getCurrent()[0]
+		if current == self.selDir:
 			def pathSelected(res):
 				return
 			self.session.openWithCallback(pathSelected, LocationBox, text=_("Create bookmark for selected directory:"), currDir=config.movielist.last_videodir.getValue(), bookmarks=cfg.selected_dirs_list)
+		elif current == self.csv_path:
+			def targetDirSelected(res):
+				if res is not None:
+					cfg.csvtarget.value = res
+			inhibitDirs = ["/autofs", "/bin", "/boot", "/dev", "/etc", "/lib", "/proc", "/sbin", "/sys", "/usr"]
+			self.session.openWithCallback(targetDirSelected, LocationBox, text="%s." % _("Select directory to save 'csv' file"), currDir=cfg.csvtarget.value, autoAdd=False, editDir=True, inhibitDirs=inhibitDirs)
 		else:
 			self.keySave()
 
