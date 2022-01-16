@@ -4,8 +4,8 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.12"
-#  by ims (c) 2018-2021 ims@openpli.org
+VERSION = "2.13"
+#  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -264,7 +264,7 @@ class MovieManager(Screen, HelpableScreen):
 		self.onShown.append(self.setService)
 		self.onLayoutFinish.append(self.moveSelector)
 
-	def parseMovieList(self, movielist, list):
+	def parseMovieList(self, movielist, mlist):
 		self.position = -1
 		index = 0
 		suma = 0
@@ -287,7 +287,7 @@ class MovieManager(Screen, HelpableScreen):
 						continue
 					if self.current.getPath() == item.getPath():
 						self.position = index
-						print "[MovieManager] position found"
+						print("[MovieManager] position found")
 					info = record[1]
 					name = info and info.getName(item)
 					size = 0
@@ -297,14 +297,14 @@ class MovieManager(Screen, HelpableScreen):
 						else:
 							size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
 						time = info.getInfo(item, iServiceInformation.sTimeCreate)
-					list.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
+					mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
 					index += 1
 					suma += size
-		self.l = MySelectionList(list)
-		self.l.setList(list)
-		print "[MovieMnager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position)
+		self.l = MySelectionList(mlist)
+		self.l.setList(mlist)
+		print("[MovieMnager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position))
 		self.size = 0
-		return list
+		return mlist
 
 	def firstItem(self):
 		self["config"].moveToIndex(0)
@@ -356,7 +356,7 @@ class MovieManager(Screen, HelpableScreen):
 					from Plugins.Extensions.PicturePlayer import ui
 					self.session.open(ui.Pic_Full_View, [((path, False), None)], 0, path)
 				except Exception, ex:
-					print "[MovieManager] Cannot display", str(ex)
+					print("[MovieManager] Cannot display", str(ex))
 					return
 			else:
 				self.session.nav.playService(ITEM(item))
@@ -495,9 +495,9 @@ class MovieManager(Screen, HelpableScreen):
 			self.selectSortby()
 		elif choice[1] == 18:
 			if cfg.refresh_bookmarks.value:
-				print "[MovieManager] reload bookmarks"
+				print("[MovieManager] reload bookmarks")
 				config.movielist.videodirs.load()
-				print "[MovieManager] bookmarks reloaded"
+				print("[MovieManager] bookmarks reloaded")
 			self.accross = cfg.manage_all.value
 			self.getData()
 		elif choice[1] == 19:
@@ -521,7 +521,7 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 40:
 			cmd = '%s' % "sync -d"
 			if self.container.execute(cmd):
-				print "[MovieManager] failed to execute sync"
+				print("[MovieManager] failed to execute sync")
 		elif choice[1] == 50:
 			self.saveList()
 		elif choice[1] == 60:
@@ -649,27 +649,27 @@ class MovieManager(Screen, HelpableScreen):
 		self.session.openWithCallback(self.renameCallback, VirtualKeyBoard, title=_("Rename"), text=name)
 
 	def renameCallback(self, name):
-		def renameItemInList(list, item, newname):
+		def renameItemInList(mlist, item, newname):
 			a = []
-			for list_item in list.list:
+			for list_item in mlist.list:
 				if list_item[0] == item[0]:
 					list_item[0] = (newname,) + list_item[0][1:]
 					self.position = list_item[0][2]
 				a.append(list_item)
 			return a
 
-		def reloadNewList(newlist, list):
+		def reloadNewList(newlist, mlist):
 			index = 0
 			for n in newlist:
 				item = n[0]
-				list.list.append(MySelectionEntryComponent(item[0], item[1], index, item[3]))
+				mlist.list.append(MySelectionEntryComponent(item[0], item[1], index, item[3]))
 				index += 1
-			self.l = MySelectionList(list)
-			self.l.setList(list)
-			return list
+			self.l = MySelectionList(mlist)
+			self.l.setList(mlist)
+			return mlist
 
-		def renameItem(item, newname, list):
-			new = renameItemInList(list, item, newname)
+		def renameItem(item, newname, mlist):
+			new = renameItemInList(mlist, item, newname)
 			self.clearList()
 			return reloadNewList(new, self.list)
 
@@ -694,20 +694,20 @@ class MovieManager(Screen, HelpableScreen):
 				else:
 					pathname, filename = os.path.split(path)
 					newpath = os.path.join(pathname, name)
-					print "[MovieManager] rename", path, "to", newpath
+					print("[MovieManager] rename", path, "to", newpath)
 					os.rename(path, newpath)
 				idx = self.getItemIndex(item)
 				self.list = renameItem(item, name, self.list)
 				self["config"].moveToIndex(idx)
 			except OSError, e:
-				print "Error %s:" % e.errno, e
+				print("Error %s:" % e.errno, e)
 				if e.errno == 17:
 					msg = _("The path %s already exists.") % name
 				else:
 					msg = _("Error") + '\n' + str(e)
 			except Exception, e:
 				import traceback
-				print "[MovieManager] Unexpected error:", e
+				print("[MovieManager] Unexpected error:", e)
 				traceback.print_exc()
 				msg = _("Error") + '\n' + str(e)
 			if msg:
@@ -737,15 +737,15 @@ class MovieManager(Screen, HelpableScreen):
 
 		def readDirectory(path):
 			setCurrentRef(path)
-			list = MovieList(None, sort_type=MovieList.SORT_GROUPWISE)
-			list.reload(self.current_ref, [])
-			return list
+			mlist = MovieList(None, sort_type=MovieList.SORT_GROUPWISE)
+			mlist.reload(self.current_ref, [])
+			return mlist
 
 		def readSubdirs(path):
 			files = []
 			for subdir in lookDirs(path):
 				files += readDirectory(subdir)
-				print "[MovieManager] + added files from %s" % subdir
+				print("[MovieManager] + added files from %s" % subdir)
 			return files
 
 		def readLists(current_dir=None):
@@ -756,12 +756,12 @@ class MovieManager(Screen, HelpableScreen):
 						files += readSubdirs(path)
 					else:
 						files += readDirectory(path)
-					print "[MovieManager] + added files from %s" % path
-				print "[MovieManager] readed items from directories in bookmarks."
+					print("[MovieManager] + added files from %s" % path)
+				print("[MovieManager] readed items from directories in bookmarks.")
 				if not cfg.subdirs.value and cfg.selected_dirs.value and cfg.selected_dirs_list.saved_value:
 					for path in eval(cfg.selected_dirs_list.saved_value):
 						files += readSubdirs(path) if cfg.selected_dirs_subs.value else readDirectory(path)
-						print "[MovieManager] + added files from selected directory %s" % "path"
+						print("[MovieManager] + added files from selected directory %s" % "path")
 			elif current_dir:
 				if cfg.subdirs.value:
 					files = readSubdirs(current_dir)
@@ -769,9 +769,9 @@ class MovieManager(Screen, HelpableScreen):
 					files += readDirectory(current_dir)
 					if os.path.exists(current_dir + PKLFILE):
 						self.pklPaths.append(current_dir)
-				print "[MovieManager] + added files from %s" % current_dir
+				print("[MovieManager] + added files from %s" % current_dir)
 			else:
-				print "[MovieManager] no valid bookmarks!"
+				print("[MovieManager] no valid bookmarks!")
 			return files
 
 		if len(self["config"].list):

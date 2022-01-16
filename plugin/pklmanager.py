@@ -2,7 +2,7 @@
 #  MovieManager
 #
 #
-#  Coded by ims (c) 2018-2019
+#  Coded by ims (c) 2018-2022
 #  Support: openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -107,7 +107,7 @@ class pklMovieManager(Screen):
 					self.list.removeSelection(item)
 					self.pklPaths.pop(item[0])
 				except:
-					print "[pklMovieManager] error remove %s" % PKLFILE
+					print("[pklMovieManager] error remove %s" % PKLFILE)
 			if not len(self.list.list):
 				self.exit()
 
