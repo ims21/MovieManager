@@ -355,7 +355,7 @@ class MovieManager(Screen, HelpableScreen):
 				try:
 					from Plugins.Extensions.PicturePlayer import ui
 					self.session.open(ui.Pic_Full_View, [((path, False), None)], 0, path)
-				except Exception, ex:
+				except Exception as ex:
 					print("[MovieManager] Cannot display", str(ex))
 					return
 			else:
@@ -699,13 +699,13 @@ class MovieManager(Screen, HelpableScreen):
 				idx = self.getItemIndex(item)
 				self.list = renameItem(item, name, self.list)
 				self["config"].moveToIndex(idx)
-			except OSError, e:
+			except OSError as e:
 				print("Error %s:" % e.errno, e)
 				if e.errno == 17:
 					msg = _("The path %s already exists.") % name
 				else:
 					msg = _("Error") + '\n' + str(e)
-			except Exception, e:
+			except Exception as e:
 				import traceback
 				print("[MovieManager] Unexpected error:", e)
 				traceback.print_exc()
@@ -1006,12 +1006,12 @@ class MovieManager(Screen, HelpableScreen):
 				eBackgroundFileEraser.getInstance().erase(os.path.realpath(item[1][0].getPath()))
 			else:
 				if offline.deleteFromDisk(0):
-					raise Exception, "Offline delete failed"
+					raise Exception("Offline delete failed")
 			self.list.removeSelection(item)
 			from Screens.InfoBarGenerics import delResumePoint
 			delResumePoint(item[1][0])
 			return True
-		except Exception, ex:
+		except Exception as ex:
 			self.session.open(MessageBox, _("Delete failed!") + "\n" + name + "\n" + str(ex), MessageBox.TYPE_ERROR, timeout=3)
 			return False
 
@@ -1042,7 +1042,7 @@ class MovieManager(Screen, HelpableScreen):
 					copyServiceFiles(item[1][0], dest, item[0])
 					if toggle:
 						self.list.toggleItemSelection(item)
-				except Exception, e:
+				except Exception as e:
 					self.session.open(MessageBox, str(e), MessageBox.TYPE_ERROR, timeout=2)
 		self.displaySelectionPars()
 
@@ -1071,7 +1071,7 @@ class MovieManager(Screen, HelpableScreen):
 					# item ... (name, (service, size, info), index, status)
 					moveServiceFiles(item[1][0], dest, item[0])
 					self.list.removeSelection(item)
-				except Exception, e:
+				except Exception as e:
 					self.session.open(MessageBox, str(e), MessageBox.TYPE_ERROR, timeout=3)
 		self.displaySelectionPars()
 		if not len(self.list.list):
