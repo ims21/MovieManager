@@ -982,12 +982,12 @@ class MovieManager(Screen, HelpableScreen):
 			# Also check whether we're INSIDE the trash, then it's a purge.
 			if cur_path.startswith(trash):
 				print("[MovieManager] plugin does not removing files in trash can")
-				return False
+				return False, True
 			else:
 				moveServiceFiles(current, trash, name, allowCopy=False)
 				self.list.removeSelection(item)
 				delResumePoint(current)
-				return True
+				return True, False
 		except OSError as e:
 			print("[MovieManager] cannot move to trash", e)
 			if e.errno == 18:
@@ -995,12 +995,12 @@ class MovieManager(Screen, HelpableScreen):
 				print("[MovieManager] cannot move files on a different disk or system to the trash can")
 			else:
 				print("[MovieManager] cannot move to trash can %s\n%s" % (e.errno, str(e)))
-			return False
+			return False, False
 		except Exception as e:
 			print("[MovieManager] Weird error moving to trash", e)
 			# Failed to create trash or move files.
 			print("[MovieManager] cannot move to trash can\n%s" % str(e))
-			return False
+			return False, False
 
 	def deleteSelected(self):
 		def firstConfirmForDelete(choice):
@@ -1015,7 +1015,7 @@ class MovieManager(Screen, HelpableScreen):
 				selected = 1
 			text = ngettext("Are You sure to delete %s selected file?", "Are You sure to delete %s selected files?", selected) % selected
 			if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
-				text += "\n" + _("Note: items in trashcan will not be deleted!")
+				text += "\n" + _("(Note: items in trashcan will not be deleted!)")
 				self.session.openWithCallback(self.delete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 			else:
 				self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
@@ -1029,16 +1029,23 @@ class MovieManager(Screen, HelpableScreen):
 				self.size = SIZE(data)
 				selected = 1
 			deleted = 0
+			trash = 0
 			for item in data:
 				# item ... (name, (service, size), index, status)
 				if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
-					if self.moveToTrash(item):
+					erased, intrash = self.moveToTrash(item)
+					if erased:
 						deleted += 1
+					if intrash:
+						trash += 1
 				else:
 					if self.deleteConfirmed(item):
 						deleted += 1
 			self.displaySelectionPars()
-			self.session.open(MessageBox, _("Sucessfuly deleted %s of %s files...") % (deleted, selected), type=MessageBox.TYPE_INFO, timeout=5)
+			text = _("Sucessfuly deleted %s of %s files...") % (deleted, selected)
+			if trash:
+				text += "\n" + ngettext("(%s item in trashcan was not deleted.)", "(%s items in trashcan were not deleted.)", trash) % trash
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=5)
 			if not len(self.list.list):
 				self.exit()
 
