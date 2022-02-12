@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:05+0100\n"
-"PO-Revision-Date: 2022-02-12 23:06+0100\n"
+"POT-Creation-Date: 2022-02-12 23:22+0100\n"
+"PO-Revision-Date: 2022-02-12 23:23+0100\n"
 "Last-Translator: IMS <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -17,6 +17,10 @@ msgstr ""
 #, python-format
 msgid " (%ss)"
 msgstr " (%ss)"
+
+#: ../ui.py:1018
+msgid " - items placed in trash can will not be deleted"
+msgstr " - položky v koši nebudou smazány"
 
 #: ../ui.py:1216
 #, python-format
@@ -45,11 +49,11 @@ msgstr "%d B"
 
 #: ../ui.py:1047
 #, python-format
-msgid "%s item in trash can was not deleted."
-msgid_plural "%s items in trash can were not deleted."
-msgstr[0] "%s položka v koši nebyla smazána."
-msgstr[1] "%s položky v koši nebyly smazány."
-msgstr[2] "%s položek v koši nebylo smazáno."
+msgid "( - %s item in trash can was not deleted)"
+msgid_plural "( - %s items in trash can were not deleted)"
+msgstr[0] "( - %s položka v koši nebyla smazána)"
+msgstr[1] "( - %s položky v koši nebyly smazány)"
+msgstr[2] "( - %s položek v koši nebylo smazáno)"
 
 #: ../ui.py:1294
 msgid "(Note: change will cancel all selections.)"
@@ -406,10 +410,6 @@ msgstr "Název nového adresáře v '%s'"
 msgid "No"
 msgstr "Ne"
 
-#: ../ui.py:1018
-msgid "Note: items placed in trash can will not be deleted."
-msgstr "Pozn: položky v koši nebudou smazány."
-
 #: ../ui.py:1274
 msgid "OK"
 msgstr "OK"
@@ -696,11 +696,11 @@ msgstr "Zastavit"
 
 #: ../ui.py:1045
 #, python-format
-msgid "Sucessfuly deleted %s file of %s."
-msgid_plural "Sucessfuly deleted %s files of %s."
-msgstr[0] "Úspěšně smazán %s soubor z %s."
-msgstr[1] "Úspěšně smazány %s soubory z %s."
-msgstr[2] "Úspěšně smazáno %s souborů z %s."
+msgid "Sucessfuly deleted %s file of %s"
+msgid_plural "Sucessfuly deleted %s files of %s"
+msgstr[0] "Úspěšně smazán %s soubor z %s"
+msgstr[1] "Úspěšně smazány %s soubory z %s"
+msgstr[2] "Úspěšně smazáno %s souborů z %s"
 
 #: ../ui.py:1246
 #, python-format

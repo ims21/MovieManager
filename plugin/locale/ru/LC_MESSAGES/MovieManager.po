@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:05+0100\n"
+"POT-Creation-Date: 2022-02-12 23:22+0100\n"
 "PO-Revision-Date: 2020-08-28 14:27+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -23,6 +23,10 @@ msgstr ""
 #, python-format
 msgid " (%ss)"
 msgstr " (%ss)"
+
+#: ../ui.py:1018
+msgid " - items placed in trash can will not be deleted"
+msgstr ""
 
 #: ../ui.py:1216
 #, python-format
@@ -51,8 +55,8 @@ msgstr "%d Б"
 
 #: ../ui.py:1047
 #, python-format
-msgid "%s item in trash can was not deleted."
-msgid_plural "%s items in trash can were not deleted."
+msgid "( - %s item in trash can was not deleted)"
+msgid_plural "( - %s items in trash can were not deleted)"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -432,10 +436,6 @@ msgstr "Новое имя каталога в '%s'"
 msgid "No"
 msgstr "Нет"
 
-#: ../ui.py:1018
-msgid "Note: items placed in trash can will not be deleted."
-msgstr ""
-
 #: ../ui.py:1274
 msgid "OK"
 msgstr "ОК"
@@ -729,8 +729,8 @@ msgstr "Стоп"
 
 #: ../ui.py:1045
 #, fuzzy, python-format
-msgid "Sucessfuly deleted %s file of %s."
-msgid_plural "Sucessfuly deleted %s files of %s."
+msgid "Sucessfuly deleted %s file of %s"
+msgid_plural "Sucessfuly deleted %s files of %s"
 msgstr[0] "Успешно удалено %s из %s файлов..."
 msgstr[1] "Успешно удалено %s из %s файлов..."
 msgstr[2] "Успешно удалено %s из %s файлов..."
