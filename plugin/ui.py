@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.13"
+VERSION = "2.14"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -43,6 +43,8 @@ from time import localtime, strftime, time
 from myselectionlist import MySelectionList, MySelectionEntryComponent
 import os
 import skin
+import Tools.Trashcan
+from Screens.InfoBarGenerics import delResumePoint
 
 MY_RECORDINGS_EXTENSIONS = frozenset((".ts",))
 MY_MOVIE_EXTENSIONS = MOVIE_EXTENSIONS.symmetric_difference(MY_RECORDINGS_EXTENSIONS)
@@ -100,6 +102,7 @@ config.moviemanager.csv_servicename = ConfigYesNo(default=False)
 config.moviemanager.units = ConfigSelection(default="MB", choices=[(None, _("No")),("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 config.moviemanager.csvtarget = ConfigDirectory(default="/tmp/")
+config.moviemanager.move_to_trash = ConfigYesNo(default=True)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -964,6 +967,37 @@ class MovieManager(Screen, HelpableScreen):
 		elif self.preview:
 			self.stopPreview()
 
+	def moveToTrash(self, item):
+		msg = ''
+		# item ... (name, (service, size), index, status)
+		name = item[0]
+		current = item[1][0]
+		cur_path = os.path.realpath(current.getPath())
+		try:
+			trash = Tools.Trashcan.createTrashFolder(cur_path)
+			# Also check whether we're INSIDE the trash, then it's a purge.
+			if cur_path.startswith(trash):
+				print("[MovieManager] plugin does not removing files in trash can")
+				return False
+			else:
+				moveServiceFiles(current, trash, name, allowCopy=False)
+				self.list.removeSelection(item)
+				delResumePoint(current)
+				return True
+		except OSError as e:
+			print("[MovieManager] cannot move to trash", e)
+			if e.errno == 18:
+				# This occurs when moving across devices
+				print("[MovieManager] cannot move files on a different disk or system to the trash can")
+			else:
+				print("[MovieManager] cannot move to trash can %s\n%s" % (e.errno, str(e)))
+			return False
+		except Exception as e:
+			print("[MovieManager] Weird error moving to trash", e)
+			# Failed to create trash or move files.
+			print("[MovieManager] cannot move to trash can\n%s" % str(e))
+			return False
+
 	def deleteSelected(self):
 		def firstConfirmForDelete(choice):
 			if choice:
@@ -976,7 +1010,11 @@ class MovieManager(Screen, HelpableScreen):
 			if not selected:
 				selected = 1
 			text = ngettext("Are You sure to delete %s selected file?", "Are You sure to delete %s selected files?", selected) % selected
-			self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
+			if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
+				text += "\n" + _("Note: items in trashcan will not be deleted!")
+				self.session.openWithCallback(self.delete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
+			else:
+				self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 
 	def delete(self, choice):
 		if choice:
@@ -989,10 +1027,14 @@ class MovieManager(Screen, HelpableScreen):
 			deleted = 0
 			for item in data:
 				# item ... (name, (service, size), index, status)
-				if self.deleteConfirmed(item):
-					deleted += 1
+				if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
+					if self.moveToTrash(item):
+						deleted += 1
+				else:
+					if self.deleteConfirmed(item):
+						deleted += 1
 			self.displaySelectionPars()
-			self.session.open(MessageBox, _("Sucessfuly deleted %s of %s files...") % (selected, deleted), type=MessageBox.TYPE_INFO, timeout=5)
+			self.session.open(MessageBox, _("Sucessfuly deleted %s of %s files...") % (deleted, selected), type=MessageBox.TYPE_INFO, timeout=5)
 			if not len(self.list.list):
 				self.exit()
 
@@ -1008,7 +1050,6 @@ class MovieManager(Screen, HelpableScreen):
 				if offline.deleteFromDisk(0):
 					raise Exception("Offline delete failed")
 			self.list.removeSelection(item)
-			from Screens.InfoBarGenerics import delResumePoint
 			delResumePoint(item[1][0])
 			return True
 		except Exception as ex:
@@ -1278,6 +1319,8 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(dx + _("Size and units"), cfg.units, _("Add filesize in used units to extended list.")))
 			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date or time into extended list.")))
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
+		if config.usage.movielist_trashcan.value:
+			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
