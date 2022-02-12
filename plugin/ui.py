@@ -306,7 +306,7 @@ class MovieManager(Screen, HelpableScreen):
 					suma += size
 		self.l = MySelectionList(mlist)
 		self.l.setList(mlist)
-		print("[MovieMnager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position))
+		print("[MovieManager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position))
 		self.size = 0
 		return mlist
 
@@ -1044,7 +1044,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.displaySelectionPars()
 			text = ngettext("Sucessfuly deleted %s file of %s", "Sucessfuly deleted %s files of %s", deleted) % (deleted, selected)
 			if trash:
-				text += "\n" + ngettext("( - %s item in trash can was not deleted)", "( - %s items in trash can were not deleted)", trash) % trash
+				text += "\n" + ngettext("( %s item in trash can was not deleted )", "( %s items in trash can were not deleted )", trash) % trash
 			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=5)
 			if not len(self.list.list):
 				self.exit()

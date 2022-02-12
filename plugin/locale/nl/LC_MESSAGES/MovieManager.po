@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:27+0100\n"
+"POT-Creation-Date: 2022-02-13 00:00+0100\n"
 "PO-Revision-Date: 2020-10-10 17:54+0200\n"
 "Last-Translator: Rob van der Does <RobvanderDoes@Gmail.com>\n"
 "Language-Team: \n"
@@ -55,8 +55,8 @@ msgstr "%d B"
 
 #: ../ui.py:1047
 #, python-format
-msgid "( - %s item in trash can was not deleted)"
-msgid_plural "( - %s items in trash can were not deleted)"
+msgid "( %s item in trash can was not deleted )"
+msgid_plural "( %s items in trash can were not deleted )"
 msgstr[0] ""
 msgstr[1] ""
 

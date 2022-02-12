@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:27+0100\n"
-"PO-Revision-Date: 2022-02-12 23:28+0100\n"
+"POT-Creation-Date: 2022-02-13 00:00+0100\n"
+"PO-Revision-Date: 2022-02-13 00:01+0100\n"
 "Last-Translator: IMS <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -49,11 +49,11 @@ msgstr "%d B"
 
 #: ../ui.py:1047
 #, python-format
-msgid "( - %s item in trash can was not deleted)"
-msgid_plural "( - %s items in trash can were not deleted)"
-msgstr[0] "( - %s položka v koši nebyla smazána)"
-msgstr[1] "( - %s položky v koši nebyly smazány)"
-msgstr[2] "( - %s položek v koši nebylo smazáno)"
+msgid "( %s item in trash can was not deleted )"
+msgid_plural "( %s items in trash can were not deleted )"
+msgstr[0] "( %s položka v koši nebyla smazána )"
+msgstr[1] "( %s položky v koši nebyly smazány )"
+msgstr[2] "( %s položek v koši nebylo smazáno )"
 
 #: ../ui.py:1294
 msgid "(Note: change will cancel all selections.)"
