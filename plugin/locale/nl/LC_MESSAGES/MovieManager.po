@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 21:29+0100\n"
+"POT-Creation-Date: 2022-02-12 23:05+0100\n"
 "PO-Revision-Date: 2020-10-10 17:54+0200\n"
 "Last-Translator: Rob van der Does <RobvanderDoes@Gmail.com>\n"
 "Language-Team: \n"
@@ -51,18 +51,14 @@ msgstr "%d B"
 
 #: ../ui.py:1047
 #, python-format
-msgid "(%s item in trash can was not deleted.)"
-msgid_plural "(%s items in trash can were not deleted.)"
+msgid "%s item in trash can was not deleted."
+msgid_plural "%s items in trash can were not deleted."
 msgstr[0] ""
 msgstr[1] ""
 
 #: ../ui.py:1294
 msgid "(Note: change will cancel all selections.)"
 msgstr "(Opm.: aanpassen annuleert alle selecties)"
-
-#: ../ui.py:1018
-msgid "(Note: items in trash can will not be deleted!)"
-msgstr ""
 
 #: ../ui.py:86
 msgid "A-z sort"
@@ -430,6 +426,10 @@ msgstr "Nieuwe mapnaam in '%s'"
 msgid "No"
 msgstr "Nee"
 
+#: ../ui.py:1018
+msgid "Note: items placed in trash can will not be deleted."
+msgstr ""
+
 #: ../ui.py:1274
 msgid "OK"
 msgstr "OK"
@@ -718,9 +718,11 @@ msgid "Stop"
 msgstr "Stop"
 
 #: ../ui.py:1045
-#, python-format
-msgid "Sucessfuly deleted %s of %s files..."
-msgstr "Sucesvol %s van %s bestanden verwijderd..."
+#, fuzzy, python-format
+msgid "Sucessfuly deleted %s file of %s."
+msgid_plural "Sucessfuly deleted %s files of %s."
+msgstr[0] "Sucesvol %s van %s bestanden verwijderd..."
+msgstr[1] "Sucesvol %s van %s bestanden verwijderd..."
 
 #: ../ui.py:1246
 #, fuzzy, python-format
