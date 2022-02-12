@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:22+0100\n"
+"POT-Creation-Date: 2022-02-12 23:27+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Pike_Bishop <alfredzngr023@gmail.com>\n"
 "Language-Team: \n"
@@ -407,7 +407,7 @@ msgstr "Verschiebe aktuell markierte Datei oder ausgewählte Datei(en) in Verzei
 
 #: ../ui.py:1335
 #, fuzzy
-msgid "Move selector"
+msgid "Move selector to next item"
 msgstr "Auswahl umkehren"
 
 #: ../ui.py:440

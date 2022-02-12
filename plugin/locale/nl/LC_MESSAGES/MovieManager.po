@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 23:22+0100\n"
+"POT-Creation-Date: 2022-02-12 23:27+0100\n"
 "PO-Revision-Date: 2020-10-10 17:54+0200\n"
 "Last-Translator: Rob van der Does <RobvanderDoes@Gmail.com>\n"
 "Language-Team: \n"
@@ -406,7 +406,7 @@ msgstr "Verplaats huidige of geselecteerde bestand(en) naar map."
 
 #: ../ui.py:1335
 #, fuzzy
-msgid "Move selector"
+msgid "Move selector to next item"
 msgstr "Keer selectie om"
 
 #: ../ui.py:440

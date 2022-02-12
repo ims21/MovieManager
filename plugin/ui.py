@@ -1332,7 +1332,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
 		if config.usage.movielist_trashcan.value:
 			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
-		self.list.append(getConfigListEntry(_("Move selector"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
+		self.list.append(getConfigListEntry(_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
