@@ -968,8 +968,6 @@ class MovieManager(Screen, HelpableScreen):
 			self.stopPreview()
 
 	def moveToTrash(self, item):
-		msg = ''
-		# item ... (name, (service, size), index, status)
 		name = item[0]
 		current = item[1][0]
 		cur_path = os.path.realpath(current.getPath())
