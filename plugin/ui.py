@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.14"
+VERSION = "2.15"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -103,6 +103,7 @@ config.moviemanager.units = ConfigSelection(default="MB", choices=[(None, _("No"
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
 config.moviemanager.csvtarget = ConfigDirectory(default="/tmp/")
 config.moviemanager.move_to_trash = ConfigYesNo(default=True)
+config.moviemanager.move_selector = ConfigYesNo(default=False)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -811,6 +812,9 @@ class MovieManager(Screen, HelpableScreen):
 			selected = SELECTED(item)
 			self.size = self.size + size if selected else self.size - size
 		self.displaySelectionPars(True)
+		if cfg.move_selector.value:
+			idx = self.getItemIndex(item)
+			self["config"].moveToIndex(idx+1)
 
 	def displaySelectionPars(self, singleToggle=False):
 		size = ""
@@ -823,6 +827,8 @@ class MovieManager(Screen, HelpableScreen):
 				size = self.countSizeSelectedItems()
 			size = _("Size: %s") % size
 			number = _("Selected: %s") % selected
+		else:
+			self.size = 0
 		self["number"].setText(number)
 		self["size"].setText(size)
 
@@ -1319,6 +1325,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
 		if config.usage.movielist_trashcan.value:
 			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
+		self.list.append(getConfigListEntry(_("Move selector"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
