@@ -1015,7 +1015,7 @@ class MovieManager(Screen, HelpableScreen):
 				selected = 1
 			text = ngettext("Are You sure to delete %s selected file?", "Are You sure to delete %s selected files?", selected) % selected
 			if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
-				text += "\n" + _("(Note: items in trashcan will not be deleted!)")
+				text += "\n" + _("(Note: items in trash can will not be deleted!)")
 				self.session.openWithCallback(self.delete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 			else:
 				self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
@@ -1044,7 +1044,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.displaySelectionPars()
 			text = _("Sucessfuly deleted %s of %s files...") % (deleted, selected)
 			if trash:
-				text += "\n" + ngettext("(%s item in trashcan was not deleted.)", "(%s items in trashcan were not deleted.)", trash) % trash
+				text += "\n" + ngettext("(%s item in trash can was not deleted.)", "(%s items in trash can were not deleted.)", trash) % trash
 			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=5)
 			if not len(self.list.list):
 				self.exit()

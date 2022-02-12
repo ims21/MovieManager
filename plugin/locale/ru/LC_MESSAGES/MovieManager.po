@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 21:23+0100\n"
+"POT-Creation-Date: 2022-02-12 21:29+0100\n"
 "PO-Revision-Date: 2020-08-28 14:27+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -51,8 +51,8 @@ msgstr "%d Б"
 
 #: ../ui.py:1047
 #, python-format
-msgid "(%s item in trashcan was not deleted.)"
-msgid_plural "(%s items in trashcan were not deleted.)"
+msgid "(%s item in trash can was not deleted.)"
+msgid_plural "(%s items in trash can were not deleted.)"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -62,7 +62,7 @@ msgid "(Note: change will cancel all selections.)"
 msgstr "(Примечание: изменение отменит весь выбор.)"
 
 #: ../ui.py:1018
-msgid "(Note: items in trashcan will not be deleted!)"
+msgid "(Note: items in trash can will not be deleted!)"
 msgstr ""
 
 #: ../ui.py:86
