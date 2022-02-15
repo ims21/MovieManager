@@ -568,8 +568,8 @@ class MovieManager(Screen, HelpableScreen):
 			if duration < 0:
 				return ""
 			if not minutes:
-				return "%d:%02d:%02d" % (duration / 3600, duration / 60 % 60, duration % 60)
-			return "%d:%02d" % (duration / 60, duration % 60)
+				return "%d:%02d:%02d" % (duration // 3600, duration // 60 % 60, duration % 60)
+			return "%d:%02d" % (duration // 60, duration % 60)
 
 		def getItemDate(service, info):
 			return strftime("%Y.%m.%d %H:%M", localtime(info.getInfo(service, iServiceInformation.sTimeCreate)))
