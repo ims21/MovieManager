@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.15"
+VERSION = "2.16"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -373,6 +373,26 @@ class MovieManager(Screen, HelpableScreen):
 			self.session.nav.playService(self.playingRef)
 		self.preview = False
 
+	def findFile(self):
+		self.session.openWithCallback(self.lookingForItem, VirtualKeyBoard, title=_("Type several first characters and press Enter"), text="")
+
+	def lookingForItem(self, searchString=None):
+		if searchString:
+			if not cfg.sensitive.value:
+				searchString = searchString.lower()
+			searchString = searchString.decode('UTF-8', 'replace')
+			for item in self.list.list:
+				if cfg.sensitive.value:
+					exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
+				else:
+					exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
+				if exist:
+					idx = self.getItemIndex(item)
+					self["config"].moveToIndex(idx)
+					print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, idx))
+					return
+			print("[MovieManager] filename starts with '%s' not exist in list" % searchString)
+
 	def selectGroup(self, mark=True):
 		if self.played:
 			self.controlPlayerInfoBar()
@@ -472,6 +492,8 @@ class MovieManager(Screen, HelpableScreen):
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
 			keys += [""]
+		menu.append((_("Find file"), 55, _("Looking for file in the list. When file is found, then selector is moved on it.")))
+		keys += [""]
 		menu.append((_("Options..."), 20))
 		keys += ["menu"]
 
@@ -528,6 +550,8 @@ class MovieManager(Screen, HelpableScreen):
 				print("[MovieManager] failed to execute sync")
 		elif choice[1] == 50:
 			self.saveList()
+		elif choice[1] == 55:
+			self.findFile()
 		elif choice[1] == 60:
 			def cfgCallBack(choice=False):
 				return
