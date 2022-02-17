@@ -610,7 +610,14 @@ class MovieManager(Screen, HelpableScreen):
 			return service_name
 
 		listfile = LISTFILE.split('.')
-		csvName = "%s%s-%s-%s.%s" % (cfg.csvtarget.value, listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
+		text = ""
+		msgtime = 5
+		path = cfg.csvtarget.value
+		if not os.path.exists(path):
+			text += _("Set path '%s' is invalid!" % path) + "\n"
+			path = "/tmp/"
+			msgtime += 5
+		csvName = "%s%s-%s-%s.%s" % (path, listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
 
 		fo = open("%s" % csvName, "w")
 		# header #
@@ -650,7 +657,8 @@ class MovieManager(Screen, HelpableScreen):
 				line = ';'.join((name, size, path)) + "\n"
 			fo.write(line)
 		fo.close()
-		self.session.open(MessageBox, _("List was saved to '%s'") % (gC + csvName + fC), type=MessageBox.TYPE_INFO, timeout=5)
+		text += _("List was saved to '%s'") % (gC + csvName + fC)
+		self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=msgtime)
 
 	def selectSortby(self):
 		menu = []
