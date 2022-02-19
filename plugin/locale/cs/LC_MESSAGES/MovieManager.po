@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-17 21:01+0100\n"
-"PO-Revision-Date: 2022-02-17 21:00+0100\n"
+"PO-Revision-Date: 2022-02-19 12:45+0100\n"
 "Last-Translator: IMS <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -13,8 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
 "X-Generator: Poedit 3.0\n"
 
-#: ../ui.py:236 ../ui.py:238 ../ui.py:244 ../ui.py:245 ../ui.py:246
-#: ../ui.py:247 ../ui.py:248 ../ui.py:249
+#: ../ui.py:236 ../ui.py:238 ../ui.py:244 ../ui.py:245 ../ui.py:246 ../ui.py:247 ../ui.py:248 ../ui.py:249
 #, python-format
 msgid " (%ss)"
 msgstr " (%ss)"

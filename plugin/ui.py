@@ -614,7 +614,7 @@ class MovieManager(Screen, HelpableScreen):
 		msgtime = 5
 		path = cfg.csvtarget.value
 		if not os.path.exists(path):
-			text += _("Set path '%s' is invalid!" % path) + "\n"
+			text += _("Set path '%s' is invalid!") % path + "\n"
 			path = "/tmp/"
 			msgtime += 5
 		csvName = "%s%s-%s-%s.%s" % (path, listfile[0], getBoxName(), datetime.now().strftime("%Y%m%d-%H%M%S"), listfile[1])
