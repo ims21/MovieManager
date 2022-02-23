@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.16"
+VERSION = "2.17"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -104,6 +104,7 @@ config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CS
 config.moviemanager.csvtarget = ConfigDirectory(default="/tmp/")
 config.moviemanager.move_to_trash = ConfigYesNo(default=True)
 config.moviemanager.move_selector = ConfigYesNo(default=False)
+config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("in", _("contains in title"))])
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -374,24 +375,38 @@ class MovieManager(Screen, HelpableScreen):
 		self.preview = False
 
 	def findFile(self):
-		self.session.openWithCallback(self.lookingForItem, VirtualKeyBoard, title=_("Type several first characters and press Enter"), text="")
+		title = _("Type several first characters in title and press Enter:") if cfg.find_title_text.value == "begin" else _("Type part of the text in title and press Enter:")
+		self.session.openWithCallback(self.lookingForItem, VirtualKeyBoard, title=title, text="")
 
 	def lookingForItem(self, searchString=None):
 		if searchString:
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
 			searchString = searchString.decode('UTF-8', 'replace')
-			for item in self.list.list:
-				if cfg.sensitive.value:
-					exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
-				else:
-					exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
-				if exist:
-					idx = self.getItemIndex(item)
-					self["config"].moveToIndex(idx)
-					print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, idx))
-					return
-			print("[MovieManager] filename starts with '%s' not exist in list" % searchString)
+			if cfg.find_title_text.value == "begin": # title starts with text
+				for item in self.list.list:
+					if cfg.sensitive.value:
+						exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
+					else:
+						exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
+					if exist:
+						idx = self.getItemIndex(item)
+						self["config"].moveToIndex(idx)
+						print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, idx))
+						return
+				print("[MovieManager] filename starts with '%s' not exist in list" % searchString)
+			elif cfg.find_title_text.value == "in": # title containing text
+				for item in self.list.list:
+					if cfg.sensitive.value:
+						exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString) == -1 else True
+					else:
+						exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString) == -1 else True
+					if exist:
+						idx = self.getItemIndex(item)
+						self["config"].moveToIndex(idx)
+						print("[MovieManager] filename containing '%s' in name exists on position %s" % (searchString, idx))
+						return
+				print("[MovieManager] filename containing '%s' in name not exist in list" % searchString)
 
 	def selectGroup(self, mark=True):
 		if self.played:
@@ -1365,6 +1380,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		if config.usage.movielist_trashcan.value:
 			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
 		self.list.append(getConfigListEntry(_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
+		self.list.append(getConfigListEntry(_("Search file by"),cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
