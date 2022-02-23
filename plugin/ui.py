@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.17"
+VERSION = "2.18"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -105,6 +105,7 @@ config.moviemanager.csvtarget = ConfigDirectory(default="/tmp/")
 config.moviemanager.move_to_trash = ConfigYesNo(default=True)
 config.moviemanager.move_selector = ConfigYesNo(default=False)
 config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("in", _("contains in title"))])
+config.moviemanager.around = ConfigYesNo(default=False)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -250,6 +251,8 @@ class MovieManager(Screen, HelpableScreen):
 			"seek_7": (b79, seekBck + _(" (%ss)") % time_79),
 			"home": (self.firstItem, _("Go to first item")),
 			"end": (self.lastItem, _("Go to last item")),
+			"findnext": (self.find, _("Find file/next file")),
+			"findprev": (self.findReversed, _("Find file/preview file")),
 			}, -2)
 
 		self["key_red"] = Button(_("Cancel"))
@@ -265,6 +268,10 @@ class MovieManager(Screen, HelpableScreen):
 		self.playerInfoBar = self.session.instantiateDialog(MovieManagerPlayerInfoBar)
 		self.played = False
 		self.preview = False
+
+		self.itemFound_idx = None
+		self.searchString = None
+
 		self["config"].onSelectionChanged.append(self.setService)
 		self.onShown.append(self.setService)
 		self.onLayoutFinish.append(self.moveSelector)
@@ -374,39 +381,90 @@ class MovieManager(Screen, HelpableScreen):
 			self.session.nav.playService(self.playingRef)
 		self.preview = False
 
-	def findFile(self):
+	def find(self):
+		if self.itemFound_idx is not None:
+			self.findNextFile()
+		else:
+			self.findFirstFile()
+
+	def findReversed(self):
+		if self.itemFound_idx is not None:
+			self.findNextFile(True)
+		else:
+			self.findFirstFile()
+
+	def findFirstFile(self):
+		self.itemFound_idx = None
+		self.searchString = None
 		title = _("Type several first characters in title and press Enter:") if cfg.find_title_text.value == "begin" else _("Type part of the text in title and press Enter:")
 		self.session.openWithCallback(self.lookingForItem, VirtualKeyBoard, title=title, text="")
 
-	def lookingForItem(self, searchString=None):
+	def findNextFile(self, reverse=False):
+		self.lookingForItem(self.searchString, reverse)
+
+	def lookingForItem(self, searchString=None, reverse=False):
+		def lookingStartsWith(item, searchString):
+			if cfg.sensitive.value:
+				exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
+			else:
+				exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
+			if exist:
+				self.itemFound_idx = self.getItemIndex(item)
+				self["config"].moveToIndex(self.itemFound_idx)
+				print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, self.itemFound_idx))
+				return True
+			return False
+		def lookingIn(item, searchString):
+			if cfg.sensitive.value:
+				exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString) == -1 else True
+			else:
+				exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString) == -1 else True
+			if exist:
+				self.itemFound_idx = self.getItemIndex(item)
+				self["config"].moveToIndex(self.itemFound_idx)
+				print("[MovieManager] filename containing '%s' in name exists on position %s" % (searchString, self.itemFound_idx))
+				return True
+			return False
+
 		if searchString:
+			self.searchString = searchString
+			if reverse:
+				idx = self.itemFound_idx - 1 if self.itemFound_idx else len(self.list.list)
+			else:
+				idx = self.itemFound_idx + 1 if self.itemFound_idx else 0
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
 			searchString = searchString.decode('UTF-8', 'replace')
 			if cfg.find_title_text.value == "begin": # title starts with text
-				for item in self.list.list:
-					if cfg.sensitive.value:
-						exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
-					else:
-						exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
-					if exist:
-						idx = self.getItemIndex(item)
-						self["config"].moveToIndex(idx)
-						print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, idx))
-						return
+				if reverse:
+					for item in self.list.list[idx::-1]:
+						if lookingStartsWith(item, searchString):
+							return
+				else:
+					for item in self.list.list[idx:]:
+						if lookingStartsWith(item, searchString):
+							return
 				print("[MovieManager] filename starts with '%s' not exist in list" % searchString)
 			elif cfg.find_title_text.value == "in": # title containing text
-				for item in self.list.list:
-					if cfg.sensitive.value:
-						exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString) == -1 else True
-					else:
-						exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString) == -1 else True
-					if exist:
-						idx = self.getItemIndex(item)
-						self["config"].moveToIndex(idx)
-						print("[MovieManager] filename containing '%s' in name exists on position %s" % (searchString, idx))
-						return
+				if reverse:
+					for item in self.list.list[idx::-1]:
+						if lookingIn(item, searchString):
+							return
+				else:
+					for item in self.list.list[idx:]:
+						if lookingIn(item, searchString):
+							return
 				print("[MovieManager] filename containing '%s' in name not exist in list" % searchString)
+			if self.itemFound_idx is not None:
+				if cfg.around.value:
+					self.itemFound_idx = len(self.list.list) if reverse else 0
+					self.lookingForItem(searchString, reverse) # recurse in list
+				else:
+					text = _("No next file was found...")
+					self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
+			else:
+				text = _("File was not found...")
+				self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
 
 	def selectGroup(self, mark=True):
 		if self.played:
@@ -501,14 +559,19 @@ class MovieManager(Screen, HelpableScreen):
 			menu.append((_("Manage files in active bookmarks..."), 18, _("Create movielist from all active bookmarks and selected directories. Please, be patient, it take some time. There in 'Options...' it can be limited to some filetypes and can be enabled browsing subdirectories.")))
 			keys += ["red"]
 		menu.append((_("Use sync"), 40))
-		keys += ["0"]
+		keys += [""]
 		menu.append((_("Save list"), 50, _("Save current movielist to '%s' directory as '.csv' file.") % cfg.csvtarget.value))
 		keys += ["blue"]
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
 			keys += [""]
-		menu.append((_("Find file"), 55, _("Looking for file in the list. When file is found, then selector is moved on it.")))
+		menu.append((_("Find file"), 55, _("Looking for file in the list. When file is found, then selector is moved on it. In list you can use key '0' for looking next file forward and key '8' for looking next file backward.")))
 		keys += [""]
+#		if self.itemFound_idx is not None:
+#			menu.append((4 * " " + _("Find previous file..."), 56, _("Looking for previous matching file in list.")))
+#			keys += [""]
+#			menu.append((4 * " " + _("Find next file..."), 57, _("Looking for next matching file in list.")))
+#			keys += [""]
 		menu.append((_("Options..."), 20))
 		keys += ["menu"]
 
@@ -566,7 +629,11 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 50:
 			self.saveList()
 		elif choice[1] == 55:
-			self.findFile()
+			self.findFirstFile()
+		elif choice[1] == 56:
+			self.findReversed()
+		elif choice[1] == 57:
+			self.findNextFile()
 		elif choice[1] == 60:
 			def cfgCallBack(choice=False):
 				return
@@ -1381,6 +1448,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
 		self.list.append(getConfigListEntry(_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
 		self.list.append(getConfigListEntry(_("Search file by"),cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
+		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
