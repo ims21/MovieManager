@@ -269,7 +269,7 @@ class MovieManager(Screen, HelpableScreen):
 		self.played = False
 		self.preview = False
 
-		self.itemFound_idx = None
+		self.item_idx = None  # used for looking item in list. None (if not found) or item index number
 		self.searchString = None
 
 		self["config"].onSelectionChanged.append(self.setService)
@@ -382,19 +382,19 @@ class MovieManager(Screen, HelpableScreen):
 		self.preview = False
 
 	def find(self):
-		if self.itemFound_idx is not None:
+		if self.item_idx is not None:
 			self.findNextFile()
 		else:
 			self.findFirstFile()
 
 	def findReversed(self):
-		if self.itemFound_idx is not None:
+		if self.item_idx is not None:
 			self.findNextFile(True)
 		else:
 			self.findFirstFile()
 
 	def findFirstFile(self):
-		self.itemFound_idx = None
+		self.item_idx = None
 		self.searchString = None
 		title = _("Type several first characters in title and press Enter:") if cfg.find_title_text.value == "begin" else _("Type part of the text in title and press Enter:")
 		self.session.openWithCallback(self.lookingForItem, VirtualKeyBoard, title=title, text="")
@@ -403,61 +403,25 @@ class MovieManager(Screen, HelpableScreen):
 		self.lookingForItem(self.searchString, reverse)
 
 	def lookingForItem(self, searchString=None, reverse=False):
-		def lookingStartsWith(item, searchString):
-			if cfg.sensitive.value:
-				exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
-			else:
-				exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
-			if exist:
-				self.itemFound_idx = self.getItemIndex(item)
-				self["config"].moveToIndex(self.itemFound_idx)
-				print("[MovieManager] filename starts with '%s' exists on position %s" % (searchString, self.itemFound_idx))
-				return True
-			return False
-		def lookingIn(item, searchString):
-			if cfg.sensitive.value:
-				exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString) == -1 else True
-			else:
-				exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString) == -1 else True
-			if exist:
-				self.itemFound_idx = self.getItemIndex(item)
-				self["config"].moveToIndex(self.itemFound_idx)
-				print("[MovieManager] filename containing '%s' in name exists on position %s" % (searchString, self.itemFound_idx))
-				return True
-			return False
-
 		if searchString:
 			self.searchString = searchString
-			if reverse:
-				idx = self.itemFound_idx - 1 if self.itemFound_idx else len(self.list.list)
-			else:
-				idx = self.itemFound_idx + 1 if self.itemFound_idx else 0
+			idx = (self.item_idx - 1 if self.item_idx else len(self.list.list)) if reverse else (self.item_idx + 1 if self.item_idx else 0)
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
 			searchString = searchString.decode('UTF-8', 'replace')
-			if cfg.find_title_text.value == "begin": # title starts with text
-				if reverse:
-					for item in self.list.list[idx::-1]:
-						if lookingStartsWith(item, searchString):
-							return
-				else:
-					for item in self.list.list[idx:]:
-						if lookingStartsWith(item, searchString):
-							return
-				print("[MovieManager] filename starts with '%s' not exist in list" % searchString)
-			elif cfg.find_title_text.value == "in": # title containing text
-				if reverse:
-					for item in self.list.list[idx::-1]:
-						if lookingIn(item, searchString):
-							return
-				else:
-					for item in self.list.list[idx:]:
-						if lookingIn(item, searchString):
-							return
-				print("[MovieManager] filename containing '%s' in name not exist in list" % searchString)
-			if self.itemFound_idx is not None:
+			if reverse:
+				for item in self.list.list[idx::-1]:
+					if self.findItem(item, searchString, cfg.sensitive.value, cfg.find_title_text.value):
+						self.setItemIndex(item)
+						return
+			else:
+				for item in self.list.list[idx:]:
+					if self.findItem(item, searchString, cfg.sensitive.value, cfg.find_title_text.value):
+						self.setItemIndex(item)
+						return
+			if self.item_idx is not None:
 				if cfg.around.value:
-					self.itemFound_idx = len(self.list.list) if reverse else 0
+					self.item_idx = len(self.list.list) if reverse else 0
 					self.lookingForItem(searchString, reverse) # recurse in list
 				else:
 					text = _("No next file was found...")
@@ -465,6 +429,27 @@ class MovieManager(Screen, HelpableScreen):
 			else:
 				text = _("File was not found...")
 				self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
+
+	def setItemIndex(self, item):
+		self.item_idx = self.getItemIndex(item)
+		self["config"].moveToIndex(self.item_idx)
+
+	def findItem(self, item, string, sensitive, searchtype):
+		if sensitive:
+			if searchtype == "begin":
+				return NAME(item).decode('UTF-8', 'replace').startswith(string)
+			elif searchtype == "end":
+				return NAME(item).decode('UTF-8', 'replace').endswith(string)
+			else: # find "in"
+				return False if NAME(item).decode('UTF-8', 'replace').find(string) == -1 else True
+		else:
+			if searchtype == "begin":
+				return NAME(item).decode('UTF-8', 'replace').lower().startswith(string)
+			elif searchtype == "end":
+				return NAME(item).decode('UTF-8', 'replace').lower().endswith(string)
+			else: # find "in"
+				return False if NAME(item).decode('UTF-8', 'replace').lower().find(string) == -1 else True
+		return False
 
 	def selectGroup(self, mark=True):
 		if self.played:
@@ -501,21 +486,7 @@ class MovieManager(Screen, HelpableScreen):
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
 			for item in self.list.list:
-				if cfg.sensitive.value:
-					if cfg.search.value == "begin":
-						exist = NAME(item).decode('UTF-8', 'replace').startswith(searchString)
-					elif cfg.search.value == "end":
-						exist = NAME(item).decode('UTF-8', 'replace').endswith(searchString)
-					else:
-						exist = False if NAME(item).decode('UTF-8', 'replace').find(searchString) == -1 else True
-				else:
-					if cfg.search.value == "begin":
-						exist = NAME(item).decode('UTF-8', 'replace').lower().startswith(searchString)
-					elif cfg.search.value == "end":
-						exist = NAME(item).decode('UTF-8', 'replace').lower().endswith(searchString)
-					else:
-						exist = False if NAME(item).decode('UTF-8', 'replace').lower().find(searchString) == -1 else True
-				if exist:
+				if self.findItem(item, searchString, cfg.sensitive.value, cfg.search.value):
 					if mark:
 						if not SELECTED(item):
 							self.list.toggleItemSelection(item[0])
@@ -567,7 +538,7 @@ class MovieManager(Screen, HelpableScreen):
 			keys += [""]
 		menu.append((_("Find file"), 55, _("Looking for file in the list. When file is found, then selector is moved on it. In list you can use key '0' for looking next file forward and key '8' for looking next file backward.")))
 		keys += [""]
-#		if self.itemFound_idx is not None:
+#		if self.item_idx is not None:
 #			menu.append((4 * " " + _("Find previous file..."), 56, _("Looking for previous matching file in list.")))
 #			keys += [""]
 #			menu.append((4 * " " + _("Find next file..."), 57, _("Looking for next matching file in list.")))
@@ -786,7 +757,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.l.setList(mlist)
 			return mlist
 
-		def renameItem(item, newname, mlist):
+		def rename_item(item, newname, mlist):
 			new = renameItemInList(mlist, item, newname)
 			self.clearList()
 			return reloadNewList(new, self.list)
@@ -815,7 +786,7 @@ class MovieManager(Screen, HelpableScreen):
 					print("[MovieManager] rename", path, "to", newpath)
 					os.rename(path, newpath)
 				idx = self.getItemIndex(item)
-				self.list = renameItem(item, name, self.list)
+				self.list = rename_item(item, name, self.list)
 				self["config"].moveToIndex(idx)
 			except OSError as e:
 				print("Error %s:" % e.errno, e)
