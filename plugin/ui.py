@@ -271,6 +271,7 @@ class MovieManager(Screen, HelpableScreen):
 
 		self.item_idx = None  # used for looking item in list. None (if not found) or item index number
 		self.searchString = None
+		self.msgNM = None
 
 		self["config"].onSelectionChanged.append(self.setService)
 		self.onShown.append(self.setService)
@@ -425,7 +426,8 @@ class MovieManager(Screen, HelpableScreen):
 					self.lookingForItem(searchString, reverse) # recurse in list
 				else:
 					text = _("No next file was found...")
-					self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
+					self.MessageBoxNM(text, 1)
+					#self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
 			else:
 				text = _("File was not found...")
 				self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
@@ -1342,6 +1344,14 @@ class MovieManager(Screen, HelpableScreen):
 					from Plugins.Extensions.CSFDLite.plugin import CSFDLite
 					self.session.open(CSFDLite, event[0][0])
 
+	def MessageBoxNM(self, text="", delay=1):
+		if self.msgNM:
+			self.session.deleteDialog(self.msgNM)
+			self.msgNM = None
+		else:
+			if self.session is not None:
+				self.msgNM = self.session.instantiateDialog(MovieManagerNonModalMessageBoxDialog, text=text, delay=delay)
+				self.msgNM.show()
 
 def MyMovieLocationBox(session, text, dir, filename="", minFree=None):
 	config.movielist.videodirs.load()
@@ -1675,3 +1685,30 @@ class MovieManagerFileInfo(Screen):
 
 	def exit(self):
 		self.close()
+
+class MovieManagerNonModalMessageBoxDialog(Screen):
+	skin = """
+		<screen name="NonModalMessageBoxDialog" position="center,center" size="470,120" backgroundColor="#00707070" zPosition="2" flags="wfNoBorder">
+			<widget name="message" position="center,center" size="466,116" font="Regular;20" valign="center" halign="center"/>
+		</screen>
+	"""
+
+	def __init__(self, session, text="", delay=1):
+		Screen.__init__(self, session)
+		self.text = text
+		self.delay = delay
+		self["message"] = Label()
+		self.timer = eTimer()
+		self.timer.callback.append(self.timerLoop)
+		self.onLayoutFinish.append(self.timerStart)
+
+	def timerStart(self):
+		self["message"].setText(self.text)
+		self.timer.start(True)
+
+	def timerLoop(self):
+		if self.delay > 0:
+			self.delay -= 1
+			self.timer.start(1000, True)
+		else:
+			self.session.deleteDialog(self)
