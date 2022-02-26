@@ -1643,7 +1643,7 @@ class MovieManagerFileInfo(Screen):
 		<widget name="play" position="350,105" size="100,30" font="Regular;26" foregroundColor="yellow"/>
 	</screen>"""
 
-	def __init__(self, session, (item, last, size)):
+	def __init__(self, session, item, last, size):
 		Screen.__init__(self, session)
 		self.session = session
 
