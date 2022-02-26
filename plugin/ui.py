@@ -940,7 +940,7 @@ class MovieManager(Screen, HelpableScreen):
 	def displayInfo(self):
 		item = self["config"].getCurrent()
 		if item:
-			self.session.open(MovieManagerFileInfo, (item, self.getLastPlayedPosition(item), self.convertSize(SIZE(item))))
+			self.session.open(MovieManagerFileInfo, item, self.getLastPlayedPosition(item), self.convertSize(SIZE(item)))
 
 	def getLastPlayedPosition(self, item):
 		lastposition = moviePlayState(ITEM(item).getPath() + '.cuts', ITEM(item), LENGTH(item))
@@ -1643,15 +1643,15 @@ class MovieManagerFileInfo(Screen):
 		<widget name="play" position="350,105" size="100,30" font="Regular;26" foregroundColor="yellow"/>
 	</screen>"""
 
-	def __init__(self, session, (item, last, size)):
+	def __init__(self, session, item, last_position, filesize):
 		Screen.__init__(self, session)
 		self.session = session
 
 		self.path = ITEM(item).getPath()
 		self["name"] = Label("%s" % NAME(item))
 		self["path"] = Label()
-		self["size"] = Label("%s" % size)
-		self["play"] = Label("%s" % last)
+		self["size"] = Label("%s" % filesize)
+		self["play"] = Label("%s" % last_position)
 		self["service"] = ServiceEvent()
 		self["service"].newService(ITEM(item))
 
@@ -1688,7 +1688,7 @@ class MovieManagerFileInfo(Screen):
 
 class MovieManagerNonModalMessageBoxDialog(Screen):
 	skin = """
-		<screen name="NonModalMessageBoxDialog" position="center,center" size="470,120" backgroundColor="#00707070" zPosition="2" flags="wfNoBorder">
+		<screen name="NonModalMessageBoxDialog" position="center,center" size="470,120" backgroundColor="#00606060" zPosition="2" flags="wfNoBorder">
 			<widget name="message" position="center,center" size="466,116" font="Regular;20" valign="center" halign="center"/>
 		</screen>
 	"""
