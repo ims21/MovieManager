@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.18"
+VERSION = "2.19"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -106,6 +106,8 @@ config.moviemanager.move_to_trash = ConfigYesNo(default=True)
 config.moviemanager.move_selector = ConfigYesNo(default=False)
 config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[("begin", _("start title")), ("in", _("contains in title"))])
 config.moviemanager.around = ConfigYesNo(default=False)
+config.moviemanager.bookmarks = ConfigLocations()
+config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -1267,6 +1269,9 @@ class MovieManager(Screen, HelpableScreen):
 
 	def selectMovieLocation(self, title, callback):
 		bookmarks = [("(" + _("Other") + "...)", None)]
+		for d in cfg.bookmarks.value:
+			d = os.path.normpath(d)
+			bookmarks.append((d, d))
 		buildMovieLocationList(bookmarks)
 		self.onMovieSelected = callback
 		self.movieSelectTitle = title
@@ -1428,8 +1433,10 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		if config.usage.movielist_trashcan.value:
 			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
 		self.list.append(getConfigListEntry(_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
-		self.list.append(getConfigListEntry(_("Search file by"),cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
+		self.list.append(getConfigListEntry(_("Search file by"), cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
 		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
+		self.bookmarks = _("Target directories")
+		self.list.append(getConfigListEntry(self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
@@ -1469,6 +1476,10 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 					cfg.csvtarget.value = res
 			inhibitDirs = ["/autofs", "/bin", "/boot", "/dev", "/etc", "/lib", "/proc", "/sbin", "/sys", "/usr"]
 			self.session.openWithCallback(targetDirSelected, LocationBox, text=_("Select directory to save 'csv' file:"), currDir=cfg.csvtarget.value, autoAdd=False, editDir=True, inhibitDirs=inhibitDirs)
+		elif current == self.bookmarks:
+			def pathSelected(res):
+				return
+			self.session.openWithCallback(pathSelected, LocationBox, text=_("Create target directories as bookmarks for copy and move:"), currDir=config.movielist.last_videodir.getValue(), bookmarks=cfg.bookmarks)
 		else:
 			self.keySave()
 
