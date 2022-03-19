@@ -631,7 +631,7 @@ class MovieManager(Screen, HelpableScreen):
 		s += 0x80 if cfg.trashcans.value else 0
 		s += 0x100 if cfg.selected_dirs.value else 0
 		s += 0x200 if cfg.selected_dirs_subs.value else 0
-		s += 0x400 if cfg.czsksort.value else 0
+		s += 0x400 if cfg.czsksort.value and config.moviemanager.sort.value in ("1", "2") else 0
 		return s
 
 	def saveList(self):
@@ -1439,7 +1439,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
 		self.bookmarks = _("Target directories")
 		self.list.append(getConfigListEntry(self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
-		self.list.append(getConfigListEntry(_("Cz/Sk sorting"), cfg.czsksort, _("Use sorting by czech/slovak characters for alphabetical list sorting.")))
+		self.list.append(getConfigListEntry(_("Cz/Sk sorting"), cfg.czsksort, _("Use sorting by czech/slovak characters for alphabetical list sorting.") + note))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
