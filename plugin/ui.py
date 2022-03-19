@@ -631,6 +631,7 @@ class MovieManager(Screen, HelpableScreen):
 		s += 0x80 if cfg.trashcans.value else 0
 		s += 0x100 if cfg.selected_dirs.value else 0
 		s += 0x200 if cfg.selected_dirs_subs.value else 0
+		s += 0x400 if cfg.czsksort.value else 0
 		return s
 
 	def saveList(self):
