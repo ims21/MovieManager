@@ -1,9 +1,11 @@
 from Components.MenuList import MenuList
+from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
 from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop, RT_HALIGN_LEFT
 from Tools.LoadPixmap import LoadPixmap
 from plugin import plugin_path
 import skin
+
 
 resolution = ""
 if getDesktop(0).size().width() <= 1280:
@@ -77,7 +79,14 @@ class MySelectionList(MenuList):
 
 	def sort(self, sortType=False, flag=False):
 		# sorting by sortType: # 0 - name, 1 - item, 2 - index, 3 - selected
-		self.list.sort(key=lambda x: x[0][sortType], reverse=flag)
+		if not sortType:
+			if config.moviemanager.czsort.value:
+				from dictsort import char2DiacriticSort
+				self.list.sort(key=lambda x: (char2DiacriticSort(x[0][0]) and char2DiacriticSort(x[0][0]).lower()), reverse=flag)
+			else:
+				self.list.sort(key=lambda x: (x[0][0] and x[0][0].lower()), reverse=flag)
+		else:
+			self.list.sort(key=lambda x: x[0][sortType], reverse=flag)
 		self.setList(self.list)
 
 	def sortItemParts(self, sortType=False, flag=False):

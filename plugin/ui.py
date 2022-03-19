@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.19"
+VERSION = "2.20"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -108,6 +108,7 @@ config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[
 config.moviemanager.around = ConfigYesNo(default=False)
 config.moviemanager.bookmarks = ConfigLocations()
 config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
+config.moviemanager.czsort = ConfigYesNo(default=False)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -1437,6 +1438,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
 		self.bookmarks = _("Target directories")
 		self.list.append(getConfigListEntry(self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
+		self.list.append(getConfigListEntry(_("Czech sorting"), cfg.czsort, _("Use sorting by czech characters for alphabetical list sorting.")))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
