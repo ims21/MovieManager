@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-19 16:18+0100\n"
-"PO-Revision-Date: 2022-03-19 16:20+0100\n"
+"POT-Creation-Date: 2022-03-19 20:24+0100\n"
+"PO-Revision-Date: 2022-03-19 20:25+0100\n"
 "Last-Translator: IMS <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -177,8 +177,8 @@ msgid "Current item info"
 msgstr "Informace o aktuální položce"
 
 #: ../ui.py:1441
-msgid "Czech sorting"
-msgstr "Třídit podle češtiny"
+msgid "Cz/Sk sorting"
+msgstr "Třídit podle Cz/Sk"
 
 #: ../ui.py:1421
 msgid "DVD images"
@@ -810,8 +810,8 @@ msgid "Use CSFD or CSFD Lite plugin version."
 msgstr "Používat CSFD nebo CSFD Lite plugin."
 
 #: ../ui.py:1441
-msgid "Use sorting by czech characters for alphabetical list sorting."
-msgstr "Pro abecedně setříděný seznam používat třídění podle českých znaků."
+msgid "Use sorting by czech/slovak characters for alphabetical list sorting."
+msgstr "Pro abecedně setříděný seznam používat třídění podle českých a slovenských znaků."
 
 #: ../ui.py:537
 msgid "Use sync"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-19 16:18+0100\n"
+"POT-Creation-Date: 2022-03-19 20:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -179,7 +179,7 @@ msgid "Current item info"
 msgstr ""
 
 #: ../ui.py:1441
-msgid "Czech sorting"
+msgid "Cz/Sk sorting"
 msgstr ""
 
 #: ../ui.py:1421
@@ -802,7 +802,7 @@ msgid "Use CSFD or CSFD Lite plugin version."
 msgstr ""
 
 #: ../ui.py:1441
-msgid "Use sorting by czech characters for alphabetical list sorting."
+msgid "Use sorting by czech/slovak characters for alphabetical list sorting."
 msgstr ""
 
 #: ../ui.py:537
