@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.20"
+VERSION = "2.21"
 #  by ims (c) 2018-2022 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -108,7 +108,7 @@ config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[
 config.moviemanager.around = ConfigYesNo(default=False)
 config.moviemanager.bookmarks = ConfigLocations()
 config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
-config.moviemanager.czsksort = ConfigYesNo(default=False)
+config.moviemanager.alphabetsort = ConfigSelection(default=None, choices=[(None, _("Standard")), ("czsk", _("Czech/Slovak")), ("latin2", _("Latin2")), ("latin2-ch", _("Latin2 with 'Ch'"))])
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -585,8 +585,8 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 20:
 			def cfgCallBack(choice=False):
 				cfg_after = self.getCfgStatus()
-				if self.cfg_before != cfg_after:
-					if (cfg_after & 0x20) - (self.cfg_before & 0x20) < 0: # all -> single
+				if cfg_before != cfg_after or cfg_alphabetsort != cfg.alphabetsort.value:
+					if (cfg_after & 0x20) - (cfg_before & 0x20) < 0: # all -> single
 						self.accross = cfg.manage_all.value
 					path = config.movielist.last_videodir.value
 					if self.accross:
@@ -594,7 +594,8 @@ class MovieManager(Screen, HelpableScreen):
 					self.getData(path)
 				self.displaySelectionPars()
 				self["key_yellow"].setText(_("Sort"))
-			self.cfg_before = self.getCfgStatus()
+			cfg_before = self.getCfgStatus()
+			cfg_alphabetsort = cfg.alphabetsort.value
 			self.session.openWithCallback(cfgCallBack, MovieManagerCfg)
 		elif choice[1] == 30:
 			self.playSelected()
@@ -631,7 +632,7 @@ class MovieManager(Screen, HelpableScreen):
 		s += 0x80 if cfg.trashcans.value else 0
 		s += 0x100 if cfg.selected_dirs.value else 0
 		s += 0x200 if cfg.selected_dirs_subs.value else 0
-		s += 0x400 if cfg.czsksort.value and config.moviemanager.sort.value in ("1", "2") else 0
+		s += 0x400 if cfg.alphabetsort.value and cfg.sort.value in ("1", "2") else 0
 		return s
 
 	def saveList(self):
@@ -1439,7 +1440,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
 		self.bookmarks = _("Target directories")
 		self.list.append(getConfigListEntry(self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
-		self.list.append(getConfigListEntry(_("Cz/Sk sorting"), cfg.czsksort, _("Use sorting by czech/slovak characters for alphabetical list sorting.") + note))
+		self.list.append(getConfigListEntry(_("Sorting type"), cfg.alphabetsort, _("Use sorting characters type for alphabetical list sorting.") + note))
 		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
 
 		self["config"].list = self.list
