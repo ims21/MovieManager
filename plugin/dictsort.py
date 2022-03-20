@@ -142,8 +142,8 @@ dictSortLatin2 = {
 	u'\xfd': 'y{',		# y acute
 #	u'\xff': 'y|',		# y diaeresis (umlaut)
 	u'\u017a': 'z{',	# z acute
-	u'\u017e': 'z|'		# z caron
-	u'\u017c': 'z}',	# z dot above
+	u'\u017e': 'z|',	# z caron
+	u'\u017c': 'z}'		# z dot above
 
 }
 
