@@ -45,10 +45,10 @@ dictSortCZSK = {
 #	u'\u0142': 'l}',	# l with stroke
 	u'\u0148': 'n{',	# n caron
 	u'\xf3': 'o{',		# o acute
-	u'\xf6': 'o|',		# o circumflex (vokan)
-	u'\xf4': 'o}',		# o diaeresis (umlaut)
-#	u'\u0159': 'r{',	# r acute
-	u'\u0155': 'r|',	# r caron
+	u'\xf4': 'o|',		# o circumflex (vokan)
+	u'\xf6': 'o}',		# o diaeresis (umlaut)
+#	u'\u0155': 'r{',	# r acute
+	u'\u0159': 'r|',	# r caron
 	u'\u0161': 's{',	# s caron
 	u'\u0165': 't{',	# t caron
 	u'\xfa': 'u{',		# u acute
@@ -62,7 +62,7 @@ dictSortCZSK = {
 dictSortLatin2 = {
 	u'\xc1': 'A{',		# A acute
 	u'\xc2': 'A|',		# A circumflex
-	u'\xc3': 'A}',		# A breve
+	u'\u0102': 'A}',	# A breve
 	u'\xc4': 'A~',		# A diaeresis (umlaut)
 	u'\u0104': 'A~{',	# A ogonek
 	u'\u0106': 'C{',	# C acute
@@ -100,11 +100,11 @@ dictSortLatin2 = {
 	u'\xdd': 'Y{',		# Y acute
 #	u'\u0178': 'Y|',	# Y diaeresis (umlaut)
 	u'\u0179': 'Z{',	# Z acute
-	u'\u017b': 'Z|',	# Z dot above
-	u'\u017d': 'Z}',	# Z caron
+	u'\u017d': 'Z|',	# Z caron
+	u'\u017b': 'Z}',	# Z dot above
 	u'\xe1': 'a{',		# a acute
 	u'\xe2': 'a|',		# a circumflex
-	u'\xe3': 'a}',		# a breve
+	u'\u0103': 'a}',	# a breve
 	u'\xe4': 'a~',		# a diaeresis (umlaut)
 	u'\u0105': 'a~{',	# a ogonek
 	u'\u0107': 'c{',	# c acute
@@ -125,11 +125,11 @@ dictSortLatin2 = {
 	u'\u0144': 'n{',	# n acute
 	u'\u0148': 'n|',	# n caron
 	u'\xf3': 'o{',		# o acute
-	u'\xf6': 'o|',		# o circumflex (vokan)
+	u'\xf4': 'o|',		# o circumflex (vokan)
 	u'\x0151': 'o}',	# o double acute
-	u'\xf4': 'o~',		# o diaeresis (umlaut)
-	u'\u0159': 'r{',	# r acute
-	u'\u0155': 'r|',	# r caron
+	u'\xf6': 'o~',		# o diaeresis (umlaut)
+	u'\u0155': 'r{',	# r acute
+	u'\u0159': 'r|',	# r caron
 	u'\u015b': 's{',	# s acute
 	u'\u0161': 's|',	# s caron
 	u'\u015f': 's}',	# s cedilla
@@ -142,8 +142,9 @@ dictSortLatin2 = {
 	u'\xfd': 'y{',		# y acute
 #	u'\xff': 'y|',		# y diaeresis (umlaut)
 	u'\u017a': 'z{',	# z acute
-	u'\u017c': 'z|',	# z dot above
-	u'\u017e': 'z}'		# z caron
+	u'\u017e': 'z|'		# z caron
+	u'\u017c': 'z}',	# z dot above
+
 }
 
 def diacriticSorting(text):
