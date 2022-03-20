@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-20 10:59+0100\n"
-"PO-Revision-Date: 2022-03-20 11:04+0100\n"
+"POT-Creation-Date: 2022-03-20 12:36+0100\n"
+"PO-Revision-Date: 2022-03-20 12:36+0100\n"
 "Last-Translator: IMS <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -177,8 +177,8 @@ msgid "Current item info"
 msgstr "Informace o aktuální položce"
 
 #: ../ui.py:111
-msgid "Czech/Slovak"
-msgstr "Česky/slovensky"
+msgid "Cz/Sk"
+msgstr "Cz/Sk"
 
 #: ../ui.py:1423
 msgid "DVD images"

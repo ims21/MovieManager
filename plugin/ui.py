@@ -108,7 +108,7 @@ config.moviemanager.find_title_text = ConfigSelection(default="begin", choices=[
 config.moviemanager.around = ConfigYesNo(default=False)
 config.moviemanager.bookmarks = ConfigLocations()
 config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
-config.moviemanager.alphabetsort = ConfigSelection(default=None, choices=[(None, _("Standard")), ("czsk", _("Czech/Slovak")), ("latin2", _("Latin2")), ("latin2-ch", _("Latin2 with 'Ch'"))])
+config.moviemanager.alphabetsort = ConfigSelection(default=None, choices=[(None, _("Standard")), ("czsk", _("Cz/Sk")), ("latin2", _("Latin2")), ("latin2-ch", _("Latin2 with 'Ch'"))])
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-20 10:59+0100\n"
+"POT-Creation-Date: 2022-03-20 12:36+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Pike_Bishop <alfredzngr023@gmail.com>\n"
 "Language-Team: \n"
@@ -180,7 +180,7 @@ msgid "Current item info"
 msgstr "Aktuelle Positions Info"
 
 #: ../ui.py:111
-msgid "Czech/Slovak"
+msgid "Cz/Sk"
 msgstr ""
 
 #: ../ui.py:1423
