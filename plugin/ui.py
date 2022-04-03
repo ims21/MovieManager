@@ -1670,13 +1670,19 @@ class MovieManagerFileInfo(Screen):
 		self["service"] = ServiceEvent()
 		self["service"].newService(ITEM(item))
 
-		self["actions"] = ActionMap(["MovieManagerActions", "OkCancelActions"],
+		self["actions"] = ActionMap(["MovieManagerActions", "OkCancelActions", "InfobarChannelSelection"],
 		{
 			"ok": self.exit,
 			"cancel": self.exit,
 			"green": self.exit,
 			"red": self.exit,
 			"info": self.exit,
+			"keyChannelUp": self.exit,
+			"keyChannelDown": self.exit,
+			"keyLeft": self.exit,
+			"keyRight": self.exit,
+			"keyUp": self.exit,
+			"keyDown": self.exit,
 		}, -2)
 		self.onLayoutFinish.append(self.setSize)
 
