@@ -28,7 +28,7 @@ from Components.config import config
 import skin
 import os
 from myselectionlist import MySelectionList
-from ui import PKLFILE, cfg
+from .ui import PKLFILE, cfg
 
 
 class pklMovieManager(Screen):
