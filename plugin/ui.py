@@ -40,7 +40,7 @@ from Components.ServiceEventTracker import ServiceEventTracker
 from Screens.MinuteInput import MinuteInput
 from ServiceReference import ServiceReference
 from time import localtime, strftime, time
-from myselectionlist import MySelectionList, MySelectionEntryComponent
+from .myselectionlist import MySelectionList, MySelectionEntryComponent
 import os
 import skin
 import Tools.Trashcan

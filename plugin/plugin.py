@@ -4,7 +4,7 @@ plugin_path = None
 
 
 def main(session, service, **kwargs):
-	import ui
+	from . import ui
 	session.open(ui.MovieManager, service, session.current_dialog)
 
 
