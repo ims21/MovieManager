@@ -81,7 +81,7 @@ class MySelectionList(MenuList):
 		# sorting by sortType: # 0 - name, 1 - item, 2 - index, 3 - selected
 		if not sortType:
 			if config.moviemanager.alphabetsort.value:
-				from dictsort import diacriticSorting
+				from .dictsort import diacriticSorting
 				self.list.sort(key=lambda x: (diacriticSorting(x[0][0]) and diacriticSorting(x[0][0]).lower()), reverse=flag)
 			else:
 				self.list.sort(key=lambda x: (x[0][0] and x[0][0].lower()), reverse=flag)

@@ -148,7 +148,7 @@ dictSortLatin2 = {
 }
 
 def diacriticSorting(text):
-	for c in unicode(text, "utf-8"):
+	for c in text:
 		if ord(c) >= 0x80:
 			converted = dictSortCZSK.get(c) if config.moviemanager.alphabetsort.value == "czsk" else dictSortLatin2.get(c)
 			if converted:

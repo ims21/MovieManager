@@ -442,18 +442,18 @@ class MovieManager(Screen, HelpableScreen):
 	def findItem(self, item, string, sensitive, searchtype):
 		if sensitive:
 			if searchtype == "begin":
-				return NAME(item).decode('UTF-8', 'replace').startswith(string)
+				return NAME(item).startswith(string)
 			elif searchtype == "end":
-				return NAME(item).decode('UTF-8', 'replace').endswith(string)
+				return NAME(item).endswith(string)
 			else: # find "in"
-				return False if NAME(item).decode('UTF-8', 'replace').find(string) == -1 else True
+				return False if NAME(item).find(string) == -1 else True
 		else:
 			if searchtype == "begin":
-				return NAME(item).decode('UTF-8', 'replace').lower().startswith(string)
+				return NAME(item).lower().startswith(string)
 			elif searchtype == "end":
-				return NAME(item).decode('UTF-8', 'replace').lower().endswith(string)
+				return NAME(item).lower().endswith(string)
 			else: # find "in"
-				return False if NAME(item).decode('UTF-8', 'replace').lower().find(string) == -1 else True
+				return False if NAME(item).lower().find(string) == -1 else True
 		return False
 
 	def selectGroup(self, mark=True):
@@ -478,10 +478,10 @@ class MovieManager(Screen, HelpableScreen):
 		name = ""
 		if item:
 			if cfg.search.value == "begin" and length:
-				name = NAME(item).decode('UTF-8', 'replace')[0:length]
+				name = NAME(item)[0:length]
 				txt += 10 * " " + "%s" % length
 			elif cfg.search.value == "end" and endlength:
-				name = NAME(item).decode('UTF-8', 'replace')[-endlength:]
+				name = NAME(item)[-endlength:]
 				txt += 10 * " " + "%s" % endlength
 		self.session.openWithCallback(boundFunction(self.changeItems, mark), VirtualKeyBoard, title=txt, text=name)
 
