@@ -679,7 +679,7 @@ class MovieManager(Screen, HelpableScreen):
 
 		fo = open("%s" % csvName, "w")
 		# header #
-		fo.write(codecs.BOM_UTF8)
+		fo.write(codecs.BOM_UTF8.decode())
 		# title #
 		units = cfg.units.value
 		if cfg.csv_extended.value:
