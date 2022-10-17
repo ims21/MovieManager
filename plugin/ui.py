@@ -412,7 +412,6 @@ class MovieManager(Screen, HelpableScreen):
 			idx = (self.item_idx - 1 if self.item_idx else len(self.list.list)) if reverse else (self.item_idx + 1 if self.item_idx else 0)
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
-			searchString = searchString.decode('UTF-8', 'replace')
 			if reverse:
 				for item in self.list.list[idx::-1]:
 					if self.findItem(item, searchString, cfg.sensitive.value, cfg.find_title_text.value):
@@ -487,7 +486,6 @@ class MovieManager(Screen, HelpableScreen):
 
 	def changeItems(self, mark, searchString=None):
 		if searchString:
-			searchString = searchString.decode('UTF-8', 'replace')
 			if not cfg.sensitive.value:
 				searchString = searchString.lower()
 			for item in self.list.list:
