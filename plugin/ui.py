@@ -1689,8 +1689,8 @@ class MovieManagerFileInfo(Screen):
 		wsize = (x + 2 * 10, 5 * y)
 		self.instance.resize(eSize(*wsize))
 		w, h = self.getScreenSize()
-		wx = (w - wsize[0]) / 2
-		wy = (h - wsize[1]) / 2
+		wx = (w - wsize[0]) // 2
+		wy = (h - wsize[1]) // 2
 		self.instance.move(ePoint(wx, wy))
 
 	def getLineSize(self):
