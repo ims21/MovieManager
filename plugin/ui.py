@@ -4,8 +4,8 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.21"
-#  by ims (c) 2018-2022 ims@openpli.org
+VERSION = "2.22"
+#  by ims (c) 2018-2023 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -98,6 +98,7 @@ config.moviemanager.refresh_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.csv_extended = ConfigYesNo(default=False)
 config.moviemanager.csv_duration = ConfigSelection(default="hour", choices=[(None, _("No")), (_("min"), _("in minutes")), (_("hour"), _("in hours"))])
 config.moviemanager.csv_date = ConfigSelection(default="date&time", choices=[(None, _("No")), ("date", _("date")), ("date&time", _("date and time"))])
+config.moviemanager.csv_ds = ConfigSelection(default=",", choices=[(',', _("comma")), (".", _("dot"))]) # filesize decimal separator in csv
 config.moviemanager.csv_servicename = ConfigYesNo(default=False)
 config.moviemanager.units = ConfigSelection(default="MB", choices=[(None, _("No")),("B", "B"), ("kB", "kB"), ("MB", "MB"), ("GB", "GB"), ("behind", _("behind the values"))])
 config.moviemanager.csfdtype = ConfigSelection(default="CSFDLite", choices=[("CSFD", "CSFD"), ("CSFDLite", "CSFD Lite")])
@@ -702,7 +703,7 @@ class MovieManager(Screen, HelpableScreen):
 			if cfg.csv_extended.value:
 				info = INFO(item)
 				line = "%s;" % name
-				line += ("%s;" % self.convertSize(SIZE(item)) if units == "behind" else "%s;" % self.convertSizeInUnits(SIZE(item), units)) if units else ""
+				line += ("%s;" % self.convertSize(SIZE(item)).replace('.', cfg.csv_ds.value) if units == "behind" else "%s;" % self.convertSizeInUnits(SIZE(item), units)).replace('.', cfg.csv_ds.value) if units else ""
 				line += ("%s;" % getItemDuration(service, info, True) if cfg.csv_duration.value == _("min") else "%s;" % getItemDuration(service, info)) if cfg.csv_duration.value else ""
 				line += "%s;" % path
 				line += "%s;" % getItemName(service, info) if cfg.csv_servicename.value else ""
@@ -711,7 +712,7 @@ class MovieManager(Screen, HelpableScreen):
 					line += "%s;%s;" % (tmp[0], tmp[1]) if "time" in cfg.csv_date.value else "%s;" % tmp[0]
 				line = "%s\n" % line.rstrip(";")
 			else:
-				size = self.convertSize(SIZE(item))
+				size = self.convertSize(SIZE(item)).replace('.', cfg.csv_ds.value)
 				line = ';'.join((name, size, path)) + "\n"
 			fo.write(line)
 		fo.close()
@@ -1424,6 +1425,7 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Refresh bookmaks"), cfg.refresh_bookmarks, _("Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time.")))
 		self.csv_path = _("Path for 'csv' file")
 		self.list.append(getConfigListEntry(self.csv_path, cfg.csvtarget, _("Select directory to save 'csv' file.")))
+		self.list.append(getConfigListEntry(_("Decimal separator"), cfg.csv_ds, _("Used separator for decimal numbers in 'csv' file for filesizes.")))
 		self.csv_extended = _("Save extended list")
 		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
