@@ -826,14 +826,15 @@ class MovieManager(Screen, HelpableScreen):
 			return paths
 
 		def setCurrentRef(path):
-			self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path.replace(':', '%3a'))
+			currentRef = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + path.replace(':', '%3a'))
 			if cfg.pictures.value:
-				self.current_ref.setName('16384:jpg 16384:png 16384:gif 16384:bmp 16384:jpeg')
+				currentRef.setName('16384:jpg 16384:png 16384:gif 16384:bmp 16384:jpeg')
+			return currentRef
 
 		def readDirectory(path):
-			setCurrentRef(path)
+			currentRef = setCurrentRef(path)
 			mlist = MovieList(None, sort_type=MovieList.SORT_GROUPWISE)
-			mlist.reload(self.current_ref, [])
+			mlist.reload(currentRef, [])
 			return mlist
 
 		def readSubdirs(path):
