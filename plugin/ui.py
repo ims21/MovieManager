@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.22"
+VERSION = "2.23"
 #  by ims (c) 2018-2023 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@ VERSION = "2.22"
 #  GNU General Public License for more details.
 #
 
-from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, getConfigListEntry, ConfigLocations, ConfigDirectory
+from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, ConfigLocations, ConfigDirectory
 from Screens.Screen import Screen
 from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
@@ -39,7 +39,7 @@ from Tools.BoundFunction import boundFunction
 from Components.ServiceEventTracker import ServiceEventTracker
 from Screens.MinuteInput import MinuteInput
 from ServiceReference import ServiceReference
-from time import localtime, strftime, time
+from time import localtime, strftime
 from .myselectionlist import MySelectionList, MySelectionEntryComponent
 import os
 import skin
@@ -110,6 +110,7 @@ config.moviemanager.around = ConfigYesNo(default=False)
 config.moviemanager.bookmarks = ConfigLocations()
 config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
 config.moviemanager.alphabetsort = ConfigSelection(default=None, choices=[(None, _("Standard")), ("czsk", _("Cz/Sk")), ("latin2", _("Latin2")), ("latin2-ch", _("Latin2 with 'Ch'"))])
+config.moviemanager.speed = ConfigYesNo(default=False)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -285,38 +286,84 @@ class MovieManager(Screen, HelpableScreen):
 		self.position = -1
 		index = 0
 		suma = 0
-		for i, record in enumerate(movielist):
-			if record:
-				item = record[0]
-				if not item.flags & eServiceReference.mustDescent:
-					ext = os.path.splitext(item.getPath())[1].lower()
-					if not cfg.recordings.value and ext in MY_RECORDINGS_EXTENSIONS:
-						continue
-					if not cfg.other_movies.value and ext in MY_MOVIE_EXTENSIONS:
-						continue
-					if not cfg.pictures.value and ext in IMAGE_EXTENSIONS:
-						continue
-					if not cfg.audios.value and ext in AUDIO_EXTENSIONS:
-						continue
-					if not cfg.dvds.value and ext in DVD_EXTENSIONS:
-						continue
-					if ext in SKIPPED:
-						continue
-					if self.current.getPath() == item.getPath():
-						self.position = index
-						print("[MovieManager] position found")
-					info = record[1]
-					name = info and info.getName(item)
-					size = 0
-					if info:
-						if isinstance(info, StubInfo): # picture
-							size = info.getInfo(item, iServiceInformation.sFileSize)
-						else:
-							size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
-						time = info.getInfo(item, iServiceInformation.sTimeCreate)
-					mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
-					index += 1
-					suma += size
+		current_path = self.current.getPath()
+		if cfg.speed.value:
+			# create list with valid extensions for compare before loop:
+			valid_extensions = []
+			if cfg.recordings.value:
+				valid_extensions += MY_RECORDINGS_EXTENSIONS
+			if cfg.other_movies.value:
+				valid_extensions += MY_MOVIE_EXTENSIONS
+			if cfg.pictures.value:
+				valid_extensions += IMAGE_EXTENSIONS
+			if cfg.audios.value:
+				valid_extensions += AUDIO_EXTENSIONS
+			if cfg.dvds.value:
+				valid_extensions += DVD_EXTENSIONS
+			valid_extensions = [ext.lower() for ext in valid_extensions]
+
+			for i, record in enumerate(movielist):
+				if record:
+					item = record[0]
+					if not item.flags & eServiceReference.mustDescent:
+						ext = os.path.splitext(item.getPath())[1].lower()
+						if ext not in valid_extensions:
+							continue
+						if ext in SKIPPED:
+							continue
+
+						if current_path == item.getPath():
+							self.position = index
+							print("[MovieManager] position found")
+
+						info = record[1]
+						name = info and info.getName(item)
+						size = 0
+						if info:
+							if isinstance(info, StubInfo): # picture
+								size = info.getInfo(item, iServiceInformation.sFileSize)
+							else:
+								size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
+							time = info.getInfo(item, iServiceInformation.sTimeCreate)
+						mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
+						index += 1
+						suma += size
+		else:
+			for i, record in enumerate(movielist):
+				if record:
+					item = record[0]
+					if not item.flags & eServiceReference.mustDescent:
+						ext = os.path.splitext(item.getPath())[1].lower()
+
+						if not cfg.recordings.value and ext in MY_RECORDINGS_EXTENSIONS:
+							continue
+						if not cfg.other_movies.value and ext in MY_MOVIE_EXTENSIONS:
+							continue
+						if not cfg.pictures.value and ext in IMAGE_EXTENSIONS:
+							continue
+						if not cfg.audios.value and ext in AUDIO_EXTENSIONS:
+							continue
+						if not cfg.dvds.value and ext in DVD_EXTENSIONS:
+							continue
+
+						if ext in SKIPPED:
+							continue
+						if current_path == item.getPath():
+						#if self.current.getPath() == item.getPath():
+							self.position = index
+							print("[MovieManager] position found")
+						info = record[1]
+						name = info and info.getName(item)
+						size = 0
+						if info:
+							if isinstance(info, StubInfo): # picture
+								size = info.getInfo(item, iServiceInformation.sFileSize)
+							else:
+								size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
+							time = info.getInfo(item, iServiceInformation.sTimeCreate)
+						mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
+						index += 1
+						suma += size
 		self.l = MySelectionList(mlist)
 		self.l.setList(mlist)
 		print("[MovieManager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position))
@@ -846,11 +893,11 @@ class MovieManager(Screen, HelpableScreen):
 
 		def readLists(current_dir=None):
 			files = []
-			if config.movielist.videodirs.saved_value and not current_dir:
+			if config.movielist.videodirs.saved_value and not current_dir: 	# dirs in videodirs only
 				for path in eval(config.movielist.videodirs.saved_value):
-					if cfg.subdirs.value:
+					if cfg.subdirs.value:					# include directories
 						files += readSubdirs(path)
-					else:
+					else:							# only current dir
 						files += readDirectory(path)
 					print("[MovieManager] + added files from %s" % path)
 				print("[MovieManager] readed items from directories in bookmarks.")
@@ -858,10 +905,10 @@ class MovieManager(Screen, HelpableScreen):
 					for path in eval(cfg.selected_dirs_list.saved_value):
 						files += readSubdirs(path) if cfg.selected_dirs_subs.value else readDirectory(path)
 						print("[MovieManager] + added files from selected directory %s" % "path")
-			elif current_dir:
-				if cfg.subdirs.value:
+			elif current_dir:						# current dir only
+				if cfg.subdirs.value:						# include subdirectories
 					files = readSubdirs(current_dir)
-				else:
+				else:								# only current dir
 					files += readDirectory(current_dir)
 					if os.path.exists(current_dir + PKLFILE):
 						self.pklPaths.append(current_dir)
@@ -1395,54 +1442,55 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		dx2 = 8 * " "
 		self.search = _("Search in group selection by")
 		note = "\n" + _("(Note: change will cancel all selections.)")
-		self.list.append(getConfigListEntry(self.search, cfg.search, _("You can set what will group selection use - start of title, end of title or contains in title.")))
+		self.list.append((self.search, cfg.search, _("You can set what will group selection use - start of title, end of title or contains in title.")))
 		if cfg.search.value == "begin":
-			self.list.append(getConfigListEntry(_("Pre-fill first 'n' filename chars to virtual keyboard"), cfg.length, _("You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
+			self.list.append((_("Pre-fill first 'n' filename chars to virtual keyboard"), cfg.length, _("You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
 		elif cfg.search.value == "end":
-			self.list.append(getConfigListEntry(_("Pre-fill last 'n' filename chars to virtual keyboard"), cfg.endlength, _("You can set the number of letters from the end of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
-		self.list.append(getConfigListEntry(_("Compare case sensitive"), cfg.sensitive, _("Sets whether to distinguish between uper case and lower case for searching.")))
-		self.list.append(getConfigListEntry(_("Use target directory as bookmark"), cfg.add_bookmark, _("Set 'yes' if You want add target directories into bookmarks.")))
-		self.list.append(getConfigListEntry(_("Enable 'Edit bookmark...'"), cfg.edit_bookmarks, _("Enable in menu utility for edit bookmarks.")))
-		self.list.append(getConfigListEntry(_("Enable 'Remove local directory setting...'"), cfg.removepkl, _("Enable item for delete local directory setting in menu. It depends on displayed directories in movielist.")))
+			self.list.append((_("Pre-fill last 'n' filename chars to virtual keyboard"), cfg.endlength, _("You can set the number of letters from the end of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons.")))
+		self.list.append((_("Compare case sensitive"), cfg.sensitive, _("Sets whether to distinguish between uper case and lower case for searching.")))
+		self.list.append((_("Use target directory as bookmark"), cfg.add_bookmark, _("Set 'yes' if You want add target directories into bookmarks.")))
+		self.list.append((_("Enable 'Edit bookmark...'"), cfg.edit_bookmarks, _("Enable in menu utility for edit bookmarks.")))
+		self.list.append((_("Enable 'Remove local directory setting...'"), cfg.removepkl, _("Enable item for delete local directory setting in menu. It depends on displayed directories in movielist.")))
 		self.manage_all = _("Enable 'Manage files in active bookmarks...'")
-		self.list.append(getConfigListEntry(self.manage_all, cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.") + note))
+		self.list.append((self.manage_all, cfg.manage_all, _("Enable in menu item for manage movies in all active bookmarks as one list.") + note))
 		self.subdirs = _("Including subdirectories")
 		self.selected_dirs = dx + _("Including selected directories")
 		self.selDir = dx2 + _("Directories list")
 		if cfg.manage_all.value and not cfg.subdirs.value:
-				self.list.append(getConfigListEntry(self.selected_dirs, cfg.selected_dirs, _("Items from selected directories will be added into list created with 'Manage files in active bookmarks...' too.") + note))
+				self.list.append((self.selected_dirs, cfg.selected_dirs, _("Items from selected directories will be added into list created with 'Manage files in active bookmarks...' too.") + note))
 				if cfg.selected_dirs.value:
-					self.list.append(getConfigListEntry(self.selDir, cfg.selected_dirs_text, _("Press 'OK' and select directories as bookmarks.")))
-					self.list.append(getConfigListEntry(dx2 + _("Including subdirectories"), cfg.selected_dirs_subs, _("Items from subdirectories selected directories will be added into list too.") + note))
-		self.list.append(getConfigListEntry(self.subdirs, cfg.subdirs, _("If enabled, then will be used subdirectories too (it will take longer).") + note))
+					self.list.append((self.selDir, cfg.selected_dirs_text, _("Press 'OK' and select directories as bookmarks.")))
+					self.list.append((dx2 + _("Including subdirectories"), cfg.selected_dirs_subs, _("Items from subdirectories selected directories will be added into list too.") + note))
+		self.list.append((self.subdirs, cfg.subdirs, _("If enabled, then will be used subdirectories too (it will take longer).") + note))
 		if cfg.subdirs.value:
-			self.list.append(getConfigListEntry(dx + _("Include trashcans"), cfg.trashcans, _("Items from trashcans will be added into list too.") + note))
-		self.list.append(getConfigListEntry(_("Recordings"), cfg.recordings, _("If enabled, then will be added recordings into list.") + note))
-		self.list.append(getConfigListEntry(_("Other movie files"), cfg.other_movies, _("If enabled, then will be added other movie files into list.") + note))
-		self.list.append(getConfigListEntry(_("Audio files"), cfg.audios, _("If enabled, then will be added audio files into list.") + note))
-		self.list.append(getConfigListEntry(_("DVD images"), cfg.dvds, _("If enabled, then will be added dvd image files into list.") + note))
-		self.list.append(getConfigListEntry(_("Pictures"), cfg.pictures, _("If enabled, then will be added pictures into list.") + note))
-		self.list.append(getConfigListEntry(_("To maintain selector position"), cfg.position, _("If enabled, then will be on start maintained selector position in items list.")))
-		self.list.append(getConfigListEntry(_("Refresh bookmaks"), cfg.refresh_bookmarks, _("Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time.")))
+			self.list.append((dx + _("Include trashcans"), cfg.trashcans, _("Items from trashcans will be added into list too.") + note))
+		self.list.append((_("Recordings"), cfg.recordings, _("If enabled, then will be added recordings into list.") + note))
+		self.list.append((_("Other movie files"), cfg.other_movies, _("If enabled, then will be added other movie files into list.") + note))
+		self.list.append((_("Audio files"), cfg.audios, _("If enabled, then will be added audio files into list.") + note))
+		self.list.append((_("DVD images"), cfg.dvds, _("If enabled, then will be added dvd image files into list.") + note))
+		self.list.append((_("Pictures"), cfg.pictures, _("If enabled, then will be added pictures into list.") + note))
+		self.list.append((_("To maintain selector position"), cfg.position, _("If enabled, then will be on start maintained selector position in items list.")))
+		self.list.append((_("Refresh bookmaks"), cfg.refresh_bookmarks, _("Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time.")))
 		self.csv_path = _("Path for 'csv' file")
-		self.list.append(getConfigListEntry(self.csv_path, cfg.csvtarget, _("Select directory to save 'csv' file.")))
-		self.list.append(getConfigListEntry(_("Decimal separator"), cfg.csv_ds, _("Used separator for decimal numbers in 'csv' file for filesizes.")))
+		self.list.append((self.csv_path, cfg.csvtarget, _("Select directory to save 'csv' file.")))
+		self.list.append((_("Decimal separator"), cfg.csv_ds, _("Used separator for decimal numbers in 'csv' file for filesizes.")))
 		self.csv_extended = _("Save extended list")
-		self.list.append(getConfigListEntry(self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
+		self.list.append((self.csv_extended, cfg.csv_extended, _("Save extended '.csv' filelist with more data. It spend more time.")))
 		if cfg.csv_extended.value:
-			self.list.append(getConfigListEntry(dx + _("Duration"), cfg.csv_duration, _("Add duration in hours or minuts into extended list. It extends list creation.")))
-			self.list.append(getConfigListEntry(dx + _("Size and units"), cfg.units, _("Add filesize in used units to extended list.")))
-			self.list.append(getConfigListEntry(dx + _("Date"), cfg.csv_date, _("Add date or time into extended list.")))
-			self.list.append(getConfigListEntry(dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
+			self.list.append((dx + _("Duration"), cfg.csv_duration, _("Add duration in hours or minuts into extended list. It extends list creation.")))
+			self.list.append((dx + _("Size and units"), cfg.units, _("Add filesize in used units to extended list.")))
+			self.list.append((dx + _("Date"), cfg.csv_date, _("Add date or time into extended list.")))
+			self.list.append((dx + _("Service name"), cfg.csv_servicename, _("Add service name into extended list.")))
 		if config.usage.movielist_trashcan.value:
-			self.list.append(getConfigListEntry(_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
-		self.list.append(getConfigListEntry(_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
-		self.list.append(getConfigListEntry(_("Search file by"), cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
-		self.list.append(getConfigListEntry(_("Search around"), cfg.around, _("Searching file in list still around.")))
+			self.list.append((_("Use trash can"), cfg.move_to_trash, _("Deleted files will be moved to trash can.")))
+		self.list.append((_("Move selector to next item"), cfg.move_selector, _("Press 'OK' button moves the selector to next item in the list.")))
+		self.list.append((_("Search file by"), cfg.find_title_text, _("Search file by text at beginning of the title or by contain text in the title.")))
+		self.list.append((_("Search around"), cfg.around, _("Searching file in list still around.")))
 		self.bookmarks = _("Target directories")
-		self.list.append(getConfigListEntry(self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
-		self.list.append(getConfigListEntry(_("Sorting type"), cfg.alphabetsort, _("Use sorting characters type for alphabetical list sorting.") + note))
-		self.list.append(getConfigListEntry(_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
+		self.list.append((self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
+		self.list.append((_("Sorting type"), cfg.alphabetsort, _("Use sorting characters type for alphabetical list sorting.") + note))
+		self.list.append((_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
+		self.list.append((_("Optimization"), cfg.speed, _("Try code speed optimization.")))
 
 		self["config"].list = self.list
 
