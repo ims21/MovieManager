@@ -381,13 +381,13 @@ class MovieManager(Screen, HelpableScreen):
 		self.setService()
 
 	def seekFwdManual(self):
-		self.session.openWithCallback(self.fwSeekTo, MinuteInput)
+		self.session.openWithCallback(self.fwSeekTo, MinuteInput, maxValue=1440)
 
 	def fwSeekTo(self, minutes):
 		self.seekRelative(1, minutes * 60 * 90000)
 
 	def seekBackManual(self):
-		self.session.openWithCallback(self.rwSeekTo, MinuteInput)
+		self.session.openWithCallback(self.rwSeekTo, MinuteInput, maxValue=1440)
 
 	def rwSeekTo(self, minutes):
 		self.seekRelative(-1, minutes * 60 * 90000)
