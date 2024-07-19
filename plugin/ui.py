@@ -4,8 +4,8 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.24"
-#  by ims (c) 2018-2023 ims@openpli.org
+VERSION = "2.25"
+#  by ims (c) 2018-2024 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -556,6 +556,9 @@ class MovieManager(Screen, HelpableScreen):
 		keys = ["5", "6"]
 		menu.append((_("Rename"), 2, _("Rename current file.")))
 		keys += ["2"]
+		if len(self.list.getSelectionsList()):
+			menu.append((_("Rename with string replacement"), 3, _("Replace string in selected files. Useful e.g. for changing the numbering format of episodes.")))
+			keys += [""]
 		menu.append((_("Create directory"), 7, _("Create new directory in current directory.")))
 		keys += ["7"]
 		if config.usage.setup_level.index == 2:
@@ -605,6 +608,8 @@ class MovieManager(Screen, HelpableScreen):
 			return
 		if choice[1] == 2:
 			self.renameItem()
+		elif choice[1] == 3:
+			self.replaceStringInFilenames()
 		if choice[1] == 5:
 			self.copySelected()
 		elif choice[1] == 6:
@@ -854,6 +859,88 @@ class MovieManager(Screen, HelpableScreen):
 				msg = _("Error") + '\n' + str(e)
 			if msg:
 				self.session.open(MessageBox, msg, type=MessageBox.TYPE_ERROR, timeout=5)
+
+
+	def replaceStringInFilenames(self):
+		def inputStringCallback(inputString):
+			if inputString:
+				def outputStringCallback(outputString):
+					if outputString:
+						self.replaceStringInSeelectedItems(inputString, outputString)
+				self.session.openWithCallback(outputStringCallback, VirtualKeyBoard, title=_("Enter string for replacement '%s' in selected filenames:") % inputString, text="(0")
+		self.session.openWithCallback(inputStringCallback, VirtualKeyBoard, title=_("Enter string for replacement in selected filenames:"), text="(")
+
+	def replaceStringInSeelectedItems(self, inputString, outputString):
+		def renameItemInList(mlist, item, newname):
+			a = []
+			for list_item in mlist.list:
+				if list_item[0][0] == item[0]:
+					list_item[0] = (newname,) + list_item[0][1:]
+					self.position = list_item[0][2]
+				a.append(list_item)
+			return a
+
+		def reloadNewList(newlist, mlist):
+			index = 0
+			for n in newlist:
+				item = n[0]
+				mlist.list.append(MySelectionEntryComponent(item[0], item[1], index, item[3]))
+				index += 1
+			self.l = MySelectionList(mlist)
+			self.l.setList(mlist)
+			return mlist
+
+		def rename_item(item, newname, mlist):
+			new = renameItemInList(mlist, item, newname)
+			self.clearList()
+			return reloadNewList(new, self.list)
+
+		data = self.list.getSelectionsList()
+		if len(data):
+			idx = self.getItemIndex(self["config"].getCurrent())
+			for item in data:
+				if item:
+					msg = None
+					extension = ""
+					name = item[0]
+					full_name = os.path.split(item[1][0].getPath())
+					if full_name == item[0]: # split extensions for files without metafile
+						name, extension = os.path.splitext(item[0])
+					newname = item[0].replace(inputString, outputString)
+					name = "".join((newname.strip(), extension))
+					if item and item[1][0]:
+						try:
+							path = item[1][0].getPath().rstrip('/')
+							meta = path + '.meta'
+							if os.path.isfile(meta):
+								metafile = open(meta, "r+")
+								sid = metafile.readline()
+								oldtitle = metafile.readline()
+								rest = metafile.read()
+								metafile.seek(0)
+								metafile.write("%s%s\n%s" % (sid, name, rest))
+								metafile.truncate()
+								metafile.close()
+							else:
+								pathname, filename = os.path.split(path)
+								newpath = os.path.join(pathname, name)
+								print("[MovieManager] rename", path, "to", newpath)
+								os.rename(path, newpath)
+							self.list = rename_item(item, name, self.list)
+						except OSError as e:
+							print("Error %s:" % e.errno, e)
+							if e.errno == 17:
+								msg = _("The path %s already exists.") % name
+							else:
+								msg = _("0Error") + '\n' + str(e)
+						except Exception as e:
+							import traceback
+							print("[MovieManager] Unexpected error:", e)
+							traceback.print_exc()
+							msg = _("1Error") + '\n' + str(e)
+						if msg:
+							self.session.open(MessageBox, msg, type=MessageBox.TYPE_ERROR, timeout=5)
+			self["config"].moveToIndex(idx)
 
 	def getData(self, current_dir=None):
 		def lookDirs(path):
