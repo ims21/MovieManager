@@ -932,12 +932,12 @@ class MovieManager(Screen, HelpableScreen):
 							if e.errno == 17:
 								msg = _("The path %s already exists.") % name
 							else:
-								msg = _("0Error") + '\n' + str(e)
+								msg = _("Error") + '\n' + str(e)
 						except Exception as e:
 							import traceback
 							print("[MovieManager] Unexpected error:", e)
 							traceback.print_exc()
-							msg = _("1Error") + '\n' + str(e)
+							msg = _("Error") + '\n' + str(e)
 						if msg:
 							self.session.open(MessageBox, msg, type=MessageBox.TYPE_ERROR, timeout=5)
 			self["config"].moveToIndex(idx)
