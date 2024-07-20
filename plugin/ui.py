@@ -555,9 +555,10 @@ class MovieManager(Screen, HelpableScreen):
 		menu.append((_("Move to..."), 6, _("Move current file or selected file(s) to directory.")))
 		keys = ["5", "6"]
 		if not self.accross:
-			menu.append((_("Rename"), 2, _("Rename current file.")))
+			note = _("\n\nNote: it is not available with use '%s'") % _("Manage files in active bookmarks...")
+			menu.append((_("Rename"), 2, _("Rename current file.") + note))
 			keys += ["2"]
-			menu.append((_("Rename with string replacement"), 3, _("Replace string in selected files. Useful e.g. for changing numbering format of episodes.")))
+			menu.append((_("Rename with string replacement"), 3, _("Replace string in selected files. Useful e.g. for changing numbering format of episodes.") + note))
 			keys += [""]
 		menu.append((_("Create directory"), 7, _("Create new directory in current directory.")))
 		keys += ["7"]
