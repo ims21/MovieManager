@@ -554,10 +554,10 @@ class MovieManager(Screen, HelpableScreen):
 		menu.append((_("Copy to..."), 5, _("Copy current file or selected file(s) to directory.")))
 		menu.append((_("Move to..."), 6, _("Move current file or selected file(s) to directory.")))
 		keys = ["5", "6"]
-		menu.append((_("Rename"), 2, _("Rename current file.")))
-		keys += ["2"]
-		if len(self.list.getSelectionsList()):
-			menu.append((_("Rename with string replacement"), 3, _("Replace string in selected files. Useful e.g. for changing the numbering format of episodes.")))
+		if not self.accross:
+			menu.append((_("Rename"), 2, _("Rename current file.")))
+			keys += ["2"]
+			menu.append((_("Rename with string replacement"), 3, _("Replace string in selected files. Useful e.g. for changing numbering format of episodes.")))
 			keys += [""]
 		menu.append((_("Create directory"), 7, _("Create new directory in current directory.")))
 		keys += ["7"]
@@ -827,6 +827,7 @@ class MovieManager(Screen, HelpableScreen):
 		item = self["config"].getCurrent()
 		if item and ITEM(item):
 			try:
+				idx = self.getItemIndex(item)
 				path = ITEM(item).getPath().rstrip('/')
 				meta = path + '.meta'
 				if os.path.isfile(meta):
@@ -843,9 +844,10 @@ class MovieManager(Screen, HelpableScreen):
 					newpath = os.path.join(pathname, name)
 					print("[MovieManager] rename", path, "to", newpath)
 					os.rename(path, newpath)
-				idx = self.getItemIndex(item)
+					self.getData(config.movielist.last_videodir.value)
 				self.list = rename_item(item, name, self.list)
 				self["config"].moveToIndex(idx)
+
 			except OSError as e:
 				print("Error %s:" % e.errno, e)
 				if e.errno == 17:
@@ -895,6 +897,7 @@ class MovieManager(Screen, HelpableScreen):
 			self.clearList()
 			return reloadNewList(new, self.list)
 
+		reload = False
 		data = self.list.getSelectionsList()
 		if len(data):
 			idx = self.getItemIndex(self["config"].getCurrent())
@@ -926,6 +929,7 @@ class MovieManager(Screen, HelpableScreen):
 								newpath = os.path.join(pathname, name)
 								print("[MovieManager] rename", path, "to", newpath)
 								os.rename(path, newpath)
+								reload = True
 							self.list = rename_item(item, name, self.list)
 						except OSError as e:
 							print("Error %s:" % e.errno, e)
@@ -940,7 +944,21 @@ class MovieManager(Screen, HelpableScreen):
 							msg = _("Error") + '\n' + str(e)
 						if msg:
 							self.session.open(MessageBox, msg, type=MessageBox.TYPE_ERROR, timeout=5)
+			if reload:
+				self.getData(config.movielist.last_videodir.value)
 			self["config"].moveToIndex(idx)
+		else:
+			if len(self["config"].list):
+				item = self["config"].getCurrent()
+				if item:
+					self.extension = ""
+					name = NAME(item)
+					full_name = os.path.split(ITEM(item).getPath())
+					if full_name == name: # split extensions for files without metafile
+						name, self.extension = os.path.splitext(name)
+					newname = name.replace(inputString, outputString)
+					name = newname.strip()
+					self.renameCallback(name)
 
 	def getData(self, current_dir=None):
 		def lookDirs(path):
