@@ -874,7 +874,7 @@ class MovieManager(Screen, HelpableScreen):
 		def renameItemInList(mlist, item, newname):
 			a = []
 			for list_item in mlist.list:
-				if list_item[0][0] == item[0]:
+				if list_item[0] == item + (True,):
 					list_item[0] = (newname,) + list_item[0][1:]
 					self.position = list_item[0][2]
 				a.append(list_item)
