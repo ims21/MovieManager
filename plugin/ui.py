@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.25"
+VERSION = "2.26"
 #  by ims (c) 2018-2024 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ from .myselectionlist import MySelectionList, MySelectionEntryComponent
 import os
 import skin
 import Tools.Trashcan
-from Screens.InfoBarGenerics import delResumePoint
+from Screens.InfoBarGenerics import resumePointsInstance
 
 MY_RECORDINGS_EXTENSIONS = frozenset((".ts",))
 MY_MOVIE_EXTENSIONS = MOVIE_EXTENSIONS.symmetric_difference(MY_RECORDINGS_EXTENSIONS)
@@ -1231,7 +1231,7 @@ class MovieManager(Screen, HelpableScreen):
 			else:
 				moveServiceFiles(current, trash, name, allowCopy=False)
 				self.list.removeSelection(item)
-				delResumePoint(current)
+				resumePointsInstance.delResumePoint(current)
 				return True, False
 		except OSError as e:
 			print("[MovieManager] cannot move to trash", e)
@@ -1306,7 +1306,7 @@ class MovieManager(Screen, HelpableScreen):
 				if offline.deleteFromDisk(0):
 					raise Exception("Offline delete failed")
 			self.list.removeSelection(item)
-			delResumePoint(item[1][0])
+			resumePointsInstance.delResumePoint(item[1][0])
 			return True
 		except Exception as ex:
 			self.session.open(MessageBox, _("Delete failed!") + "\n" + name + "\n" + str(ex), MessageBox.TYPE_ERROR, timeout=3)
