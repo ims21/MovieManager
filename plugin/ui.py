@@ -276,7 +276,6 @@ class MovieManager(Screen, HelpableScreen):
 
 		self.item_idx = None  # used for looking item in list. None (if not found) or item index number
 		self.searchString = None
-		self.msgNM = None
 
 		self["config"].onSelectionChanged.append(self.setService)
 		self.onShown.append(self.setService)
@@ -477,7 +476,6 @@ class MovieManager(Screen, HelpableScreen):
 				else:
 					text = _("No next file was found...")
 					self.MessageBoxNM(text, 1)
-					#self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
 			else:
 				text = _("File was not found...")
 				self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=3)
@@ -1506,9 +1504,10 @@ class MovieManager(Screen, HelpableScreen):
 					self.session.open(CSFDLite, event[0][0])
 
 	def MessageBoxNM(self, text="", delay=1):
-		if self.msgNM:
-			self.session.deleteDialog(self.msgNM)
-			self.msgNM = None
+		msgNM = getattr(self.session, 'msgNM', None)
+		if msgNM:
+			self.session.deleteDialog(msgNM)
+			del self.session.msgNM
 		else:
 			if self.session is not None:
 				self.msgNM = self.session.instantiateDialog(MovieManagerNonModalMessageBoxDialog, text=text, delay=delay)
