@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-29 19:12+0200\n"
-"PO-Revision-Date: 2025-06-29 19:16+0200\n"
+"POT-Creation-Date: 2025-06-29 21:31+0200\n"
+"PO-Revision-Date: 2025-06-29 21:35+0200\n"
 "Last-Translator: ims <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -24,7 +24,7 @@ msgstr ""
 "\n"
 "Pozn.: není k dispozici při použití '%s'"
 
-#: ../duplicates.py:78
+#: ../duplicates.py:80
 #, python-format
 msgid ""
 "\n"
@@ -266,8 +266,8 @@ msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks 
 msgstr "Zobrazí všechny existující záložky v přijímači. Nechtěné nebo nepotřebné záložky mohou být odstraněny nebo upraveny."
 
 #: ../duplicates.py:47
-msgid "Duplicates are detected based on the part of the title up to selected comma ',' because some programs are re-broadcast with an additional phrase in the title. Therefore, some duplicates may not be actual duplicates."
-msgstr "Duplicity se vyhledávají v názvu do výskytu zvolené čárky ',', protože některé pořady jsou znovu vysílané s dodatkem v názvu za čárkou. Proto některé duplicity nemusí být skutečnými duplicitami."
+msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
+msgstr "Duplicitní záznamy jsou detekovány na základě části názvu až po zvolenou čárku ',' (protože některé pořady jsou znovu vysílány s doplňujícím výrazem v názvu), nebo podle celého názvu. Proto některé duplicity nemusí být skutečnými duplicitami."
 
 #: ../ui.py:1595
 msgid "Duration"
@@ -446,6 +446,10 @@ msgstr "Latin2"
 msgid "Latin2 with 'Ch'"
 msgstr "Latin2 s 'Ch'"
 
+#: ../duplicates.py:53
+msgid "Less of title"
+msgstr "Méně z názvu"
+
 #: ../ui.py:1684
 msgid "List of bookmarks"
 msgstr "Seznam záložek"
@@ -475,6 +479,10 @@ msgstr "Hledá soubor v seznamu. Jestliže je soubor nalezen, kurzor se přesune
 msgid "Manage files in active bookmarks..."
 msgstr "Správa souborů v aktivních záložkách..."
 
+#: ../duplicates.py:54
+msgid "More of title"
+msgstr "Více z názvu"
+
 #: ../ui.py:554
 msgid "Move current file or selected file(s) to directory."
 msgstr "Přemístit aktuální soubor nebo označené soubory do adresáře."
@@ -495,19 +503,15 @@ msgstr "Správce souborů"
 msgid "MovieManager"
 msgstr "Správce souborů"
 
-#: ../duplicates.py:76
+#: ../duplicates.py:78
 #, python-format
-msgid "MovieManager - Duplicates (title compared up to %s)"
-msgstr "MovieManager - duplicity (názvy porovnávány až po %s)"
+msgid "MovieManager - Duplicates (titles compared %s)"
+msgstr "MovieManager - duplicity (názvy porovnávány %s)"
 
 #: ../ui.py:681
 #, python-format
 msgid "New directory name in '%s'"
 msgstr "Název nového adresáře v '%s'"
-
-#: ../duplicates.py:54
-msgid "Next comma"
-msgstr "Další čárka"
 
 #: ../ui.py:67 ../ui.py:68 ../ui.py:100 ../ui.py:101 ../ui.py:104
 msgid "No"
@@ -615,10 +619,6 @@ msgstr "Stisknutí tlačítka 'OK' přesune kurzor na další položku v seznamu
 #: ../ui.py:242
 msgid "Preview"
 msgstr "Náhled"
-
-#: ../duplicates.py:53
-msgid "Previous comma"
-msgstr "Předchozí čárka"
 
 #: ../ui.py:1582
 msgid "Recordings"
@@ -956,6 +956,10 @@ msgstr "Můžete zvolit, podle čeho bude skupinový výběr vybírat - podle za
 msgid "Z-a sort"
 msgstr "Z-a"
 
+#: ../duplicates.py:71
+msgid "as whole titles"
+msgstr "jako celé názvy"
+
 #: ../ui.py:104
 msgid "behind the values"
 msgstr "za hodnotami"
@@ -1053,6 +1057,11 @@ msgstr "začíná na..."
 #: ../ui.py:753
 msgid "time"
 msgstr "čas"
+
+#: ../duplicates.py:72
+#, python-format
+msgid "up to %s"
+msgstr "až po %s"
 
 #: ../ui.py:1534
 #, python-format

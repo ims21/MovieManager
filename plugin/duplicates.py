@@ -44,14 +44,14 @@ class duplicatesList(Screen):
 		self.skinName = ["duplicatesList", "Setup"]
 
 		self.text = _(
-			"Duplicates are detected based on the part of the title up to selected comma ',' "
-			"because some programs are re-broadcast with an additional phrase in the title. "
-			"Therefore, some duplicates may not be actual duplicates."
+				"Duplicates are detected based on the part of the title up to the selected comma ',' "
+				"(because some programs are re-broadcast with an additional phrase in the title), "
+				"or on the whole title. Therefore, some duplicates may not be actual duplicates."
 		)
 		self.comma = 1
 		self["key_red"] = Button(_("Cancel"))
-		self["key_yellow"] = Button(_("Previous comma"))
-		self["key_blue"] = Button(_("Next comma"))
+		self["key_yellow"] = Button(_("Less of title"))
+		self["key_blue"] = Button(_("More of title"))
 		self["description"] = Label()
 
 		self.list = []
@@ -67,13 +67,15 @@ class duplicatesList(Screen):
 			})
 
 	def commaTxt(self, comma_index=0):
-		s = "...,...,...,"
+		if comma_index == 3:
+			return _("as whole titles")
+		s = _("up to %s") % "...,...,...,"
 		return s.replace(',', '[,]', 1 + comma_index).replace('[,]', ',', comma_index)
 
 	def reloadList(self):
 		self.list =  self.checkDuplicates(self.comma) or []
 		self["config"].setList(self.list)
-		self.setTitle(_("MovieManager - Duplicates (title compared up to %s)") % self.commaTxt(self.comma))
+		self.setTitle(_("MovieManager - Duplicates (titles compared %s)") % self.commaTxt(self.comma))
 		count = len(self.list)
 		self["description"].setText(self.text + ngettext("\nFound %d possible duplicate.", "\nFound %d possible duplicates.", count) % count)
 
@@ -82,7 +84,7 @@ class duplicatesList(Screen):
 		self.reloadList()
 
 	def nextCommaPosition(self):
-		self.comma = min(self.comma + 1, 2)
+		self.comma = min(self.comma + 1, 3)
 		self.reloadList()
 
 	def find_latest_csv(self, directory):
@@ -118,10 +120,10 @@ class duplicatesList(Screen):
 				full_name = line.split(';', 1)[0].strip()
 
 				parts = full_name.split(',')
-				if comma_index < len(parts):
+				if comma_index != 3 and comma_index < len(parts):
 					key = ','.join(parts[:comma_index + 1]).strip().lower()
 				else:
-					key = full_name
+					key = full_name.strip().lower()
 
 				if key != prev_key:
 					if len(group) > 1:

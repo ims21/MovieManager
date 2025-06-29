@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-29 19:12+0200\n"
+"POT-Creation-Date: 2025-06-29 21:31+0200\n"
 "PO-Revision-Date: 2020-10-10 17:54+0200\n"
 "Last-Translator: Rob van der Does <RobvanderDoes@Gmail.com>\n"
 "Language-Team: \n"
@@ -26,7 +26,7 @@ msgid ""
 "Note: it is not available with use '%s'"
 msgstr ""
 
-#: ../duplicates.py:78
+#: ../duplicates.py:80
 #, python-format
 msgid ""
 "\n"
@@ -269,7 +269,7 @@ msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks 
 msgstr "Toon alle bestaande bladwijzers. Ongewenste en onnodige bladwijzers kunnen worden verwijderd."
 
 #: ../duplicates.py:47
-msgid "Duplicates are detected based on the part of the title up to selected comma ',' because some programs are re-broadcast with an additional phrase in the title. Therefore, some duplicates may not be actual duplicates."
+msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
 msgstr ""
 
 #: ../ui.py:1595
@@ -459,6 +459,11 @@ msgstr ""
 msgid "Latin2 with 'Ch'"
 msgstr ""
 
+#: ../duplicates.py:53
+#, fuzzy
+msgid "Less of title"
+msgstr "Lijst met bestanden"
+
 #: ../ui.py:1684
 msgid "List of bookmarks"
 msgstr "Lijst met bladwijzers"
@@ -488,6 +493,11 @@ msgstr ""
 msgid "Manage files in active bookmarks..."
 msgstr "Beheer de bestanden in actieve bladwijzers..."
 
+#: ../duplicates.py:54
+#, fuzzy
+msgid "More of title"
+msgstr "eindtitel"
+
 #: ../ui.py:554
 msgid "Move current file or selected file(s) to directory."
 msgstr "Verplaats huidige of geselecteerde bestand(en) naar map."
@@ -509,19 +519,15 @@ msgstr "Moviemanager"
 msgid "MovieManager"
 msgstr "Moviemanager"
 
-#: ../duplicates.py:76
+#: ../duplicates.py:78
 #, python-format
-msgid "MovieManager - Duplicates (title compared up to %s)"
+msgid "MovieManager - Duplicates (titles compared %s)"
 msgstr ""
 
 #: ../ui.py:681
 #, python-format
 msgid "New directory name in '%s'"
 msgstr "Nieuwe mapnaam in '%s'"
-
-#: ../duplicates.py:54
-msgid "Next comma"
-msgstr ""
 
 #: ../ui.py:67 ../ui.py:68 ../ui.py:100 ../ui.py:101 ../ui.py:104
 msgid "No"
@@ -629,10 +635,6 @@ msgstr ""
 #: ../ui.py:242
 msgid "Preview"
 msgstr "Preview"
-
-#: ../duplicates.py:53
-msgid "Previous comma"
-msgstr ""
 
 #: ../ui.py:1582
 msgid "Recordings"
@@ -978,6 +980,10 @@ msgstr "Hier stelt u in wat de groepsselectie gebruikt - begin van de titel, ein
 msgid "Z-a sort"
 msgstr "Z-A sorteren"
 
+#: ../duplicates.py:71
+msgid "as whole titles"
+msgstr ""
+
 #: ../ui.py:104
 msgid "behind the values"
 msgstr ""
@@ -1077,6 +1083,11 @@ msgstr "begint met..."
 #: ../ui.py:753
 msgid "time"
 msgstr "tijd"
+
+#: ../duplicates.py:72
+#, python-format
+msgid "up to %s"
+msgstr ""
 
 #: ../ui.py:1534
 #, python-format
