@@ -4,8 +4,8 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.26"
-#  by ims (c) 2018-2024 ims@openpli.org
+VERSION = "2.27"
+#  by ims (c) 2018-2025 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -586,6 +586,8 @@ class MovieManager(Screen, HelpableScreen):
 		keys += [""]
 		menu.append((_("Save list"), 50, _("Save current movielist to '%s' directory as '.csv' file.") % cfg.csvtarget.value))
 		keys += ["blue"]
+		menu.append((_("Show duplicates"), 51, _("Checking existing csv file and looking for duplicates in movie names.")))
+		keys += [""]
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
 			keys += [""]
@@ -655,6 +657,12 @@ class MovieManager(Screen, HelpableScreen):
 				print("[MovieManager] failed to execute sync")
 		elif choice[1] == 50:
 			self.saveList()
+		elif choice[1] == 51:
+			def cfgCallBack(choice=False):
+				return
+			duplicateEntries  = self.checkDuplicates()
+			from .duplicates import duplicatesList
+			self.session.openWithCallback(cfgCallBack, duplicatesList, duplicateEntries)
 		elif choice[1] == 55:
 			self.findFirstFile()
 		elif choice[1] == 56:
@@ -664,7 +672,7 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 60:
 			def cfgCallBack(choice=False):
 				return
-			from pklmanager import pklMovieManager
+			from .pklmanager import pklMovieManager
 			self.session.openWithCallback(cfgCallBack, pklMovieManager, self.pklPaths)
 
 	def createDir(self):
@@ -684,6 +692,53 @@ class MovieManager(Screen, HelpableScreen):
 		s += 0x200 if cfg.selected_dirs_subs.value else 0
 		s += 0x400 if cfg.alphabetsort.value and cfg.sort.value in ("1", "2") else 0
 		return s
+
+	def find_latest_csv(self, directory):
+		try:
+			files = [f for f in os.listdir(directory) if f.startswith("movies-") and f.endswith(".csv") and os.path.isfile(os.path.join(directory, f))]
+			if files:
+				latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(directory, f)))
+				latest_file_name = latest_file
+			else:
+				latest_file_name = None
+			return latest_file_name
+		except Exception as e:
+			print("ERROR while searching for the file:", e)
+			return None
+
+	def checkDuplicates(self):
+		filename = self.find_latest_csv(cfg.csvtarget.value)
+		if filename is None:
+			self.MessageBoxNM("The CSV file does not exist or the path is not set correctly!", 5)
+			return
+		filename = os.path.join(cfg.csvtarget.value, filename)
+
+		duplicates = []
+		prev_key = None
+		group = []
+
+		with open(filename, encoding='utf-8') as f:
+			for i, line in enumerate(f):
+				if i == 0:
+					continue  # skip header
+
+				line = line.strip()
+				full_name = line.split(';', 1)[0].strip()
+				key = full_name.split(',', 1)[0].strip()
+
+				if key != prev_key:
+					if len(group) > 1:
+						duplicates.extend(group)
+					group = [line]
+					prev_key = key
+				else:
+					group.append(line)
+
+			# last group
+			if len(group) > 1:
+				duplicates.extend(group)
+
+		return duplicates
 
 	def saveList(self):
 		import codecs

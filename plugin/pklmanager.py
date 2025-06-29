@@ -2,7 +2,7 @@
 #  MovieManager
 #
 #
-#  Coded by ims (c) 2018-2022
+#  Coded by ims (c) 2018-2025
 #  Support: openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ from Screens.MessageBox import MessageBox
 from Components.config import config
 import skin
 import os
-from myselectionlist import MySelectionList
+from .myselectionlist import MySelectionList
 from .ui import PKLFILE, cfg
 
 
