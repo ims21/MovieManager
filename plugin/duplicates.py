@@ -16,7 +16,7 @@
 #  GNU General Public License for more details.
 #
 # for localized messages
-from . import _
+from . import _, ngettext
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Components.Button import Button
@@ -24,8 +24,9 @@ from Components.Label import Label
 from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.MenuList import MenuList
+from .ui import cfg
+import os
 import skin
-
 
 
 class duplicatesList(Screen):
@@ -38,33 +39,103 @@ class duplicatesList(Screen):
 		<widget name="description" position="5,325" zPosition="2" size="550,92" valign="center" halign="left" font="Regular;20" foregroundColor="white"/>
 	</screen>"""
 
-	def __init__(self, session, duplicates):
+	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.setTitle(_("MovieManager - List of possible duplicates"))
-
 		self.skinName = ["duplicatesList", "Setup"]
 
-		self.duplicates = duplicates
+		self.text = _(
+			"Duplicates are detected based on the part of the title up to selected comma ',' "
+			"because some programs are re-broadcast with an additional phrase in the title. "
+			"Therefore, some duplicates may not be actual duplicates."
+		)
+		self.comma = 1
 		self["key_red"] = Button(_("Cancel"))
+		self["key_yellow"] = Button(_("Previous comma"))
+		self["key_blue"] = Button(_("Next comma"))
+		self["description"] = Label()
 
 		self.list = []
+		self["config"] =  MenuList(self.list)
 		self.reloadList()
-		self["description"] = Label()
 
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 			{
 				"cancel": self.exit,
 				"red": self.exit,
+				"yellow": self.prevCommaPosition,
+				"blue": self.nextCommaPosition,
 			})
 
-		text = _("Duplicates are detected based on the part of the title before the first comma ',' because some programs are re-broadcast with an additional phrase in the title. Therefore, some duplicates may not be actual duplicates.")
-		self["description"].setText(text)
+	def commaTxt(self, comma_index=0):
+		s = "...,...,...,"
+		return s.replace(',', '[,]', 1 + comma_index).replace('[,]', ',', comma_index)
 
 	def reloadList(self):
-		for x in self.duplicates:
-			self.list.append(x)
+		self.list =  self.checkDuplicates(self.comma) or []
+		self["config"].setList(self.list)
+		self.setTitle(_("MovieManager - Duplicates (title compared up to %s)") % self.commaTxt(self.comma))
+		count = len(self.list)
+		self["description"].setText(self.text + ngettext("\nFound %d possible duplicate.", "\nFound %d possible duplicates.", count) % count)
 
-		self["config"] =  MenuList(self.list)
+	def prevCommaPosition(self):
+		self.comma = max(self.comma - 1, 0)
+		self.reloadList()
+
+	def nextCommaPosition(self):
+		self.comma = min(self.comma + 1, 2)
+		self.reloadList()
+
+	def find_latest_csv(self, directory):
+		try:
+			files = [f for f in os.listdir(directory) if f.startswith("movies-") and f.endswith(".csv") and os.path.isfile(os.path.join(directory, f))]
+			if files:
+				latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(directory, f)))
+				latest_file_name = latest_file
+			else:
+				latest_file_name = None
+			return latest_file_name
+		except Exception as e:
+			print("ERROR while searching for the file:", e)
+			return None
+
+	def checkDuplicates(self, comma_index=0):
+		filename = self.find_latest_csv(cfg.csvtarget.value)
+		if filename is None:
+			self.MessageBoxNM("The CSV file does not exist or the path is not set correctly!", 5)
+			return
+		filename = os.path.join(cfg.csvtarget.value, filename)
+
+		duplicates = []
+		prev_key = None
+		group = []
+
+		with open(filename, encoding='utf-8') as f:
+			for i, line in enumerate(f):
+				if i == 0:
+					continue  # skip header
+
+				line = line.strip()
+				full_name = line.split(';', 1)[0].strip()
+
+				parts = full_name.split(',')
+				if comma_index < len(parts):
+					key = ','.join(parts[:comma_index + 1]).strip().lower()
+				else:
+					key = full_name
+
+				if key != prev_key:
+					if len(group) > 1:
+						duplicates.extend(group)
+					group = [line]
+					prev_key = key
+				else:
+					group.append(line)
+
+			# last group
+			if len(group) > 1:
+				duplicates.extend(group)
+
+		return duplicates
 
 	def exit(self):
 		self.close()
