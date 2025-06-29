@@ -18,7 +18,7 @@ VERSION = "2.28"
 #  GNU General Public License for more details.
 #
 
-from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, ConfigLocations, ConfigDirectory
+from Components.config import ConfigSubsection, config, ConfigYesNo, ConfigSelection, ConfigLocations, ConfigDirectory, ConfigInteger
 from Screens.Screen import Screen
 from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
@@ -71,6 +71,7 @@ config.moviemanager.edit_bookmarks = ConfigYesNo(default=True)
 config.moviemanager.manage_all = ConfigYesNo(default=False)
 config.moviemanager.removepkl = ConfigYesNo(default=False)
 config.moviemanager.duplicates = ConfigYesNo(default=False)
+config.moviemanager.comma = ConfigInteger(default=1)
 config.moviemanager.subdirs = ConfigYesNo(default=False)
 config.moviemanager.trashcans = ConfigYesNo(default=False)
 config.moviemanager.selected_dirs = ConfigYesNo(default=False)

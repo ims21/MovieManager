@@ -33,7 +33,13 @@ class duplicatesList(Screen):
 	skin = """
 		<screen name="duplicatesList" position="center,center" size="560,417" title="MovieManager - duplicates">
 		<ePixmap name="red"    position="0,0"   zPosition="2" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on"/>
+		<ePixmap name="green"  position="140,0" zPosition="2" size="140,40" pixmap="skin_default/buttons/green.png" transparent="1" alphatest="on"/>
+		<ePixmap name="yellow" position="280,0" zPosition="2" size="140,40" pixmap="skin_default/buttons/yellow.png" transparent="1" alphatest="on"/>
+		<ePixmap name="blue"   position="420,0" zPosition="2" size="140,40" pixmap="skin_default/buttons/blue.png" transparent="1" alphatest="on"/>
 		<widget name="key_red" position="0,0" size="140,40" valign="center" halign="center" zPosition="4"  foregroundColor="white" font="Regular;20" transparent="1" shadowColor="background" shadowOffset="-2,-2"/>
+		<widget name="key_green" position="140,0" size="140,40" valign="center" halign="center" zPosition="4"  foregroundColor="white" font="Regular;20" transparent="1" shadowColor="background" shadowOffset="-2,-2"/>
+		<widget name="key_yellow" position="280,0" size="140,40" valign="center" halign="center" zPosition="4"  foregroundColor="white" font="Regular;20" transparent="1" shadowColor="background" shadowOffset="-2,-2"/>
+		<widget name="key_blue" position="420,0" size="140,40" valign="center" halign="center" zPosition="4"  foregroundColor="white" font="Regular;20" transparent="1" shadowColor="background" shadowOffset="-2,-2"/>
 		<widget name="config" position="5,40" zPosition="2" size="550,275" itemHeight="30" font="Regular;20" foregroundColor="white" scrollbarMode="showOnDemand"/>
 		<ePixmap pixmap="skin_default/div-h.png" position="5,320" zPosition="2" size="550,2"/>
 		<widget name="description" position="5,325" zPosition="2" size="550,92" valign="center" halign="left" font="Regular;20" foregroundColor="white"/>
@@ -48,10 +54,10 @@ class duplicatesList(Screen):
 				"(because some programs are re-broadcast with an additional phrase in the title), "
 				"or on the whole title. Therefore, some duplicates may not be actual duplicates."
 		)
-		self.comma = 1
+		self.comma = cfg.comma.value
 		self["key_red"] = Button(_("Cancel"))
-		self["key_yellow"] = Button(_("Less of title"))
-		self["key_blue"] = Button(_("More of title"))
+		self["key_yellow"] = Button()
+		self["key_blue"] = Button()
 		self["description"] = Label()
 
 		self.list = []
@@ -66,6 +72,10 @@ class duplicatesList(Screen):
 				"blue": self.nextCommaPosition,
 			})
 
+	def setButtonsTexts(self):
+		self["key_yellow"].setText(_("Less of title") if self.comma != 0 else "")
+		self["key_blue"].setText(_("More of title") if self.comma != 3 else "")
+
 	def commaTxt(self, comma_index=0):
 		if comma_index == 3:
 			return _("as whole titles")
@@ -78,6 +88,7 @@ class duplicatesList(Screen):
 		self.setTitle(_("MovieManager - Duplicates (titles compared %s)") % self.commaTxt(self.comma))
 		count = len(self.list)
 		self["description"].setText(self.text + ngettext("\nFound %d possible duplicate.", "\nFound %d possible duplicates.", count) % count)
+		self.setButtonsTexts()
 
 	def prevCommaPosition(self):
 		self.comma = max(self.comma - 1, 0)
@@ -140,4 +151,6 @@ class duplicatesList(Screen):
 		return duplicates
 
 	def exit(self):
+		cfg.comma.value = self.comma
+		cfg.comma.save()
 		self.close()
