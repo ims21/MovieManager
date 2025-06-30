@@ -19,13 +19,13 @@
 from . import _, ngettext
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
+from Screens.MessageBox import MessageBox
 from Components.Button import Button
 from Components.Label import Label
 from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.MenuList import MenuList
 from .ui import cfg
-import os
 import skin
 
 
@@ -45,7 +45,7 @@ class duplicatesList(Screen):
 		<widget name="description" position="5,325" zPosition="2" size="550,92" valign="center" halign="left" font="Regular;20" foregroundColor="white"/>
 	</screen>"""
 
-	def __init__(self, session):
+	def __init__(self, session, filename):
 		Screen.__init__(self, session)
 		self.skinName = ["duplicatesList", "Setup"]
 
@@ -55,6 +55,7 @@ class duplicatesList(Screen):
 				"or on the whole title. Therefore, some duplicates may not be actual duplicates."
 		)
 		self.comma = cfg.comma.value
+		self.filename = filename
 		self["key_red"] = Button(_("Cancel"))
 		self["key_yellow"] = Button()
 		self["key_blue"] = Button()
@@ -70,6 +71,7 @@ class duplicatesList(Screen):
 				"red": self.exit,
 				"yellow": self.prevCommaPosition,
 				"blue": self.nextCommaPosition,
+				"ok": self.info,
 			})
 
 	def setButtonsTexts(self):
@@ -83,7 +85,7 @@ class duplicatesList(Screen):
 		return s.replace(',', '[,]', 1 + comma_index).replace('[,]', ',', comma_index)
 
 	def reloadList(self):
-		self.list =  self.checkDuplicates(self.comma) or []
+		self.list =  self.checkDuplicates(self.filename, self.comma) or []
 		self["config"].setList(self.list)
 		self.setTitle(_("MovieManager - Duplicates (titles compared %s)") % self.commaTxt(self.comma))
 		count = len(self.list)
@@ -98,26 +100,7 @@ class duplicatesList(Screen):
 		self.comma = min(self.comma + 1, 3)
 		self.reloadList()
 
-	def find_latest_csv(self, directory):
-		try:
-			files = [f for f in os.listdir(directory) if f.startswith("movies-") and f.endswith(".csv") and os.path.isfile(os.path.join(directory, f))]
-			if files:
-				latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(directory, f)))
-				latest_file_name = latest_file
-			else:
-				latest_file_name = None
-			return latest_file_name
-		except Exception as e:
-			print("ERROR while searching for the file:", e)
-			return None
-
-	def checkDuplicates(self, comma_index=0):
-		filename = self.find_latest_csv(cfg.csvtarget.value)
-		if filename is None:
-			self.MessageBoxNM("The CSV file does not exist or the path is not set correctly!", 5)
-			return
-		filename = os.path.join(cfg.csvtarget.value, filename)
-
+	def checkDuplicates(self, filename, comma_index=0):
 		duplicates = []
 		prev_key = None
 		group = []
@@ -125,6 +108,7 @@ class duplicatesList(Screen):
 		with open(filename, encoding='utf-8') as f:
 			for i, line in enumerate(f):
 				if i == 0:
+					self.header = line.split(';')
 					continue  # skip header
 
 				line = line.strip()
@@ -149,6 +133,21 @@ class duplicatesList(Screen):
 				duplicates.extend(group)
 
 		return duplicates
+
+	def info(self):
+		item = self["config"].getCurrent()
+		if item:
+			par = item.split(";")
+			if len(par) == 7 and len(self.header) == 7:
+				text = "%s\n\n" % par[0]
+				text += "%s\t%s %s\n" % (_("Size:"), par[1], self.header[1].split("[")[1].split("]")[0])
+				text += "%s\t%s\n" % (_("Duration:"), par[2])
+				text += "%s\t%s\n" % (_("Location:"), par[3])
+				text += "%s\t%s\n" % (_("Service:"), par[4])
+				text += "%s\t%s %s\n" % (_("Recorded:"), ".".join(par[5].split(".")[::-1]), par[6])
+			else:
+				text = item
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, simple=True)
 
 	def exit(self):
 		cfg.comma.value = self.comma

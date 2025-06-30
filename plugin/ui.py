@@ -40,6 +40,7 @@ from Components.ServiceEventTracker import ServiceEventTracker
 from Screens.MinuteInput import MinuteInput
 from ServiceReference import ServiceReference
 from time import localtime, strftime
+#from .duplicates import duplicatesList
 from .myselectionlist import MySelectionList, MySelectionEntryComponent
 import os
 import skin
@@ -663,8 +664,13 @@ class MovieManager(Screen, HelpableScreen):
 		elif choice[1] == 51:
 			def cfgCallBack(choice=False):
 				return
-			from .duplicates import duplicatesList
-			self.session.openWithCallback(cfgCallBack, duplicatesList)
+			filename = self.find_latest_csv(cfg.csvtarget.value)
+			if filename is None:
+				self.session.open(MessageBox, _("The CSV file does not exist or the path is not set correctly!"), type=MessageBox.TYPE_ERROR, timeout=5)
+			else:
+				fullfilename = os.path.join(cfg.csvtarget.value, filename)
+				from .duplicates import duplicatesList
+				self.session.openWithCallback(cfgCallBack, duplicatesList, fullfilename)
 		elif choice[1] == 55:
 			self.findFirstFile()
 		elif choice[1] == 56:
@@ -1490,6 +1496,19 @@ class MovieManager(Screen, HelpableScreen):
 			else:
 				return "%d" % filesize
 		return ""
+
+	def find_latest_csv(self, directory):
+		try:
+			files = [f for f in os.listdir(directory) if f.startswith("movies-") and f.endswith(".csv") and os.path.isfile(os.path.join(directory, f))]
+			if files:
+				latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(directory, f)))
+				latest_file_name = latest_file
+			else:
+				latest_file_name = None
+			return latest_file_name
+		except Exception as e:
+			print("ERROR while searching for the file:", e)
+			return None
 
 	def csfd(self):
 		def isCSFD():
