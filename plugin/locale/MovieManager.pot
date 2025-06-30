@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 10:16+0200\n"
+"POT-Creation-Date: 2025-06-30 21:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgid ""
 "Note: it is not available with use '%s'"
 msgstr ""
 
-#: ../duplicates.py:92
+#: ../duplicates.py:94
 #, python-format
 msgid ""
 "\n"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "CSFD plugin version"
 msgstr ""
 
-#: ../pklmanager.py:56 ../duplicates.py:59 ../ui.py:266 ../ui.py:1557
+#: ../pklmanager.py:56 ../duplicates.py:61 ../ui.py:266 ../ui.py:1557
 #: ../ui.py:1728
 msgid "Cancel"
 msgstr ""
@@ -164,6 +164,10 @@ msgstr ""
 
 #: ../ui.py:1432
 msgid "Close playback?"
+msgstr ""
+
+#: ../duplicates.py:72 ../duplicates.py:73
+msgid "Close the window with duplicates"
 msgstr ""
 
 #: ../ui.py:1584
@@ -258,7 +262,7 @@ msgstr ""
 msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed or edited."
 msgstr ""
 
-#: ../duplicates.py:53
+#: ../duplicates.py:55
 msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
 msgstr ""
 
@@ -266,7 +270,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: ../duplicates.py:144
+#: ../duplicates.py:146
 msgid "Duration:"
 msgstr ""
 
@@ -443,7 +447,7 @@ msgstr ""
 msgid "Latin2 with 'Ch'"
 msgstr ""
 
-#: ../duplicates.py:78
+#: ../duplicates.py:80
 msgid "Less of title"
 msgstr ""
 
@@ -468,8 +472,12 @@ msgstr ""
 msgid "Lists and content A-z"
 msgstr ""
 
-#: ../duplicates.py:145
+#: ../duplicates.py:147
 msgid "Location:"
+msgstr ""
+
+#: ../duplicates.py:75
+msgid "Longer part of title (later comma or full) for comparison"
 msgstr ""
 
 #: ../ui.py:598
@@ -480,7 +488,7 @@ msgstr ""
 msgid "Manage files in active bookmarks..."
 msgstr ""
 
-#: ../duplicates.py:79
+#: ../duplicates.py:81
 msgid "More of title"
 msgstr ""
 
@@ -504,7 +512,7 @@ msgstr ""
 msgid "MovieManager"
 msgstr ""
 
-#: ../duplicates.py:90
+#: ../duplicates.py:92
 #, python-format
 msgid "MovieManager - Duplicates (titles compared %s)"
 msgstr ""
@@ -614,7 +622,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: ../duplicates.py:147
+#: ../duplicates.py:149
 msgid "Recorded:"
 msgstr ""
 
@@ -770,7 +778,7 @@ msgstr ""
 msgid "Service name"
 msgstr ""
 
-#: ../duplicates.py:146
+#: ../duplicates.py:148
 msgid "Service:"
 msgstr ""
 
@@ -791,8 +799,16 @@ msgstr ""
 msgid "Sets whether to distinguish between uper case and lower case for searching."
 msgstr ""
 
+#: ../duplicates.py:74
+msgid "Shorter part of title (earlier comma) for comparison"
+msgstr ""
+
 #: ../ui.py:593
 msgid "Show duplicates"
+msgstr ""
+
+#: ../duplicates.py:76
+msgid "Shows and hides info for the selected item"
 msgstr ""
 
 #: ../ui.py:95
@@ -807,7 +823,7 @@ msgstr ""
 msgid "Size and units"
 msgstr ""
 
-#: ../duplicates.py:143
+#: ../duplicates.py:145
 msgid "Size:"
 msgstr ""
 
@@ -963,7 +979,7 @@ msgstr ""
 msgid "Z-a sort"
 msgstr ""
 
-#: ../duplicates.py:83
+#: ../duplicates.py:85
 msgid "as whole titles"
 msgstr ""
 
@@ -1065,7 +1081,7 @@ msgstr ""
 msgid "time"
 msgstr ""
 
-#: ../duplicates.py:84
+#: ../duplicates.py:86
 #, python-format
 msgid "up to %s"
 msgstr ""

@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.28"
+VERSION = "2.29"
 #  by ims (c) 2018-2025 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 10:16+0200\n"
-"PO-Revision-Date: 2025-06-30 10:18+0200\n"
+"POT-Creation-Date: 2025-06-30 21:33+0200\n"
+"PO-Revision-Date: 2025-06-30 21:39+0200\n"
 "Last-Translator: ims <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -24,7 +24,7 @@ msgstr ""
 "\n"
 "Pozn.: není k dispozici při použití '%s'"
 
-#: ../duplicates.py:92
+#: ../duplicates.py:94
 #, python-format
 msgid ""
 "\n"
@@ -157,7 +157,7 @@ msgstr "Audio soubory"
 msgid "CSFD plugin version"
 msgstr "Verze CSFD pluginu"
 
-#: ../pklmanager.py:56 ../duplicates.py:59 ../ui.py:266 ../ui.py:1557 ../ui.py:1728
+#: ../pklmanager.py:56 ../duplicates.py:61 ../ui.py:266 ../ui.py:1557 ../ui.py:1728
 msgid "Cancel"
 msgstr "Zavřít"
 
@@ -172,6 +172,10 @@ msgstr "Zavřít"
 #: ../ui.py:1432
 msgid "Close playback?"
 msgstr "Ukončit přehrávání?"
+
+#: ../duplicates.py:72 ../duplicates.py:73
+msgid "Close the window with duplicates"
+msgstr "Zavřít okno s duplicitami"
 
 #: ../ui.py:1584
 msgid "Compare case sensitive"
@@ -265,7 +269,7 @@ msgstr "Adresáře s lokálním nastavením"
 msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed or edited."
 msgstr "Zobrazí všechny existující záložky v přijímači. Nechtěné nebo nepotřebné záložky mohou být odstraněny nebo upraveny."
 
-#: ../duplicates.py:53
+#: ../duplicates.py:55
 msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
 msgstr "Duplicitní záznamy jsou detekovány na základě části názvu až po zvolenou čárku ',' (protože některé pořady jsou znovu vysílány s doplňujícím výrazem v názvu), nebo podle celého názvu. Proto některé duplicity nemusí být skutečnými duplicitami."
 
@@ -273,7 +277,7 @@ msgstr "Duplicitní záznamy jsou detekovány na základě části názvu až po
 msgid "Duration"
 msgstr "Délka"
 
-#: ../duplicates.py:144
+#: ../duplicates.py:146
 msgid "Duration:"
 msgstr "Délka:"
 
@@ -450,7 +454,7 @@ msgstr "Latin2"
 msgid "Latin2 with 'Ch'"
 msgstr "Latin2 s 'Ch'"
 
-#: ../duplicates.py:78
+#: ../duplicates.py:80
 msgid "Less of title"
 msgstr "Méně z názvu"
 
@@ -475,9 +479,13 @@ msgstr "Seznam uložen do '%s'"
 msgid "Lists and content A-z"
 msgstr "Seznamy a jejich obsah abecedně"
 
-#: ../duplicates.py:145
+#: ../duplicates.py:147
 msgid "Location:"
 msgstr "Umístění:"
+
+#: ../duplicates.py:75
+msgid "Longer part of title (later comma or full) for comparison"
+msgstr "Porovnává delší část názvu (pozdější čárka nebo celý)"
 
 #: ../ui.py:598
 msgid "Looking for file in the list. When file is found, then selector is moved on it. In list you can use key '0' for looking next file forward and key '8' for looking next file backward."
@@ -487,7 +495,7 @@ msgstr "Hledá soubor v seznamu. Jestliže je soubor nalezen, kurzor se přesune
 msgid "Manage files in active bookmarks..."
 msgstr "Správa souborů v aktivních záložkách..."
 
-#: ../duplicates.py:79
+#: ../duplicates.py:81
 msgid "More of title"
 msgstr "Více z názvu"
 
@@ -511,7 +519,7 @@ msgstr "Správce souborů"
 msgid "MovieManager"
 msgstr "Správce souborů"
 
-#: ../duplicates.py:90
+#: ../duplicates.py:92
 #, python-format
 msgid "MovieManager - Duplicates (titles compared %s)"
 msgstr "MovieManager - duplicity (názvy porovnávány %s)"
@@ -628,7 +636,7 @@ msgstr "Stisknutí tlačítka 'OK' přesune kurzor na další položku v seznamu
 msgid "Preview"
 msgstr "Náhled"
 
-#: ../duplicates.py:147
+#: ../duplicates.py:149
 msgid "Recorded:"
 msgstr "Nahráno:"
 
@@ -784,7 +792,7 @@ msgstr "Označeno: %s"
 msgid "Service name"
 msgstr "Název programu"
 
-#: ../duplicates.py:146
+#: ../duplicates.py:148
 msgid "Service:"
 msgstr "Program:"
 
@@ -805,9 +813,17 @@ msgstr "Nastavit třídění pro aktuální seznam."
 msgid "Sets whether to distinguish between uper case and lower case for searching."
 msgstr "Nastavuje, zda chcete při vyhledávání rozlišovat mezi velkými a malými písmeny."
 
+#: ../duplicates.py:74
+msgid "Shorter part of title (earlier comma) for comparison"
+msgstr "Porovnává kratší část názvu (dřívější čárka)"
+
 #: ../ui.py:593
 msgid "Show duplicates"
 msgstr "Zobrazit duplicity"
+
+#: ../duplicates.py:76
+msgid "Shows and hides info for the selected item"
+msgstr "Zobrazuje a skrývá informace o vybrané položce"
 
 #: ../ui.py:95
 msgid "Size - largest top"
@@ -821,7 +837,7 @@ msgstr "Velikost - nejmenší nahoře"
 msgid "Size and units"
 msgstr "Velikost a jednotky"
 
-#: ../duplicates.py:143
+#: ../duplicates.py:145
 msgid "Size:"
 msgstr "Velikost:"
 
@@ -980,7 +996,7 @@ msgstr "Můžete zvolit, podle čeho bude skupinový výběr vybírat - podle za
 msgid "Z-a sort"
 msgstr "Z-a"
 
-#: ../duplicates.py:83
+#: ../duplicates.py:85
 msgid "as whole titles"
 msgstr "jako celé názvy"
 
@@ -1082,7 +1098,7 @@ msgstr "začíná na..."
 msgid "time"
 msgstr "čas"
 
-#: ../duplicates.py:84
+#: ../duplicates.py:86
 #, python-format
 msgid "up to %s"
 msgstr "až po %s"

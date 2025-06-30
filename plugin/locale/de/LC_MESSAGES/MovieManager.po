@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 10:16+0200\n"
+"POT-Creation-Date: 2025-06-30 21:33+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Pike_Bishop <alfredzngr023@gmail.com>\n"
 "Language-Team: \n"
@@ -21,7 +21,7 @@ msgid ""
 "Note: it is not available with use '%s'"
 msgstr ""
 
-#: ../duplicates.py:92
+#: ../duplicates.py:94
 #, python-format
 msgid ""
 "\n"
@@ -147,7 +147,7 @@ msgstr "Audio Dateien"
 msgid "CSFD plugin version"
 msgstr ""
 
-#: ../pklmanager.py:56 ../duplicates.py:59 ../ui.py:266 ../ui.py:1557
+#: ../pklmanager.py:56 ../duplicates.py:61 ../ui.py:266 ../ui.py:1557
 #: ../ui.py:1728
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -163,6 +163,10 @@ msgstr "Schliessen"
 #: ../ui.py:1432
 msgid "Close playback?"
 msgstr "Abspielen beenden ?"
+
+#: ../duplicates.py:72 ../duplicates.py:73
+msgid "Close the window with duplicates"
+msgstr ""
 
 #: ../ui.py:1584
 msgid "Compare case sensitive"
@@ -263,7 +267,7 @@ msgstr "Verzeichnisse mit lokalen Einstellungen"
 msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks can be removed or edited."
 msgstr "Zeigt alle existierenden Lesezeichen an der Box. Hiermit können ungewollte oder unnütze Lesezeichen gelöscht werden."
 
-#: ../duplicates.py:53
+#: ../duplicates.py:55
 msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
 msgstr ""
 
@@ -271,7 +275,7 @@ msgstr ""
 msgid "Duration"
 msgstr "Dauer"
 
-#: ../duplicates.py:144
+#: ../duplicates.py:146
 #, fuzzy
 msgid "Duration:"
 msgstr "Dauer"
@@ -465,7 +469,7 @@ msgstr ""
 msgid "Latin2 with 'Ch'"
 msgstr ""
 
-#: ../duplicates.py:78
+#: ../duplicates.py:80
 #, fuzzy
 msgid "Less of title"
 msgstr "Liste der Dateien"
@@ -491,10 +495,14 @@ msgstr "Liste wurde gespeichert in '%s'"
 msgid "Lists and content A-z"
 msgstr ""
 
-#: ../duplicates.py:145
+#: ../duplicates.py:147
 #, fuzzy
 msgid "Location:"
 msgstr "Aktion"
+
+#: ../duplicates.py:75
+msgid "Longer part of title (later comma or full) for comparison"
+msgstr ""
 
 #: ../ui.py:598
 msgid "Looking for file in the list. When file is found, then selector is moved on it. In list you can use key '0' for looking next file forward and key '8' for looking next file backward."
@@ -504,7 +512,7 @@ msgstr ""
 msgid "Manage files in active bookmarks..."
 msgstr "Verwalte Dateien in aktiven Lesezeichen ..."
 
-#: ../duplicates.py:79
+#: ../duplicates.py:81
 #, fuzzy
 msgid "More of title"
 msgstr "Ende des Titels"
@@ -530,7 +538,7 @@ msgstr "Movie Manager"
 msgid "MovieManager"
 msgstr "Movie Manager"
 
-#: ../duplicates.py:90
+#: ../duplicates.py:92
 #, python-format
 msgid "MovieManager - Duplicates (titles compared %s)"
 msgstr ""
@@ -648,7 +656,7 @@ msgstr ""
 msgid "Preview"
 msgstr "Vorschau"
 
-#: ../duplicates.py:147
+#: ../duplicates.py:149
 msgid "Recorded:"
 msgstr ""
 
@@ -808,7 +816,7 @@ msgstr "Ausgewählt: %s"
 msgid "Service name"
 msgstr "Kanalname"
 
-#: ../duplicates.py:146
+#: ../duplicates.py:148
 #, fuzzy
 msgid "Service:"
 msgstr "Kanalname"
@@ -830,8 +838,16 @@ msgstr "Bestimme Sortierungs-Typ für die aktuelle Film-Liste."
 msgid "Sets whether to distinguish between uper case and lower case for searching."
 msgstr "Festlegen ob bei der Suche zwischen Groß und Kleinschreibung unterschieden werden soll."
 
+#: ../duplicates.py:74
+msgid "Shorter part of title (earlier comma) for comparison"
+msgstr ""
+
 #: ../ui.py:593
 msgid "Show duplicates"
+msgstr ""
+
+#: ../duplicates.py:76
+msgid "Shows and hides info for the selected item"
 msgstr ""
 
 #: ../ui.py:95
@@ -848,7 +864,7 @@ msgstr "Ausgewählte oben"
 msgid "Size and units"
 msgstr ""
 
-#: ../duplicates.py:143
+#: ../duplicates.py:145
 #, fuzzy
 msgid "Size:"
 msgstr "Grösse: %s"
@@ -1010,7 +1026,7 @@ msgstr ""
 msgid "Z-a sort"
 msgstr "Z-a sortieren"
 
-#: ../duplicates.py:83
+#: ../duplicates.py:85
 msgid "as whole titles"
 msgstr ""
 
@@ -1114,7 +1130,7 @@ msgstr "startet mit ..."
 msgid "time"
 msgstr "Zeit"
 
-#: ../duplicates.py:84
+#: ../duplicates.py:86
 #, python-format
 msgid "up to %s"
 msgstr ""

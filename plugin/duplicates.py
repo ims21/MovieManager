@@ -18,18 +18,19 @@
 # for localized messages
 from . import _, ngettext
 from Plugins.Plugin import PluginDescriptor
+from Screens.HelpMenu import HelpableScreen
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.Button import Button
 from Components.Label import Label
-from Components.ActionMap import ActionMap
+from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.config import config
 from Components.MenuList import MenuList
 from .ui import cfg
 import skin
 
 
-class duplicatesList(Screen):
+class duplicatesList(Screen, HelpableScreen):
 	skin = """
 		<screen name="duplicatesList" position="center,center" size="560,417" title="MovieManager - duplicates">
 		<ePixmap name="red"    position="0,0"   zPosition="2" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on"/>
@@ -47,6 +48,7 @@ class duplicatesList(Screen):
 
 	def __init__(self, session, filename):
 		Screen.__init__(self, session)
+		HelpableScreen.__init__(self)
 		self.skinName = ["duplicatesList", "Setup"]
 
 		self.text = _(
@@ -65,13 +67,13 @@ class duplicatesList(Screen):
 		self["config"] =  MenuList(self.list)
 		self.reloadList()
 
-		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
+		self["actions"] = HelpableActionMap(self, ["OkCancelActions", "ColorActions"],
 			{
-				"cancel": self.exit,
-				"red": self.exit,
-				"yellow": self.prevCommaPosition,
-				"blue": self.nextCommaPosition,
-				"ok": self.info,
+				"cancel": (self.exit, _("Close the window with duplicates")),
+				"red": (self.exit, _("Close the window with duplicates")),
+				"yellow": (self.prevCommaPosition , _("Shorter part of title (earlier comma) for comparison")),
+				"blue": (self.nextCommaPosition, _("Longer part of title (later comma or full) for comparison")),
+				"ok": (self.info, _("Shows and hides info for the selected item")),
 			})
 
 	def setButtonsTexts(self):
@@ -139,15 +141,15 @@ class duplicatesList(Screen):
 		if item:
 			par = item.split(";")
 			if len(par) == 7 and len(self.header) == 7:
-				text = "%s\n\n" % par[0]
+				text = "\n%s\n\n" % par[0]
 				text += "%s\t%s %s\n" % (_("Size:"), par[1], self.header[1].split("[")[1].split("]")[0])
 				text += "%s\t%s\n" % (_("Duration:"), par[2])
 				text += "%s\t%s\n" % (_("Location:"), par[3])
 				text += "%s\t%s\n" % (_("Service:"), par[4])
-				text += "%s\t%s %s\n" % (_("Recorded:"), ".".join(par[5].split(".")[::-1]), par[6])
+				text += "%s\t%s, %s\n" % (_("Recorded:"), ".".join(par[5].split(".")[::-1]), par[6])
 			else:
 				text = item
-			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, simple=True)
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_MESSAGE, simple=True)
 
 	def exit(self):
 		cfg.comma.value = self.comma
