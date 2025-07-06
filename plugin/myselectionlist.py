@@ -16,6 +16,12 @@ if select_png is None:
 	select_png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "icons/lock_on.png"))
 
 
+def removeItemFromList(lst, item):
+	for it in lst:
+		if it[0][0:3] == item[0:3]:
+			lst.remove(it)
+			return
+
 def MySelectionEntryComponent(description, value, index, selected):
 	dx, dy, dw, dh = skin.parameters.get("ImsSelectionListDescr", (35, 2, 650, 30))
 	res = [
@@ -101,3 +107,71 @@ class MySelectionList(MenuList):
 
 	def len(self):
 		return len(self.list)
+
+	def markDuplicates(self, comma_index=0):
+		seen = {}
+		duplicates_keys = set()
+
+		# find repeated keys
+		for entry in self.list:
+			description = entry[0][0].strip()
+			parts = description.split(',')
+			if comma_index != 3 and comma_index < len(parts):
+				key = ','.join(parts[:comma_index + 1]).strip().lower()
+			else:
+				key = description.lower()
+			if key in seen:
+				duplicates_keys.add(key)
+			else:
+				seen[key] = entry
+
+		# remark items with selected=True, it it is duplicete
+		for idx, entry in enumerate(self.list):
+			description, value, index, _ = entry[0]
+			parts = description.split(',')
+			if comma_index != 3 and comma_index < len(parts):
+				key = ','.join(parts[:comma_index + 1]).strip().lower()
+			else:
+				key = description.lower()
+			selected = key in duplicates_keys
+			self.list[idx] = MySelectionEntryComponent(description, value, index, selected)
+
+		self.setList(self.list)
+
+	def keepOnlyDuplicates(self, comma_index=0):
+		seen = {}
+		duplicates_keys = set()
+
+		# 1. find duplicates keys
+		for entry in self.list:
+			description = entry[0][0].strip()
+			parts = description.split(',')
+			if comma_index != 3 and comma_index < len(parts):
+				key = ','.join(parts[:comma_index + 1]).strip().lower()
+			else:
+				key = description.lower()
+			if key in seen:
+				duplicates_keys.add(key)
+			else:
+				seen[key] = entry
+
+		# 2. select diplicates only
+		new_list = []
+		for entry in self.list:
+			description, value, index, _ = entry[0]
+			parts = description.split(',')
+			if comma_index != 3 and comma_index < len(parts):
+				key = ','.join(parts[:comma_index + 1]).strip().lower()
+			else:
+				key = description.lower()
+			if key in duplicates_keys:
+				new_list.append(MySelectionEntryComponent(description, value, index, False)) # if you want marked duplicates, then replace 'False' with 'True'
+
+		self.list = new_list
+		self.setList(self.list)
+
+	def resetList(self, items):
+		self.list = []
+		for description, value, index, selected in items:
+			self.list.append(MySelectionEntryComponent(description, value, index, selected))
+		self.setList(self.list)

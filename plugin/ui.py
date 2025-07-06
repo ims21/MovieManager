@@ -4,7 +4,7 @@ from . import _, ngettext
 
 #
 #  Movie Manager - Plugin E2 for OpenPLi
-VERSION = "2.29"
+VERSION = "2.30"
 #  by ims (c) 2018-2025 ims@openpli.org
 #
 #  This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ from Screens.MinuteInput import MinuteInput
 from ServiceReference import ServiceReference
 from time import localtime, strftime
 #from .duplicates import duplicatesList
-from .myselectionlist import MySelectionList, MySelectionEntryComponent
+from .myselectionlist import MySelectionList, MySelectionEntryComponent, removeItemFromList
 import os
 import skin
 import Tools.Trashcan
@@ -73,6 +73,16 @@ config.moviemanager.manage_all = ConfigYesNo(default=False)
 config.moviemanager.removepkl = ConfigYesNo(default=False)
 config.moviemanager.duplicates = ConfigYesNo(default=False)
 config.moviemanager.comma = ConfigInteger(default=1)
+config.moviemanager.searchduplicates = ConfigSelection(default="5", choices=[
+	("0", _("In list, ...[,]...,...,"), _("Titles are compared using the text up to the first comma. Duplicates found are marked in the list.")),
+	("1", _("In list, ...,...[,]...,"), _("Titles are compared using the text up to the second comma. Duplicates found are marked in the list.")),
+	("2", _("In list, ...,...,...[,]"), _("Titles are compared using the text up to the third comma. Duplicates found are marked in the list.")),
+	("3", _("In list, whole title"), _("Whole titles are compared. Duplicates found are marked in the list.")),
+	("4", _("Filtered, ...[,]...,...,"), _("Titles are compared using the text up to the first comma. Only duplicates are displayed.")),
+	("5", _("Filtered, ...,...[,]...,"), _("Titles are compared using the text up to the second comma. Only duplicates are displayed.")),
+	("6", _("Filtered, ...,...,...[,]"), _("Titles are compared using the text up to the third comma. Only duplicates are displayed.")),
+	("7", _("Filtered, whole title"), _("Whole titles are compared. Only duplicates are displayed.")),
+	])
 config.moviemanager.subdirs = ConfigYesNo(default=False)
 config.moviemanager.trashcans = ConfigYesNo(default=False)
 config.moviemanager.selected_dirs = ConfigYesNo(default=False)
@@ -113,7 +123,6 @@ config.moviemanager.around = ConfigYesNo(default=False)
 config.moviemanager.bookmarks = ConfigLocations()
 config.moviemanager.bookmarks_text = ConfigDirectory(default=_("press OK"))
 config.moviemanager.alphabetsort = ConfigSelection(default=None, choices=[(None, _("Standard")), ("czsk", _("Cz/Sk")), ("latin2", _("Latin2")), ("latin2-ch", _("Latin2 with 'Ch'"))])
-config.moviemanager.speed = ConfigYesNo(default=False)
 cfg = config.moviemanager
 
 LISTFILE =  'movies.csv'
@@ -289,87 +298,53 @@ class MovieManager(Screen, HelpableScreen):
 		index = 0
 		suma = 0
 		current_path = self.current.getPath()
-		if cfg.speed.value:
-			# create list with valid extensions for compare before loop:
-			valid_extensions = []
-			if cfg.recordings.value:
-				valid_extensions += MY_RECORDINGS_EXTENSIONS
-			if cfg.other_movies.value:
-				valid_extensions += MY_MOVIE_EXTENSIONS
-			if cfg.pictures.value:
-				valid_extensions += IMAGE_EXTENSIONS
-			if cfg.audios.value:
-				valid_extensions += AUDIO_EXTENSIONS
-			if cfg.dvds.value:
-				valid_extensions += DVD_EXTENSIONS
-			valid_extensions = [ext.lower() for ext in valid_extensions]
+		# create list with valid extensions for compare before loop:
+		valid_extensions = []
+		if cfg.recordings.value:
+			valid_extensions += MY_RECORDINGS_EXTENSIONS
+		if cfg.other_movies.value:
+			valid_extensions += MY_MOVIE_EXTENSIONS
+		if cfg.pictures.value:
+			valid_extensions += IMAGE_EXTENSIONS
+		if cfg.audios.value:
+			valid_extensions += AUDIO_EXTENSIONS
+		if cfg.dvds.value:
+			valid_extensions += DVD_EXTENSIONS
+		valid_extensions = [ext.lower() for ext in valid_extensions]
 
-			for i, record in enumerate(movielist):
-				if record:
-					item = record[0]
-					if not item.flags & eServiceReference.mustDescent:
-						ext = os.path.splitext(item.getPath())[1].lower()
-						if ext not in valid_extensions:
-							continue
-						if ext in SKIPPED:
-							continue
+		for record in movielist:
+			if record:
+				item = record[0]
+				if not item.flags & eServiceReference.mustDescent:
+					path = item.getPath()
+					ext = os.path.splitext(path)[1].lower()
+					if ext not in valid_extensions:
+						continue
+					if ext in SKIPPED:
+						continue
 
-						if current_path == item.getPath():
-							self.position = index
-							print("[MovieManager] position found")
+					if current_path == path:
+						self.position = index
+						print("[MovieManager] position found")
 
-						info = record[1]
-						name = info and info.getName(item)
-						size = 0
-						if info:
-							if isinstance(info, StubInfo): # picture
-								size = info.getInfo(item, iServiceInformation.sFileSize)
-							else:
-								size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
-							time = info.getInfo(item, iServiceInformation.sTimeCreate)
-						mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
-						index += 1
-						suma += size
-		else:
-			for i, record in enumerate(movielist):
-				if record:
-					item = record[0]
-					if not item.flags & eServiceReference.mustDescent:
-						ext = os.path.splitext(item.getPath())[1].lower()
+					info = record[1]
+					name = info and info.getName(item)
+					size, time = 0, 0
+					if info:
+						if isinstance(info, StubInfo): # picture
+							size = info.getInfo(item, iServiceInformation.sFileSize)
+						else:
+							size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
+						time = info.getInfo(item, iServiceInformation.sTimeCreate)
+					mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
+					index += 1
+					suma += size
 
-						if not cfg.recordings.value and ext in MY_RECORDINGS_EXTENSIONS:
-							continue
-						if not cfg.other_movies.value and ext in MY_MOVIE_EXTENSIONS:
-							continue
-						if not cfg.pictures.value and ext in IMAGE_EXTENSIONS:
-							continue
-						if not cfg.audios.value and ext in AUDIO_EXTENSIONS:
-							continue
-						if not cfg.dvds.value and ext in DVD_EXTENSIONS:
-							continue
-
-						if ext in SKIPPED:
-							continue
-						if current_path == item.getPath():
-						#if self.current.getPath() == item.getPath():
-							self.position = index
-							print("[MovieManager] position found")
-						info = record[1]
-						name = info and info.getName(item)
-						size = 0
-						if info:
-							if isinstance(info, StubInfo): # picture
-								size = info.getInfo(item, iServiceInformation.sFileSize)
-							else:
-								size = info.getInfoObject(item, iServiceInformation.sFileSize) # movie
-							time = info.getInfo(item, iServiceInformation.sTimeCreate)
-						mlist.list.append(MySelectionEntryComponent(name, (item, size, info, time), index, False))
-						index += 1
-						suma += size
 		self.l = MySelectionList(mlist)
 		self.l.setList(mlist)
 		print("[MovieManager} list filled with %s items. Size: %s, position %s" % (index, self.convertSize(suma), self.position))
 		self.size = 0
+		self.fullList = [x[0][:] for x in mlist.list] # backup original list - used for 'filtered' duplicates list
 		return mlist
 
 	def firstItem(self):
@@ -592,6 +567,8 @@ class MovieManager(Screen, HelpableScreen):
 		if cfg.duplicates.value:
 			menu.append((_("Show duplicates"), 51, _("Checking existing csv file and looking for duplicates in movie names.")))
 			keys += [""]
+		menu.append((_("Show duplicates in list"), 52, _("Checking existing list and looking for duplicates in movie names.")))
+		keys += ["0"]
 		if cfg.removepkl.value and len(self.pklPaths):
 			menu.append((_("Remove local directory setting..."), 60, _("Remove local setting '.e2settings.pkl' in selected directories.")))
 			keys += [""]
@@ -671,6 +648,8 @@ class MovieManager(Screen, HelpableScreen):
 				fullfilename = os.path.join(cfg.csvtarget.value, filename)
 				from .duplicates import duplicatesList
 				self.session.openWithCallback(cfgCallBack, duplicatesList, fullfilename)
+		elif choice[1] == 52:
+			self.selectSearchDuplicates()
 		elif choice[1] == 55:
 			self.findFirstFile()
 		elif choice[1] == 56:
@@ -796,6 +775,45 @@ class MovieManager(Screen, HelpableScreen):
 		if choice is None:
 			return
 		self.sortList(int(choice[1]))
+
+	def selectSearchDuplicates(self):
+		menu = []
+		for x in cfg.searchduplicates.choices.choices:
+			menu.append((x[1], x[0], x[2]))
+		self.session.openWithCallback(self.duplicatesCallback, ChoiceBox, title=_("Duplicate Search Mode:"), list=menu, selection=int(cfg.searchduplicates.value))
+
+	def duplicatesCallback(self, choice):
+		if choice is None:
+			return
+		if choice[1] == "0":
+			mode, comma_index = False, 0
+		elif choice[1] == "1":
+			mode, comma_index = False, 1
+		elif choice[1] == "2":
+			mode, comma_index = False, 2
+		elif choice[1] == "3":
+			mode, comma_index = False, 3
+		elif choice[1] == "4":
+			mode, comma_index = True, 0
+		elif choice[1] == "5":
+			mode, comma_index = True, 1
+		elif choice[1] == "6":
+			mode, comma_index = True, 2
+		elif choice[1] == "7":
+			mode, comma_index = True, 3
+		else:
+			mode, comma_index = True, 2
+		cfg.searchduplicates.value = choice[1]
+		self.markDuplicatesInList(mode, comma_index)
+
+	def markDuplicatesInList(self, mode=False, comma_index=1):
+		if len(self["config"].list) < len(self.fullList):
+			self["config"].resetList(self.fullList)
+		if mode:
+			self["config"].keepOnlyDuplicates(comma_index)
+		else:
+			self["config"].markDuplicates(comma_index)
+			self.displaySelectionPars()
 
 	def renameItem(self):
 		if not len(self["config"].list):
@@ -1071,7 +1089,7 @@ class MovieManager(Screen, HelpableScreen):
 			selected = SELECTED(item)
 			self.size = self.size + size if selected else self.size - size
 		self.displaySelectionPars(True)
-		if cfg.move_selector.value:
+		if cfg.move_selector.value: # if enabled then move to next item in list
 			idx = self.getItemIndex(item)
 			self["config"].moveToIndex(idx+1)
 
@@ -1238,15 +1256,21 @@ class MovieManager(Screen, HelpableScreen):
 		cur_path = os.path.realpath(current.getPath())
 		try:
 			trash = Tools.Trashcan.createTrashFolder(cur_path)
-			# Also check whether we're INSIDE the trash, then it's a purge.
-			if cur_path.startswith(trash):
-				print("[MovieManager] plugin does not removing files in trash can")
-				return False, True
+			if cfg.trashcans.value and cur_path.startswith(trash): # plugin does not remove files from the trash can.
+				print("[MovieManager] plugin does not removing files f trash can")
+				return False, True, False
 			else:
+				dest_file = os.path.join(trash, os.path.basename(cur_path))
+				if os.path.exists(dest_file):
+					print("[MovieManager] file already exists in trash can:", dest_file)
+					return False, True, True
 				moveServiceFiles(current, trash, name, allowCopy=False)
 				self.list.removeSelection(item)
 				resumePointsInstance.delResumePoint(current)
-				return True, False
+				return True, False, False
+		except FileExistsError as e:
+			print("[MovieManager] file already exists in trash can:", e)
+			return False, True, False
 		except OSError as e:
 			print("[MovieManager] cannot move to trash", e)
 			if e.errno == 18:
@@ -1254,12 +1278,12 @@ class MovieManager(Screen, HelpableScreen):
 				print("[MovieManager] cannot move files on a different disk or system to the trash can")
 			else:
 				print("[MovieManager] cannot move to trash can %s\n%s" % (e.errno, str(e)))
-			return False, False
+			return False, False, False
 		except Exception as e:
 			print("[MovieManager] Weird error moving to trash", e)
 			# Failed to create trash or move files.
 			print("[MovieManager] cannot move to trash can\n%s" % str(e))
-			return False, False
+			return False, False, False
 
 	def deleteSelected(self):
 		def firstConfirmForDelete(choice):
@@ -1274,7 +1298,8 @@ class MovieManager(Screen, HelpableScreen):
 				selected = 1
 			text = ngettext("Are You sure to delete %s selected file?", "Are You sure to delete %s selected files?", selected) % selected
 			if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
-				text += "\n" + _(" - items placed in trash can will not be deleted")
+				if cfg.trashcans.value:
+					text += "\n" + _(" - items placed in trash can will not be deleted")
 				self.session.openWithCallback(self.delete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
 			else:
 				self.session.openWithCallback(firstConfirmForDelete, MessageBox, text, type=MessageBox.TYPE_YESNO, default=False)
@@ -1288,23 +1313,28 @@ class MovieManager(Screen, HelpableScreen):
 				self.size = SIZE(data)
 				selected = 1
 			deleted = 0
-			trash = 0
+			trash = 0 # file is placed in trash, do not erase, if it is not enabled
+			exists = 0 # file is in trash, enigma do not erase it
 			for item in data:
 				# item ... (name, (service, size), index, status)
 				if cfg.move_to_trash.value and config.usage.movielist_trashcan.value:
-					erased, intrash = self.moveToTrash(item)
+					erased, intrash, exist = self.moveToTrash(item)
 					if erased:
 						deleted += 1
 					if intrash:
 						trash += 1
+					if exist:
+						exists += 1
 				else:
 					if self.deleteConfirmed(item):
 						deleted += 1
 			self.displaySelectionPars()
 			text = ngettext("Sucessfuly deleted %s file of %s", "Sucessfuly deleted %s files of %s", deleted) % (deleted, selected)
-			if trash:
+			if cfg.trashcans.value and trash:
 				text += "\n" + ngettext("( %s item in trash can was not deleted )", "( %s items in trash can were not deleted )", trash) % trash
-			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=5)
+			if exists:
+				text += "\n" + ngettext("( %s item already exists in the trash can, so it cannot be deleted. )", "( %s items already exist in the trash can, so they cannot be deleted. )", exists) % exists
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=10)
 			if not len(self.list.list):
 				self.exit()
 
@@ -1320,6 +1350,7 @@ class MovieManager(Screen, HelpableScreen):
 				if offline.deleteFromDisk(0):
 					raise Exception("Offline delete failed")
 			self.list.removeSelection(item)
+			removeItemFromList(self.fullList, item)
 			resumePointsInstance.delResumePoint(item[1][0])
 			return True
 		except Exception as ex:
@@ -1625,7 +1656,6 @@ class MovieManagerCfg(Screen, ConfigListScreen):
 		self.list.append((self.bookmarks, cfg.bookmarks_text, _("Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files.")))
 		self.list.append((_("Sorting type"), cfg.alphabetsort, _("Use sorting characters type for alphabetical list sorting.") + note))
 		self.list.append((_("CSFD plugin version"), cfg.csfdtype, _("Use CSFD or CSFD Lite plugin version.")))
-		self.list.append((_("Optimization"), cfg.speed, _("Try code speed optimization.")))
 
 		self["config"].list = self.list
 
