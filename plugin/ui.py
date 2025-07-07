@@ -565,7 +565,7 @@ class MovieManager(Screen, HelpableScreen):
 		menu.append((_("Save list"), 50, _("Save current movielist to '%s' directory as '.csv' file.") % cfg.csvtarget.value))
 		keys += ["blue"]
 		if cfg.duplicates.value:
-			menu.append((_("Show duplicates"), 51, _("Checking existing csv file and looking for duplicates in movie names.")))
+			menu.append((_("Show duplicates in CSV file"), 51, _("Checking existing csv file and looking for duplicates in movie names.")))
 			keys += [""]
 		menu.append((_("Show duplicates in list"), 52, _("Checking existing list and looking for duplicates in movie names.")))
 		keys += ["0"]

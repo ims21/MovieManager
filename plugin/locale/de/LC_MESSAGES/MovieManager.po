@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-07 13:01+0200\n"
+"POT-Creation-Date: 2025-07-07 13:18+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Pike_Bishop <alfredzngr023@gmail.com>\n"
 "Language-Team: \n"
@@ -42,46 +42,46 @@ msgstr " (%ss)"
 msgid " - items placed in trash can will not be deleted"
 msgstr ""
 
-#: ../ui.py:1510
+#: ../ui.py:1509
 #, python-format
 msgid "%.0f GB"
 msgstr "%.0f GB"
 
-#: ../ui.py:1514
+#: ../ui.py:1513
 #, python-format
 msgid "%.0f MB"
 msgstr "%.0f MB"
 
-#: ../ui.py:1516
+#: ../ui.py:1515
 #, python-format
 msgid "%.0f kB"
 msgstr "%.0f kB"
 
-#: ../ui.py:1512
+#: ../ui.py:1511
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
-#: ../ui.py:1517
+#: ../ui.py:1516
 #, python-format
 msgid "%d B"
 msgstr "%d B"
 
-#: ../ui.py:1337
+#: ../ui.py:1336
 #, python-format
 msgid "( %s item already exists in the trash can, so it cannot be deleted. )"
 msgid_plural "( %s items already exist in the trash can, so they cannot be deleted. )"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../ui.py:1335
+#: ../ui.py:1334
 #, python-format
 msgid "( %s item in trash can was not deleted )"
 msgid_plural "( %s items in trash can were not deleted )"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../ui.py:1610
+#: ../ui.py:1609
 msgid "(Note: change will cancel all selections.)"
 msgstr "(Anm.: Änderung verwirft alle Auswahlen.)"
 
@@ -93,26 +93,26 @@ msgstr "A-z sortieren"
 msgid "Action"
 msgstr "Aktion"
 
-#: ../ui.py:1649
+#: ../ui.py:1648
 #, fuzzy
 msgid "Add date or time into extended list."
 msgstr "Füge der Erweiterten Liste den Kanalnamen hinzu."
 
-#: ../ui.py:1647
+#: ../ui.py:1646
 #, fuzzy
 msgid "Add duration in hours or minuts into extended list. It extends list creation."
 msgstr "Füge der Erweiterten Liste die Laufzeit in Stunden hinzu. Das Erstellen der Liste dauert dadurch länger."
 
-#: ../ui.py:1648
+#: ../ui.py:1647
 #, fuzzy
 msgid "Add filesize in used units to extended list."
 msgstr "Füge der Erweiterten Liste den Kanalnamen hinzu."
 
-#: ../ui.py:226 ../ui.py:1748
+#: ../ui.py:226 ../ui.py:1747
 msgid "Add or remove item of selection"
 msgstr "Hinzufügen oder Löschen Eintrag der Auswahl"
 
-#: ../ui.py:1650
+#: ../ui.py:1649
 msgid "Add service name into extended list."
 msgstr "Füge der Erweiterten Liste den Kanalnamen hinzu."
 
@@ -125,7 +125,7 @@ msgstr "Hinzufügen zur Auswahl (%s)"
 msgid "All"
 msgstr "Alle"
 
-#: ../ui.py:1810
+#: ../ui.py:1809
 #, python-format
 msgid "Are You sure to delete %s selected bookmark?"
 msgid_plural "Are You sure to delete %s selected bookmarks?"
@@ -146,16 +146,16 @@ msgid_plural "Are You sure to delete %s settings?"
 msgstr[0] "Möchten Sie %s Einstellung wirklich löschen ?"
 msgstr[1] "Möchten Sie %s Einstellung wirklich löschen ?"
 
-#: ../ui.py:1636
+#: ../ui.py:1635
 msgid "Audio files"
 msgstr "Audio Dateien"
 
-#: ../ui.py:1659
+#: ../ui.py:1658
 msgid "CSFD plugin version"
 msgstr ""
 
-#: ../pklmanager.py:56 ../duplicates.py:61 ../ui.py:275 ../ui.py:1589
-#: ../ui.py:1759
+#: ../pklmanager.py:56 ../duplicates.py:61 ../ui.py:275 ../ui.py:1588
+#: ../ui.py:1758
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -167,11 +167,11 @@ msgstr ""
 msgid "Checking existing list and looking for duplicates in movie names."
 msgstr ""
 
-#: ../ui.py:1747 ../ui.py:1752
+#: ../ui.py:1746 ../ui.py:1751
 msgid "Close"
 msgstr "Schliessen"
 
-#: ../ui.py:1464
+#: ../ui.py:1463
 msgid "Close playback?"
 msgstr "Abspielen beenden ?"
 
@@ -179,7 +179,7 @@ msgstr "Abspielen beenden ?"
 msgid "Close the window with duplicates"
 msgstr ""
 
-#: ../ui.py:1616
+#: ../ui.py:1615
 msgid "Compare case sensitive"
 msgstr "Unterscheide Groß und Kleinschreibung"
 
@@ -191,7 +191,7 @@ msgstr "Kopiere aktuell markierte Datei oder ausgewählte Datei(en) in Verzeichn
 msgid "Copy to..."
 msgstr "Kopiere nach ..."
 
-#: ../ui.py:1691
+#: ../ui.py:1690
 #, fuzzy
 msgid "Create bookmark for selected directory:"
 msgstr "Kopiere aktuell markierte Datei oder ausgewählte Datei(en) in Verzeichnis."
@@ -209,7 +209,7 @@ msgstr "Erstelle Film-Liste von alle aktiven Lesezeichen. Bitte Geduld, das daue
 msgid "Create new directory in current directory."
 msgstr "Neues Verzeichnis im aktuellen Verzeichnis erstellen."
 
-#: ../ui.py:1701
+#: ../ui.py:1700
 #, fuzzy
 msgid "Create target directories as bookmarks for copy and move:"
 msgstr "Benutze Ziel Verzeichnis als Lesezeichen"
@@ -222,11 +222,11 @@ msgstr "Aktuelle Positions Info"
 msgid "Cz/Sk"
 msgstr ""
 
-#: ../ui.py:1637
+#: ../ui.py:1636
 msgid "DVD images"
 msgstr "DVD-Images"
 
-#: ../ui.py:1649
+#: ../ui.py:1648
 msgid "Date"
 msgstr "Datum"
 
@@ -240,11 +240,11 @@ msgstr "Ausgewählte oben"
 msgid "Date - oldest top"
 msgstr "Ausgewählte oben"
 
-#: ../ui.py:1643
+#: ../ui.py:1642
 msgid "Decimal separator"
 msgstr ""
 
-#: ../ui.py:542 ../ui.py:1760
+#: ../ui.py:542 ../ui.py:1759
 msgid "Delete"
 msgstr "Löschen"
 
@@ -252,19 +252,19 @@ msgstr "Löschen"
 msgid "Delete current file or selected file(s)."
 msgstr "Lösche aktuell markierte Datei oder ausgewählte Datei(en)."
 
-#: ../ui.py:1358
+#: ../ui.py:1357
 msgid "Delete failed!"
 msgstr "Löschen fehlgeschlagen !"
 
-#: ../ui.py:1753
+#: ../ui.py:1752
 msgid "Delete selected"
 msgstr "Lösche Ausgewählte"
 
-#: ../ui.py:1652
+#: ../ui.py:1651
 msgid "Deleted files will be moved to trash can."
 msgstr ""
 
-#: ../ui.py:1625
+#: ../ui.py:1624
 #, fuzzy
 msgid "Directories list"
 msgstr "Verzeichnisse mit lokalen Einstellungen"
@@ -286,7 +286,7 @@ msgstr ""
 msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
 msgstr ""
 
-#: ../ui.py:1647
+#: ../ui.py:1646
 msgid "Duration"
 msgstr "Dauer"
 
@@ -295,11 +295,11 @@ msgstr "Dauer"
 msgid "Duration:"
 msgstr "Dauer"
 
-#: ../ui.py:1761 ../ui.py:1787
+#: ../ui.py:1760 ../ui.py:1786
 msgid "Edit"
 msgstr ""
 
-#: ../ui.py:1845
+#: ../ui.py:1844
 #, fuzzy
 msgid "Edit bookmark"
 msgstr "Liste der Lesezeichen"
@@ -309,46 +309,46 @@ msgstr "Liste der Lesezeichen"
 msgid "Edit bookmarks..."
 msgstr "Lesezeichen löschen ..."
 
-#: ../ui.py:1754
+#: ../ui.py:1753
 #, fuzzy
 msgid "Edit current bookmark"
 msgstr "Liste der Lesezeichen"
 
-#: ../ui.py:1618
+#: ../ui.py:1617
 #, fuzzy
 msgid "Enable 'Edit bookmark...'"
 msgstr "Lesezeichen löschen erlauben ..."
 
-#: ../ui.py:1621
+#: ../ui.py:1620
 msgid "Enable 'Manage files in active bookmarks...'"
 msgstr "'Datei Verwaltung in aktiven Lesezeichen' ermöglichen ..."
 
-#: ../ui.py:1619
+#: ../ui.py:1618
 msgid "Enable 'Remove local directory setting...'"
 msgstr "Erlaube 'Lokal Verzeichnis Einstellung löschen ...'"
 
-#: ../ui.py:1620
+#: ../ui.py:1619
 msgid "Enable 'Show duplicates'"
 msgstr ""
 
-#: ../ui.py:1622
+#: ../ui.py:1621
 msgid "Enable in menu item for manage movies in all active bookmarks as one list."
 msgstr "Wenn aktiviert, werden die Filme in allen aktiven Lesezeichen als eine Liste verwaltet."
 
-#: ../ui.py:1618
+#: ../ui.py:1617
 #, fuzzy
 msgid "Enable in menu utility for edit bookmarks."
 msgstr "Wenn aktiviert, können Lesezeichen im Menü über das Programm gelöscht werden."
 
-#: ../ui.py:1620
+#: ../ui.py:1619
 msgid "Enable item for checking existing csv file and looking for duplicates in movie names."
 msgstr ""
 
-#: ../ui.py:1619
+#: ../ui.py:1618
 msgid "Enable item for delete local directory setting in menu. It depends on displayed directories in movielist."
 msgstr "Aktiviere Eintrag um Lokal Verzeichnis Einstellung im Menü zu löschen. Das ist abhängig von den gezeigten Verzeichnissen in der Film-Liste."
 
-#: ../ui.py:1640
+#: ../ui.py:1639
 msgid "Enable refresh bookmarks before each 'Manage files in active bookmarks'. It will add extra time."
 msgstr "Lesezeichen aktualisieren bevor jeweils 'Verwaltete Dateien in aktiven Lesezeichen'. Dauert etwas länger."
 
@@ -411,50 +411,50 @@ msgstr "Gruppen-Auswahl -> hinzufügen"
 msgid "Group selection - remove"
 msgstr "Gruppen-Auswahl -> löschen"
 
-#: ../ui.py:1636
+#: ../ui.py:1635
 msgid "If enabled, then will be added audio files into list."
 msgstr ""
 "Wenn aktiviert, werden Audio Dateien\n"
 "zur Liste hinzugefügt."
 
-#: ../ui.py:1637
+#: ../ui.py:1636
 msgid "If enabled, then will be added dvd image files into list."
 msgstr "Wenn aktiviert, werden DVD Image Dateien (*.iso) zur Liste hinzugefügt."
 
-#: ../ui.py:1635
+#: ../ui.py:1634
 #, fuzzy
 msgid "If enabled, then will be added other movie files into list."
 msgstr ""
 "Wenn aktiviert, werden Film Dateien\n"
 "zur Liste hinzugefügt."
 
-#: ../ui.py:1638
+#: ../ui.py:1637
 msgid "If enabled, then will be added pictures into list."
 msgstr "Wenn aktiviert, werden Bilder zur Liste hinzugefügt."
 
-#: ../ui.py:1634
+#: ../ui.py:1633
 #, fuzzy
 msgid "If enabled, then will be added recordings into list."
 msgstr "Wenn aktiviert, werden Bilder zur Liste hinzugefügt."
 
-#: ../ui.py:1639
+#: ../ui.py:1638
 msgid "If enabled, then will be on start maintained selector position in items list."
 msgstr "Wenn aktiviert, wird beim Start die Auswahl Position in der Liste beibehalten."
 
-#: ../ui.py:1631
+#: ../ui.py:1630
 msgid "If enabled, then will be used subdirectories too (it will take longer)."
 msgstr "Wenn aktiviert, werden auch die Unterverzeichnisse mit verwendet (das dauert länger)."
 
-#: ../ui.py:1633
+#: ../ui.py:1632
 msgid "Include trashcans"
 msgstr ""
 
-#: ../ui.py:1624
+#: ../ui.py:1623
 #, fuzzy
 msgid "Including selected directories"
 msgstr "Unterverzeichnisse mit einbeziehen"
 
-#: ../ui.py:1623 ../ui.py:1630
+#: ../ui.py:1622 ../ui.py:1629
 msgid "Including subdirectories"
 msgstr "Unterverzeichnisse mit einbeziehen"
 
@@ -462,24 +462,24 @@ msgstr "Unterverzeichnisse mit einbeziehen"
 msgid "Individual lists and content of individual lists are sorted alphabetically."
 msgstr ""
 
-#: ../pklmanager.py:85 ../ui.py:278 ../ui.py:1762
+#: ../pklmanager.py:85 ../ui.py:278 ../ui.py:1761
 msgid "Inversion"
 msgstr "Ausw. umkehren"
 
-#: ../ui.py:252 ../ui.py:1755
+#: ../ui.py:252 ../ui.py:1754
 msgid "Invert selection"
 msgstr "Auswahl umkehren"
 
-#: ../ui.py:1627
+#: ../ui.py:1626
 msgid "Items from selected directories will be added into list created with 'Manage files in active bookmarks...' too."
 msgstr ""
 
-#: ../ui.py:1630
+#: ../ui.py:1629
 #, fuzzy
 msgid "Items from subdirectories selected directories will be added into list too."
 msgstr "Wenn aktiviert, werden Bilder zur Liste hinzugefügt."
 
-#: ../ui.py:1633
+#: ../ui.py:1632
 #, fuzzy
 msgid "Items from trashcans will be added into list too."
 msgstr "Wenn aktiviert, werden Bilder zur Liste hinzugefügt."
@@ -497,7 +497,7 @@ msgstr ""
 msgid "Less of title"
 msgstr "Liste der Dateien"
 
-#: ../ui.py:1735
+#: ../ui.py:1734
 msgid "List of bookmarks"
 msgstr "Liste der Lesezeichen"
 
@@ -544,7 +544,7 @@ msgstr "Ende des Titels"
 msgid "Move current file or selected file(s) to directory."
 msgstr "Verschiebe aktuell markierte Datei oder ausgewählte Datei(en) in Verzeichnis."
 
-#: ../ui.py:1653
+#: ../ui.py:1652
 #, fuzzy
 msgid "Move selector to next item"
 msgstr "Auswahl umkehren"
@@ -557,7 +557,7 @@ msgstr "Verschiebe nach ..."
 msgid "Movie manager"
 msgstr "Movie Manager"
 
-#: ../ui.py:1586
+#: ../ui.py:1585
 msgid "MovieManager"
 msgstr "Movie Manager"
 
@@ -579,16 +579,16 @@ msgstr "Nein"
 msgid "No next file was found..."
 msgstr ""
 
-#: ../ui.py:1590
+#: ../ui.py:1589
 msgid "OK"
 msgstr "OK"
 
-#: ../ui.py:1435
+#: ../ui.py:1434
 #, python-format
 msgid "On destination '%s' is %s free space only!"
 msgstr "Am Zielort '%s' ist nur %s freier Speicher verfügbar !"
 
-#: ../ui.py:582 ../ui.py:1586
+#: ../ui.py:582 ../ui.py:1585
 msgid "Options..."
 msgstr "Einstellungen ..."
 
@@ -602,20 +602,20 @@ msgstr "Originale Liste - umgekehrt"
 msgid "Original list - reverted"
 msgstr "Originale Liste - umgekehrt"
 
-#: ../ui.py:1473
+#: ../ui.py:1472
 msgid "Other"
 msgstr "Weitere"
 
-#: ../ui.py:1635
+#: ../ui.py:1634
 #, fuzzy
 msgid "Other movie files"
 msgstr "Film Dateien"
 
-#: ../ui.py:1641
+#: ../ui.py:1640
 msgid "Path for 'csv' file"
 msgstr ""
 
-#: ../ui.py:1638
+#: ../ui.py:1637
 msgid "Pictures"
 msgstr "Bilder"
 
@@ -650,24 +650,24 @@ msgstr[1] ""
 "Plugin nutzt keinen Papierkorb oder prüft laufende Aufnahmen !\n"
 "Möchten Sie fortfahren und %s ausgewählte Dateien löschen ?"
 
-#: ../ui.py:1613
+#: ../ui.py:1612
 msgid "Pre-fill first 'n' filename chars to virtual keyboard"
 msgstr "Vorausfüllen erste 'n' Dateinamen Zeichen in der virtuellen Tastatur"
 
-#: ../ui.py:1615
+#: ../ui.py:1614
 msgid "Pre-fill last 'n' filename chars to virtual keyboard"
 msgstr "Vorausfüllen letzte 'n' Dateinamen Zeichen in der virtuellen Tastatur"
 
-#: ../ui.py:1629
+#: ../ui.py:1628
 #, fuzzy
 msgid "Press 'OK' and select directories as bookmarks."
 msgstr "Benutze Ziel Verzeichnis als Lesezeichen"
 
-#: ../ui.py:1657
+#: ../ui.py:1656
 msgid "Press 'OK' and set target directories as bookmarks for easier selection of target when copying and moving files."
 msgstr ""
 
-#: ../ui.py:1653
+#: ../ui.py:1652
 msgid "Press 'OK' button moves the selector to next item in the list."
 msgstr ""
 
@@ -679,11 +679,11 @@ msgstr "Vorschau"
 msgid "Recorded:"
 msgstr ""
 
-#: ../ui.py:1634
+#: ../ui.py:1633
 msgid "Recordings"
 msgstr ""
 
-#: ../ui.py:1640
+#: ../ui.py:1639
 msgid "Refresh bookmaks"
 msgstr "Lesezeichen aktualisieren"
 
@@ -734,7 +734,7 @@ msgstr ""
 "Wiedergabeposition aller ausgewählten Dateien in der\n"
 "Film-Liste zurücksetzen."
 
-#: ../ui.py:1370 ../ui.py:1402
+#: ../ui.py:1369 ../ui.py:1401
 msgid "Same source and target directory!"
 msgstr "Gleiches Quell und Ziel Verzeichnis !"
 
@@ -743,11 +743,11 @@ msgstr "Gleiches Quell und Ziel Verzeichnis !"
 msgid "Save current movielist to '%s' directory as '.csv' file."
 msgstr "Aktuelle Film-Liste in '/tmp' als '*.csv' Datei abspeichern."
 
-#: ../ui.py:1645
+#: ../ui.py:1644
 msgid "Save extended '.csv' filelist with more data. It spend more time."
 msgstr "Erweiterte Dateiliste (*.csv) mit ausführlicheren Angaben speichern. Benötigt mehr Zeit."
 
-#: ../ui.py:1644
+#: ../ui.py:1643
 msgid "Save extended list"
 msgstr "Erweiterte Liste speichern"
 
@@ -760,24 +760,24 @@ msgstr "Liste speichern"
 msgid "Save list to '%s'"
 msgstr "Liste speichern in '%s'"
 
-#: ../ui.py:1655
+#: ../ui.py:1654
 msgid "Search around"
 msgstr ""
 
-#: ../ui.py:1654
+#: ../ui.py:1653
 #, fuzzy
 msgid "Search file by"
 msgstr "Suche in Gruppen-Auswahl nach"
 
-#: ../ui.py:1654
+#: ../ui.py:1653
 msgid "Search file by text at beginning of the title or by contain text in the title."
 msgstr ""
 
-#: ../ui.py:1609
+#: ../ui.py:1608
 msgid "Search in group selection by"
 msgstr "Suche in Gruppen-Auswahl nach"
 
-#: ../ui.py:1655
+#: ../ui.py:1654
 msgid "Searching file in list still around."
 msgstr ""
 
@@ -793,19 +793,19 @@ msgstr "Springe vorwärts (Zeit eingeben)"
 msgid "Select action"
 msgstr "Wähle Aktion"
 
-#: ../ui.py:1363
+#: ../ui.py:1362
 msgid "Select destination for copy selected files..."
 msgstr "Wähle den Zielort der zu kopierenden ausgewählten Dateien ..."
 
-#: ../ui.py:1394
+#: ../ui.py:1393
 msgid "Select destination for move selected files..."
 msgstr "Wähle den Zielort der zu verschiebenden ausgewählten Dateien ..."
 
-#: ../ui.py:1642
+#: ../ui.py:1641
 msgid "Select directory to save 'csv' file."
 msgstr ""
 
-#: ../ui.py:1697
+#: ../ui.py:1696
 msgid "Select directory to save 'csv' file:"
 msgstr ""
 
@@ -821,7 +821,7 @@ msgstr ""
 msgid "Selected top"
 msgstr "Ausgewählte oben"
 
-#: ../ui.py:1803
+#: ../ui.py:1802
 #, fuzzy
 msgid "Selected top."
 msgstr "Ausgewählte oben"
@@ -831,7 +831,7 @@ msgstr "Ausgewählte oben"
 msgid "Selected: %s"
 msgstr "Ausgewählt: %s"
 
-#: ../ui.py:1650
+#: ../ui.py:1649
 msgid "Service name"
 msgstr "Kanalname"
 
@@ -840,7 +840,7 @@ msgstr "Kanalname"
 msgid "Service:"
 msgstr "Kanalname"
 
-#: ../ui.py:1617
+#: ../ui.py:1616
 msgid "Set 'yes' if You want add target directories into bookmarks."
 msgstr "Bei Auswahl 'Ja' werden Ziel Verzeichnisse zu Lesezeichen hinzugefügt."
 
@@ -853,7 +853,7 @@ msgstr ""
 msgid "Set sort type for current movielist."
 msgstr "Bestimme Sortierungs-Typ für die aktuelle Film-Liste."
 
-#: ../ui.py:1616
+#: ../ui.py:1615
 msgid "Sets whether to distinguish between uper case and lower case for searching."
 msgstr "Festlegen ob bei der Suche zwischen Groß und Kleinschreibung unterschieden werden soll."
 
@@ -862,7 +862,7 @@ msgid "Shorter part of title (earlier comma) for comparison"
 msgstr ""
 
 #: ../ui.py:568
-msgid "Show duplicates"
+msgid "Show duplicates in CSV file"
 msgstr ""
 
 #: ../ui.py:570
@@ -883,7 +883,7 @@ msgstr "Ausgewählte oben"
 msgid "Size - smallest top"
 msgstr "Ausgewählte oben"
 
-#: ../ui.py:1648
+#: ../ui.py:1647
 msgid "Size and units"
 msgstr ""
 
@@ -913,7 +913,7 @@ msgstr "Sortieren"
 msgid "Sort by..."
 msgstr "Sortiere nach ..."
 
-#: ../ui.py:251 ../ui.py:277 ../ui.py:1756
+#: ../ui.py:251 ../ui.py:277 ../ui.py:1755
 msgid "Sort list"
 msgstr "Sortiere Liste"
 
@@ -921,15 +921,15 @@ msgstr "Sortiere Liste"
 msgid "Sort list:"
 msgstr "Sortiere Liste:"
 
-#: ../ui.py:1803
+#: ../ui.py:1802
 msgid "Sorted from A to Z."
 msgstr ""
 
-#: ../ui.py:1803
+#: ../ui.py:1802
 msgid "Sorted from Z to A."
 msgstr ""
 
-#: ../ui.py:1658
+#: ../ui.py:1657
 msgid "Sorting type"
 msgstr ""
 
@@ -948,12 +948,12 @@ msgid_plural "Sucessfuly deleted %(count)s files of %(total)s"
 msgstr[0] "Erfolgreich gelöscht %(count)s der %(total)s Dateien ..."
 msgstr[1] "Erfolgreich gelöscht %(count)s der %(total)s Dateien ..."
 
-#: ../ui.py:1656
+#: ../ui.py:1655
 #, fuzzy
 msgid "Target directories"
 msgstr "Verzeichnis erstellen"
 
-#: ../ui.py:1553
+#: ../ui.py:1552
 #, fuzzy, python-format
 msgid ""
 "The %s plugin is not installed!\n"
@@ -995,7 +995,7 @@ msgstr ""
 msgid "Titles are compared using the text up to the third comma. Only duplicates are displayed."
 msgstr ""
 
-#: ../ui.py:1639
+#: ../ui.py:1638
 msgid "To maintain selector position"
 msgstr "Auswahl Position beibehalten"
 
@@ -1043,15 +1043,15 @@ msgstr "Aktualisiere gültige Lesezeichen"
 msgid "Use 'Menu' or 'Action' for select operation. Multiple files mark with 'OK' or use 'CH+/CH-'."
 msgstr "Wähle 'Menü' oder 'Aktion' für gewünschte Aktion. Mehrere Dateien mit 'OK' wählen, oder 'CH+/CH-' benutzen."
 
-#: ../ui.py:1765
+#: ../ui.py:1764
 msgid "Use 'OK' to select multiple items. List can be sorted with 'Info/Epg'."
 msgstr ""
 
-#: ../ui.py:1659
+#: ../ui.py:1658
 msgid "Use CSFD or CSFD Lite plugin version."
 msgstr ""
 
-#: ../ui.py:1658
+#: ../ui.py:1657
 msgid "Use sorting characters type for alphabetical list sorting."
 msgstr ""
 
@@ -1059,11 +1059,11 @@ msgstr ""
 msgid "Use sync"
 msgstr "Benutze sync"
 
-#: ../ui.py:1617
+#: ../ui.py:1616
 msgid "Use target directory as bookmark"
 msgstr "Benutze Ziel Verzeichnis als Lesezeichen"
 
-#: ../ui.py:1652
+#: ../ui.py:1651
 msgid "Use trash can"
 msgstr ""
 
@@ -1071,7 +1071,7 @@ msgstr ""
 msgid "Used 'Default' sorting in original lists. Lists are sorted one after another."
 msgstr ""
 
-#: ../ui.py:1643
+#: ../ui.py:1642
 msgid "Used separator for decimal numbers in 'csv' file for filesizes."
 msgstr ""
 
@@ -1083,15 +1083,15 @@ msgstr ""
 msgid "Whole titles are compared. Only duplicates are displayed."
 msgstr ""
 
-#: ../ui.py:1613
+#: ../ui.py:1612
 msgid "You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons."
 msgstr "Anzahl der Zeichen vom Beginn des aktuellen Dateinamens festlegen die in der Virtuellen Tastatur automatisch vorausgewählt werden (zur einfacheren Eingabe über die Gruppen-Auswahl). Für die Gruppen-Auswahl benutze die Tasten 'CH+/CH-'."
 
-#: ../ui.py:1615
+#: ../ui.py:1614
 msgid "You can set the number of letters from the end of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons."
 msgstr "Anzahl der Zeichen vom Ende des aktuellen Dateinamens festlegen die in der Virtuellen Tastatur automatisch vorausgewählt werden (zur einfacheren Eingabe über die Gruppen-Auswahl). Für die Gruppen-Auswahl benutze die Tasten 'CH+/CH-'."
 
-#: ../ui.py:1611
+#: ../ui.py:1610
 msgid "You can set what will group selection use - start of title, end of title or contains in title."
 msgstr ""
 "Bestimmen wonach in der Gruppen-Auswahl gesucht werden soll, 'Anfang des Titels, Ende des Titels\n"
@@ -1210,7 +1210,7 @@ msgstr "Zeit"
 msgid "up to %s"
 msgstr ""
 
-#: ../ui.py:1586
+#: ../ui.py:1585
 #, python-format
 msgid "v.%s"
 msgstr "v.%s"
