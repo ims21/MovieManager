@@ -1329,7 +1329,7 @@ class MovieManager(Screen, HelpableScreen):
 					if self.deleteConfirmed(item):
 						deleted += 1
 			self.displaySelectionPars()
-			text = ngettext("Sucessfuly deleted %s file of %s", "Sucessfuly deleted %s files of %s", deleted) % (deleted, selected)
+			text = ngettext("Successfuly deleted %(count)s file of %(total)s", "Sucessfuly deleted %(count)s files of %(total)s", deleted) % {"count": deleted, "total": selected}
 			if cfg.trashcans.value and trash:
 				text += "\n" + ngettext("( %s item in trash can was not deleted )", "( %s items in trash can were not deleted )", trash) % trash
 			if exists:
