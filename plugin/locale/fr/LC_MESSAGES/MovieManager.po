@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GithubIMS 21\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-06 23:50+0200\n"
+"POT-Creation-Date: 2025-07-07 09:11+0200\n"
 "PO-Revision-Date: 2019-07-28 20:49+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -284,7 +284,7 @@ msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks 
 msgstr "Afficher tous les signets existants dans la boîte. Les signets indésirables ou inutiles peuvent être supprimés."
 
 #: ../ui.py:783
-msgid "Duplicate Search Mode:"
+msgid "Duplicate detection and display mode:"
 msgstr ""
 
 #: ../duplicates.py:55
@@ -378,22 +378,6 @@ msgstr "Quitter le plugin"
 msgid "File was not found..."
 msgstr ""
 
-#: ../ui.py:83
-msgid "Filtered, ...,...,...[,]"
-msgstr ""
-
-#: ../ui.py:82
-msgid "Filtered, ...,...[,]...,"
-msgstr ""
-
-#: ../ui.py:81
-msgid "Filtered, ...[,]...,...,"
-msgstr ""
-
-#: ../ui.py:84
-msgid "Filtered, whole title"
-msgstr ""
-
 #: ../ui.py:575
 #, fuzzy
 msgid "Find file"
@@ -406,6 +390,14 @@ msgstr "Fichiers audio"
 
 #: ../ui.py:272
 msgid "Find file/preview file"
+msgstr ""
+
+#: ../ui.py:84
+msgid "Full title, filtered"
+msgstr ""
+
+#: ../ui.py:80
+msgid "Full title, marked in list"
 msgstr ""
 
 #: ../ui.py:269
@@ -453,22 +445,6 @@ msgstr "Si activée, alors la position du sélecteur au démarrage est maintenue
 #: ../ui.py:1630
 msgid "If enabled, then will be used subdirectories too (it will take longer)."
 msgstr "Si activé, puis les sous-répertoires seront aussi utilisé (il faudra plus longtemps)."
-
-#: ../ui.py:79
-msgid "In list, ...,...,...[,]"
-msgstr ""
-
-#: ../ui.py:78
-msgid "In list, ...,...[,]...,"
-msgstr ""
-
-#: ../ui.py:77
-msgid "In list, ...[,]...,...,"
-msgstr ""
-
-#: ../ui.py:80
-msgid "In list, whole title"
-msgstr ""
 
 #: ../ui.py:1632
 msgid "Include trashcans"
@@ -1028,6 +1004,30 @@ msgstr ""
 
 #: ../ui.py:428
 msgid "Type several first characters in title and press Enter:"
+msgstr ""
+
+#: ../ui.py:81
+msgid "Up to 1st comma, filtered"
+msgstr ""
+
+#: ../ui.py:77
+msgid "Up to 1st comma, marked in list"
+msgstr ""
+
+#: ../ui.py:82
+msgid "Up to 2nd comma, filtered"
+msgstr ""
+
+#: ../ui.py:78
+msgid "Up to 2nd comma, marked in list"
+msgstr ""
+
+#: ../ui.py:83
+msgid "Up to 3rd comma, filtered"
+msgstr ""
+
+#: ../ui.py:79
+msgid "Up to 3rd comma, marked in list"
 msgstr ""
 
 #: ../ui.py:559

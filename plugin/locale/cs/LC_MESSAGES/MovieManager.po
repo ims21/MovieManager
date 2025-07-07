@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enigma2 ManagerAutofs Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-06 23:50+0200\n"
-"PO-Revision-Date: 2025-07-07 00:13+0200\n"
+"POT-Creation-Date: 2025-07-07 09:11+0200\n"
+"PO-Revision-Date: 2025-07-07 09:12+0200\n"
 "Last-Translator: ims <ims@openpli.org>\n"
 "Language-Team: PLi\n"
 "Language: cs_CZ\n"
@@ -282,8 +282,8 @@ msgid "Display all existing bookmarks in box. Unwanted or unnecessary bookmarks 
 msgstr "Zobrazí všechny existující záložky v přijímači. Nechtěné nebo nepotřebné záložky mohou být odstraněny nebo upraveny."
 
 #: ../ui.py:783
-msgid "Duplicate Search Mode:"
-msgstr "Zvolte způsob vyhledání duplicit:"
+msgid "Duplicate detection and display mode:"
+msgstr "Způsob vyhledání a zobrazení duplicit:"
 
 #: ../duplicates.py:55
 msgid "Duplicates are detected based on the part of the title up to the selected comma ',' (because some programs are re-broadcast with an additional phrase in the title), or on the whole title. Therefore, some duplicates may not be actual duplicates."
@@ -370,22 +370,6 @@ msgstr "Zavřít plugin"
 msgid "File was not found..."
 msgstr "Soubor nenalezen..."
 
-#: ../ui.py:83
-msgid "Filtered, ...,...,...[,]"
-msgstr "Filtrováno, ...,...,...[,]"
-
-#: ../ui.py:82
-msgid "Filtered, ...,...[,]...,"
-msgstr "Filtrováno, ...,...[,]...,"
-
-#: ../ui.py:81
-msgid "Filtered, ...[,]...,...,"
-msgstr "Filtrováno, ...[,]...,...,"
-
-#: ../ui.py:84
-msgid "Filtered, whole title"
-msgstr "Filtrovány, celý název"
-
 #: ../ui.py:575
 msgid "Find file"
 msgstr "Najít soubor"
@@ -397,6 +381,14 @@ msgstr "Najít soubor/další soubor"
 #: ../ui.py:272
 msgid "Find file/preview file"
 msgstr "Najít soubor/předchozí soubor"
+
+#: ../ui.py:84
+msgid "Full title, filtered"
+msgstr "Celý název, filtrované"
+
+#: ../ui.py:80
+msgid "Full title, marked in list"
+msgstr "Celý název, označené v seznamu"
 
 #: ../ui.py:269
 msgid "Go to first item"
@@ -441,22 +433,6 @@ msgstr "Jestliže je povoleno, je po startu zachovávána pozice kurzoru v sezna
 #: ../ui.py:1630
 msgid "If enabled, then will be used subdirectories too (it will take longer)."
 msgstr "Pokud je povoleno, použijí se také podadresáře (spotřebuje více času)."
-
-#: ../ui.py:79
-msgid "In list, ...,...,...[,]"
-msgstr "V seznamu, ...,...,...[,]"
-
-#: ../ui.py:78
-msgid "In list, ...,...[,]...,"
-msgstr "V seznamu, ...,...[,]...,"
-
-#: ../ui.py:77
-msgid "In list, ...[,]...,...,"
-msgstr "V seznamu, ...[,]...,...,"
-
-#: ../ui.py:80
-msgid "In list, whole title"
-msgstr "V seznamu, celý název"
 
 #: ../ui.py:1632
 msgid "Include trashcans"
@@ -974,7 +950,7 @@ msgstr "Názvy jsou porovnávány do první čárky. Duplicity jsou označené v
 
 #: ../ui.py:81
 msgid "Titles are compared using the text up to the first comma. Only duplicates are displayed."
-msgstr "Názvy jsou porovnávány do první čárky. Pouze duplicity jsou zobrazené."
+msgstr "Názvy jsou porovnávány do první čárky. Jsou zobrazené pouze duplicity."
 
 #: ../ui.py:78
 msgid "Titles are compared using the text up to the second comma. Duplicates found are marked in the list."
@@ -982,7 +958,7 @@ msgstr "Názvy jsou porovnávány do druhé čárky. Duplicity jsou označené v
 
 #: ../ui.py:82
 msgid "Titles are compared using the text up to the second comma. Only duplicates are displayed."
-msgstr "Názvy jsou porovnávány do druhé čárky. Pouze duplicity jsou zobrazené."
+msgstr "Názvy jsou porovnávány do druhé čárky. Jsou zobrazené pouze duplicity."
 
 #: ../ui.py:79
 msgid "Titles are compared using the text up to the third comma. Duplicates found are marked in the list."
@@ -990,7 +966,7 @@ msgstr "Názvy jsou porovnávány do třetí čárky. Duplicity jsou označené 
 
 #: ../ui.py:83
 msgid "Titles are compared using the text up to the third comma. Only duplicates are displayed."
-msgstr "Názvy jsou porovnávány do třetí čárky. Pouze duplicity jsou zobrazené."
+msgstr "Názvy jsou porovnávány do třetí čárky. Jsou zobrazené pouze duplicity."
 
 #: ../ui.py:1638
 msgid "To maintain selector position"
@@ -1003,6 +979,30 @@ msgstr "Zadejte část textu v názvu a stiskněte Enter:"
 #: ../ui.py:428
 msgid "Type several first characters in title and press Enter:"
 msgstr "Zadejte několik prvních znaků v názvu a stiskněte Enter:"
+
+#: ../ui.py:81
+msgid "Up to 1st comma, filtered"
+msgstr "Do 1. čárky, filtrované"
+
+#: ../ui.py:77
+msgid "Up to 1st comma, marked in list"
+msgstr "Do 1. čárky, označené v seznamu"
+
+#: ../ui.py:82
+msgid "Up to 2nd comma, filtered"
+msgstr "Do 2. čárky, filtrované"
+
+#: ../ui.py:78
+msgid "Up to 2nd comma, marked in list"
+msgstr "Do 2. čárky, označené v seznamu"
+
+#: ../ui.py:83
+msgid "Up to 3rd comma, filtered"
+msgstr "Do 3. čárky, filtrované"
+
+#: ../ui.py:79
+msgid "Up to 3rd comma, marked in list"
+msgstr "Do 2. čárky, označené v seznamu"
 
 #: ../ui.py:559
 msgid "Update bookmarks depending on the current mountpoints. If mountpoints sleeping, then it take some time before they wakes up."
@@ -1054,7 +1054,7 @@ msgstr "Jsou porovnávány celé názvy. Duplicity jsou označené v seznamu."
 
 #: ../ui.py:84
 msgid "Whole titles are compared. Only duplicates are displayed."
-msgstr "Jsou porovnávány celé názvy. Pouze duplicity jsou zobrazené."
+msgstr "Jsou porovnávány celé názvy. Jsou zobrazené pouze duplicity."
 
 #: ../ui.py:1612
 msgid "You can set the number of letters from the beginning of the current file name as the text pre-filled into virtual keyboard for easier input via group selection. For 'group selection' use 'CH+/CH-' buttons."

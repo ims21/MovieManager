@@ -74,14 +74,14 @@ config.moviemanager.removepkl = ConfigYesNo(default=False)
 config.moviemanager.duplicates = ConfigYesNo(default=False)
 config.moviemanager.comma = ConfigInteger(default=1)
 config.moviemanager.searchduplicates = ConfigSelection(default="5", choices=[
-	("0", _("In list, ...[,]...,...,"), _("Titles are compared using the text up to the first comma. Duplicates found are marked in the list.")),
-	("1", _("In list, ...,...[,]...,"), _("Titles are compared using the text up to the second comma. Duplicates found are marked in the list.")),
-	("2", _("In list, ...,...,...[,]"), _("Titles are compared using the text up to the third comma. Duplicates found are marked in the list.")),
-	("3", _("In list, whole title"), _("Whole titles are compared. Duplicates found are marked in the list.")),
-	("4", _("Filtered, ...[,]...,...,"), _("Titles are compared using the text up to the first comma. Only duplicates are displayed.")),
-	("5", _("Filtered, ...,...[,]...,"), _("Titles are compared using the text up to the second comma. Only duplicates are displayed.")),
-	("6", _("Filtered, ...,...,...[,]"), _("Titles are compared using the text up to the third comma. Only duplicates are displayed.")),
-	("7", _("Filtered, whole title"), _("Whole titles are compared. Only duplicates are displayed.")),
+	("0", _("Up to 1st comma, marked in list"), _("Titles are compared using the text up to the first comma. Duplicates found are marked in the list.")),
+	("1", _("Up to 2nd comma, marked in list"), _("Titles are compared using the text up to the second comma. Duplicates found are marked in the list.")),
+	("2", _("Up to 3rd comma, marked in list"), _("Titles are compared using the text up to the third comma. Duplicates found are marked in the list.")),
+	("3", _("Full title, marked in list"), _("Whole titles are compared. Duplicates found are marked in the list.")),
+	("4", _("Up to 1st comma, filtered"), _("Titles are compared using the text up to the first comma. Only duplicates are displayed.")),
+	("5", _("Up to 2nd comma, filtered"), _("Titles are compared using the text up to the second comma. Only duplicates are displayed.")),
+	("6", _("Up to 3rd comma, filtered"), _("Titles are compared using the text up to the third comma. Only duplicates are displayed.")),
+	("7", _("Full title, filtered"), _("Whole titles are compared. Only duplicates are displayed.")),
 	])
 config.moviemanager.subdirs = ConfigYesNo(default=False)
 config.moviemanager.trashcans = ConfigYesNo(default=False)
@@ -780,7 +780,7 @@ class MovieManager(Screen, HelpableScreen):
 		menu = []
 		for x in cfg.searchduplicates.choices.choices:
 			menu.append((x[1], x[0], x[2]))
-		self.session.openWithCallback(self.duplicatesCallback, ChoiceBox, title=_("Duplicate Search Mode:"), list=menu, selection=int(cfg.searchduplicates.value))
+		self.session.openWithCallback(self.duplicatesCallback, ChoiceBox, title=_("Duplicate detection and display mode:"), list=menu, selection=int(cfg.searchduplicates.value))
 
 	def duplicatesCallback(self, choice):
 		if choice is None:
