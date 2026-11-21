@@ -1,6 +1,6 @@
 from Components.MenuList import MenuList
 from Components.config import config
-from locale import strxfrm
+from Components.Language import alphabeticSortKey
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
 from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop, RT_HALIGN_LEFT
 from Tools.LoadPixmap import LoadPixmap
@@ -87,7 +87,7 @@ class MySelectionList(MenuList):
 	def sort(self, sortType=False, flag=False):
 		# sorting by sortType: # 0 - name, 1 - item, 2 - index, 3 - selected
 		if not sortType:
-			self.list.sort(key=lambda x: strxfrm((x[0][0] or "").lower()), reverse=flag)
+			self.list.sort(key=lambda x: alphabeticSortKey(x[0][0]), reverse=flag)
 		self.setList(self.list)
 
 	def sortItemParts(self, sortType=False, flag=False):
