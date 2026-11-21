@@ -1,5 +1,6 @@
 from Components.MenuList import MenuList
 from Components.config import config
+from locale import strxfrm
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
 from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop, RT_HALIGN_LEFT
 from Tools.LoadPixmap import LoadPixmap
@@ -86,13 +87,7 @@ class MySelectionList(MenuList):
 	def sort(self, sortType=False, flag=False):
 		# sorting by sortType: # 0 - name, 1 - item, 2 - index, 3 - selected
 		if not sortType:
-			if config.moviemanager.alphabetsort.value:
-				from .dictsort import diacriticSorting
-				self.list.sort(key=lambda x: (diacriticSorting(x[0][0]) and diacriticSorting(x[0][0]).lower()), reverse=flag)
-			else:
-				self.list.sort(key=lambda x: (x[0][0] and x[0][0].lower()), reverse=flag)
-		else:
-			self.list.sort(key=lambda x: x[0][sortType], reverse=flag)
+			self.list.sort(key=lambda x: strxfrm((x[0][0] or "").lower()), reverse=flag)
 		self.setList(self.list)
 
 	def sortItemParts(self, sortType=False, flag=False):
